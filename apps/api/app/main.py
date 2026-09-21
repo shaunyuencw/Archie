@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse
 from pydantic import BaseModel
@@ -8,6 +8,7 @@ from .domain.models import Project, ChangeSet, uid
 from .domain.commands import DomainError
 from .domain.views import view_graph,narrative
 from .storage.store import Store
+from .orchestration.service import ingest,answer
 
 ROOT=Path(__file__).resolve().parents[3]
 store=Store()
@@ -87,3 +88,35 @@ def catalogue(): return json.loads((ROOT/'fixtures/assets/manifest.json').read_t
 def asset_file(asset:str):
     if asset not in {a['icon'] for a in catalogue()}: raise DomainError('invalid_input','Asset not in catalogue')
     return FileResponse(ROOT/'fixtures/assets'/asset,media_type='image/svg+xml')
+
+class RunRequest(ChangeSet):
+    prompt:str
+    provider:str='mock'
+
+class AnswerRequest(ChangeSet):
+    decision_id:str
+    answer:str
+
+@app.post('/api/projects/{pid}/sources')
+async def upload_source(pid:str,file:UploadFile=File(...)):
+    data=await file.read(10*1024*1024+1)
+    return ingest(store,pid,data,file.filename or 'upload')
+
+@app.post('/api/projects/{pid}/sources/{sid}/continue')
+def continue_source(pid:str,sid:str,c:ChangeSet):
+    from .domain.commands import apply
+    apply(store.get(pid),c)
+    return ingest(store,pid,b'','',source_id=sid)
+
+@app.post('/api/projects/{pid}/runs')
+def run(pid:str,req:RunRequest):
+    from .domain.commands import apply
+    apply(store.get(pid),req)
+    if req.provider!='mock': raise DomainError('unavailable_provider','Provider adapter is not configured',503)
+    if not req.prompt.strip(): raise DomainError('invalid_input','Prompt is empty')
+    result=ingest(store,pid,req.prompt.encode(),'Prompt','prompt')
+    if result.get('message'): raise DomainError('insufficient_context',result['message'])
+    return result
+
+@app.post('/api/projects/{pid}/answers',response_model=Project)
+def answers(pid:str,req:AnswerRequest): return answer(store,pid,req)

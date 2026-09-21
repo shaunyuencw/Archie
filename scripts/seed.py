@@ -104,9 +104,8 @@ def reference(pack,d,rows):
     data['sources']=[source.model_dump()]
     data['claims']=[Claim(id=f'claim-{ident}',source_id=source.id,source_version='1.0',locator=f'row/{i+1}',excerpt=line,target_id=ident,field='record',value=line,source_kind='document',review='confirmed').model_dump() for i,(ident,line) in enumerate(rows)]
     for c in data['components']+data['interfaces']: c['evidence']=['claim-'+c['id']]
-    for k,view in data['views'].items():
-        for i,c in enumerate(data['components']): view['placements'][c['id']]={'x':100+(i%3)*250,'y':100+(i//3)*180}
-    return Project.model_validate(data)
+    from apps.api.app.domain.views import initialise_views
+    return initialise_views(Project.model_validate(data))
 
 def main(out=None):
     target=Path(out or ROOT/'fixtures'); target.mkdir(parents=True,exist_ok=True); manifest=[]

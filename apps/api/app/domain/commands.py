@@ -44,6 +44,10 @@ def apply(project:Project,change:ChangeSet)->Project:
                 for x in data['components']:
                     for field in ['audit_destination','storage_destination']:
                         if x[field]==o.id: x[field]=None
+            if o.entity=='zones':
+                assigned=[x for x in data['deployments'] if x['zone_id']==o.id]
+                if assigned and not o.confirmed: raise DomainError('confirmation_required','This zone has assigned deployments.',409)
+                for x in assigned: x['zone_id']=None
             records.remove(existing)
             removed={o.id}|{x['id'] for x in refs}
             for x in data['claims']:

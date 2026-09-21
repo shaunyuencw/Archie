@@ -7,4 +7,6 @@ M1 complete: canonical Pydantic contract, transactional commands, SQLite snapsho
 
 M2 complete: React Flow editor, palette, inspector, zone reassignment preview, persistent placement/routes, undo/reopen, three projections. Browser journey passed with zero assisted requests (reports/browser-tests.json, reports/workbench-m2.png). Frontend unit check, TypeScript and production build passed; backend suite passed (reports/m2-tests.xml).
 
-Next: M3 local parsing, source coverage and mock assistant. Initial dependency audit flagged advisories; inspect and resolve during compatibility gate before handover. DOCX visual rendering is pending because bundled LibreOffice has not been found.
+M3 complete: local DOCX/PDF parsing, hashed cache, format deduplication, exact evidence, partial coverage, candidate review, clarification and contradiction cards. Eight backend tests and two browser journeys passed (reports/m3-tests.xml, reports/browser-tests.json). Mock is explicitly a deterministic fixture/narrow-prompt parser.
+
+Next: M4 policies, real provider adapters and persisted budget reservations. Dependency advisories will be resolved before handover. DOCX visual rendering is pending because bundled LibreOffice has not been found.
