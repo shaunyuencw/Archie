@@ -8,13 +8,13 @@
   },
   "components": 50,
   "interfaces": 100,
-  "load_to_render_ms": 1820.3,
+  "load_to_render_ms": 1331.04,
   "placement_edit_saved_and_rendered_ms": [
-    269.73,
-    559.59,
-    578.41
+    881.37,
+    395.35,
+    209.29
   ],
-  "reopen_ms": 172.3,
+  "reopen_ms": 211.21,
   "drag_frame_intervals_ms": {
     "samples": 60,
     "median": 16.7,

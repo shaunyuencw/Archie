@@ -1,6 +1,6 @@
 # Acceptance checkpoint — 21 September 2026
 
-This matrix records the Mac continuation. The full offline gate passes (88 backend, 19 frontend unit, 21 browser journeys, TypeScript and production build). New product scenarios and library are covered by `apps/web/tests/product.spec.ts`. Mac handover is ready; full native Visio acceptance remains conditional. Fixture version is 1.0; historical Windows results are retained separately.
+This matrix records the Mac continuation. The full offline gate passes (109 backend, 19 frontend unit, 21 browser journeys, TypeScript and production build). New product scenarios and library are covered by `apps/web/tests/product.spec.ts`. Mac handover is ready; full native Visio acceptance remains conditional. Fixture version is 1.0; historical Windows results are retained separately.
 
 ## Product requirements
 
@@ -44,8 +44,8 @@ This matrix records the Mac continuation. The full offline gate passes (88 backe
 | T08 | Passed | Targeted prompt after manual positioning, accept/reject/undo. |
 | T09 | Passed | Stale semantic and presentation proposals rejected. |
 | T10 | Passed | Three views, narrative and interface table consistency. |
-| T11 | Passed offline fault tests | Malformed/truncated/refused output and false source references leave accepted state unchanged. |
-| T12 | Passed | Budget reservations, parallel calls, restart and provider isolation tests. |
+| T11 | Passed offline fault tests | Malformed/truncated/refused output and false source references leave accepted state unchanged. Reported unknown enforcement fields normalize with review notes; invalid references still reject (`tests/test_provider_normalization.py`). |
+| T12 | Passed | Budget reservations, parallel calls, restart and provider isolation tests. Local default deadlines scale to response size; explicit deadlines are retained and timeouts do not replay. |
 | T13 | Passed | Injection fixture cannot change tools/configuration or execute document instructions. |
 | T14 | Passed backend and Mac browser | `reports/capacity.json`, `reports/browser-capacity-darwin.json`: 50 components / 100 interfaces, render/edit/drag/reopen, intact references and no model calls. Single-run browser timings include automation overhead. |
 | T15 | Passed | Explicit partial coverage and unsupported text handling; live batching tested with mocked transport. |
@@ -56,6 +56,7 @@ This matrix records the Mac continuation. The full offline gate passes (88 backe
 - **OpenAI:** Terra Flow A/B passed at the application service layer, four requests including one repair, approximately $0.0743975. Browser interaction tests are separate. `reports/mac-resume-20260921-providers.md`. Saved-output scope guard replay and versioned corrections are documented; original live snapshots are preserved.
 - **New AI policy review:** one real Terra request assessed three selected portal policies for an estimated $0.01538, with valid source references and no architecture changes (`reports/mac-policy-review-20260921.json`). Combined continuation usage is eight requests (five cloud, three local), approximately $0.0897775. Automatic project naming is verified offline with mocked transport and browser acceptance/undo; no separate real naming call was made.
 - **Ollama:** installed qwen3:14b, 14.8B Q4_K_M, 8192 context. Small extraction passed; richer generation failed safely. Loaded-model observation: 10 GB / 100% GPU, not peak memory. No fallback.
+- **User-import follow-up:** enforcement type mismatches and the local 90-second response timeout were reproduced or traced and corrected offline. No fresh full live import was run after the fixes; the earlier successful journeys are not a claim of general import reliability. `reports/provider-input-recovery-20260921.md`.
 - **Mac:** macOS 26.6.2, M2 Max, 32 GiB, Python 3.12.0, Node 22.23.1, pnpm 11.19.0, Chromium 153.0.8010.12. `reports/environment-mac.json`.
 - **Windows history:** `reports/windows-checkpoint`, `reports/smoke-openai.json` (three checks/$0.006948), `reports/smoke-ollama.json` (qwen3:4b failure). RTX 3080 Ti Laptop/16,384 MiB and 68,334,067,712 bytes RAM are historical Windows observations.
 - **Extraction:** `reports/extraction-metrics.json` records authored component/interface coverage across six specification format variants. It is not field-level or real-world accuracy; remaining sections stay explicit.

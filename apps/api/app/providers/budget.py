@@ -7,6 +7,20 @@ from ..domain.commands import DomainError
 from .instructions import SYSTEM_PROMPT
 
 LOCAL_LOCK=threading.Lock()
+LOCAL_MIN_TOKENS_PER_SECOND=8
+LOCAL_STARTUP_SECONDS=15
+LOCAL_TIMEOUT_CAP_SECONDS=210
+
+def default_deadline(adapter_name,max_output):
+    """Use a bounded local window sized for the response the app requested.
+
+    Local models run serially and can be substantially slower than the API.
+    Explicit caller deadlines are handled by ``call`` unchanged.
+    """
+    seconds=90
+    if adapter_name=='ollama':
+        seconds=min(LOCAL_TIMEOUT_CAP_SECONDS,max(seconds,LOCAL_STARTUP_SECONDS+(max_output+LOCAL_MIN_TOKENS_PER_SECOND-1)//LOCAL_MIN_TOKENS_PER_SECOND))
+    return time.monotonic()+seconds
 
 class BudgetedProvider:
     """Only runtime entry to adapters. Persist reservations before transmission."""
@@ -39,9 +53,15 @@ class BudgetedProvider:
                 with self.store.connect() as db:db.execute("UPDATE usage SET status='cancelled_before_send',cost=0 WHERE id=?",(ident,))
                 raise DomainError('cancelled','Cancelled before transmission')
             fn=a.invoke_tools if native else a.generate_structured
+            # An explicit deadline is an upper bound owned by the caller.  Start a
+            # default local window only after the serial local-model lock is held.
             if local:
-                with LOCAL_LOCK: result=fn(prompt,max_output,deadline or time.monotonic()+90,cancel)
-            else: result=fn(prompt,max_output,deadline or time.monotonic()+90,cancel)
+                with LOCAL_LOCK:
+                    request_deadline=deadline if deadline is not None else default_deadline(a.name,max_output)
+                    result=fn(prompt,max_output,request_deadline,cancel)
+            else:
+                request_deadline=deadline if deadline is not None else default_deadline(a.name,max_output)
+                result=fn(prompt,max_output,request_deadline,cancel)
             actual=cost(result.usage,rates) if rates else 0
             with self.store.connect() as db: db.execute("UPDATE usage SET status='completed',cost=?,model=?,details=? WHERE id=?",(actual,result.model,result.usage.model_dump_json(),ident))
             if cancel and cancel.is_set():raise DomainError('cancelled','Response received after cancellation; usage retained.')
@@ -52,7 +72,8 @@ class BudgetedProvider:
             if status in [400,401,403,404,422,429]:
                 with self.store.connect() as db:db.execute("UPDATE usage SET status='rejected_before_generation',cost=0 WHERE id=? AND status='reserved'",(ident,))
             # Unknown transport outcomes retain their conservative cost reservation across restarts.
-            with self.store.connect() as db:db.execute("UPDATE usage SET status='unresolved' WHERE id=? AND status='reserved'",(ident,))
+            details=json.dumps({'error_code':e.code}) if isinstance(e,DomainError) and e.code=='provider_timeout' else '{}'
+            with self.store.connect() as db:db.execute("UPDATE usage SET status='unresolved',details=? WHERE id=? AND status='reserved'",(details,ident))
             if isinstance(e,DomainError):raise
             raise DomainError('unavailable_provider','Provider failed or returned invalid output; accepted architecture was preserved.',503) from e
 

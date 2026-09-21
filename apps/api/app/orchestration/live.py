@@ -14,7 +14,8 @@ from .service import question_ops
 ROOT=Path(__file__).resolve().parents[4]
 CANCELLATIONS={}
 _PORT_VALUE=re.compile(r'^\s*(?:(?:tcp|udp|sctp|dccp)\s*(?:[/:\-]\s*)?)?(?:port\s*)?(\d{1,5})(?:\s*/\s*(?:tcp|udp|sctp|dccp))?\s*$',re.I)
-_UNKNOWN_PORT_VALUES={'','-','n/a','na','none','not decided','not specified','null','unknown','unspecified'}
+_UNKNOWN_VALUES={'','-','n/a','na','none','not decided','not specified','null','unknown','unspecified'}
+_UNKNOWN_ENUM_FIELDS={'systems':('scope',),'components':('scope','form_factor'),'deployments':('redundancy_mode',),'interfaces':('data_direction',)}
 
 def normalize_interface_port(value,ident,uncertainties):
     """Keep the canonical port scalar while accepting a few common model spellings."""
@@ -24,7 +25,7 @@ def normalize_interface_port(value,ident,uncertainties):
         port=value
     elif isinstance(value,str):
         text=value.strip()
-        if text.lower() in _UNKNOWN_PORT_VALUES:return None
+        if text.lower() in _UNKNOWN_VALUES:return None
         match=_PORT_VALUE.fullmatch(text)
         if match:
             port=int(match.group(1))
@@ -37,6 +38,22 @@ def normalize_interface_port(value,ident,uncertainties):
     # Keep it unknown rather than selecting a value that was never specified.
     uncertainties.append(f'{ident}: port was left unknown because the supplied value was not one valid numeric port. Split the connection or provide one port.')
     return None
+
+def normalize_interface_enforcement(value,ident,component_ids,uncertainties):
+    """Unknown enforcement is an empty list, never a made-up component reference."""
+    items=value if isinstance(value,list) else [value]
+    references=[]; unknown=False
+    for item in items:
+        # Resolve exact IDs first, including a component literally named "unknown".
+        if isinstance(item,str) and item in component_ids:
+            if item not in references:references.append(item)
+        elif item is None or (isinstance(item,str) and item.strip().lower() in _UNKNOWN_VALUES):
+            unknown=True
+        else:
+            raise DomainError('provider_output',f'Connection {ident}: the AI supplied an enforcement reference that does not match a component. Enforcement must list component IDs, or be empty when unspecified. Your current design was not changed.')
+    if unknown:
+        uncertainties.append(f'{ident}: enforcement is not fully specified. Confirm which firewall or other component controls this connection; no extra enforcement component was assumed.')
+    return references
 
 def context(p,query):
     matched=[c for c in p.components if c.name.lower() in query.lower() or c.id.lower() in query.lower()]
@@ -70,6 +87,7 @@ def proposal_from_envelope(p,source,envelope,source_alias=None):
     if not envelope.operations and (naming is None or not explicit_name_request(source)):
         raise DomainError('insufficient_context',envelope.message or 'No architecture changes proposed')
     claims=[]; ops=[naming] if naming else []; uncertainties=[]
+    component_ids=({c.id for c in p.components}|{w.id for w in envelope.operations if w.entity=='components' and w.op=='add'})-{w.id for w in envelope.operations if w.entity=='components' and w.op=='remove'}
     for w in envelope.claims:
         if w.source_id not in {source.id,source_alias}: raise DomainError('provider_output','Evidence was not in the supplied source context')
         claims.append(Claim(id=uid(),source_id=source.id,source_version=source.version,locator=w.locator,excerpt=w.excerpt,target_id=w.target_id,field=w.field,value=json.loads(w.value_json),source_kind=source.kind,review='confirmed'))
@@ -78,6 +96,11 @@ def proposal_from_envelope(p,source,envelope,source_alias=None):
         if not isinstance(value,dict):raise DomainError('provider_output','Operation value must be an object')
         if w.entity=='interfaces' and 'port' in value:
             value['port']=normalize_interface_port(value['port'],w.id,uncertainties)
+        if w.entity=='interfaces' and 'enforcement' in value:
+            value['enforcement']=normalize_interface_enforcement(value['enforcement'],w.id,component_ids,uncertainties)
+        # Nullable unknowns from the model must use the canonical enum's unknown value.
+        for field in _UNKNOWN_ENUM_FIELDS.get(w.entity,()):
+            if field in value and value[field] is None:value[field]='unknown'
         # Domain defaults help manual creation; model omissions are unknown facts.
         if w.op=='add' and w.entity in ['components','systems']:
             if value.get('scope') is None:value['scope']='unknown'
@@ -129,7 +152,7 @@ def assisted_run(store,pid,req,settings=None,adapter=None,live_run=None,deadline
                 result={'run_id':run_id,'proposal':store.preview(proposed).model_dump(),'mode':'schema_action_envelope','model':output.model,'repairs':int(repaired)}
                 break
             except (ValueError,DomainError) as error:
-                if isinstance(error,DomainError) and error.code in ['budget_exceeded','insufficient_context','cancelled','unavailable_provider']:raise
+                if isinstance(error,DomainError) and error.code in ['budget_exceeded','insufficient_context','cancelled','unavailable_provider','provider_timeout']:raise
                 if repaired:raise
                 repaired=True
                 prompt=json.dumps({'initial':json.loads(prompt),'repair':'Previous response was not a valid reference-safe proposal. Return valid schema and exact source citations.'},separators=(',',':'))

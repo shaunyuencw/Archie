@@ -1,4 +1,4 @@
-import json,os,time,threading
+import json,os,time,threading,math
 import httpx
 from openai import OpenAI
 from .contracts import Envelope,ProviderResult,Usage,schema,ToolRequest
@@ -42,13 +42,31 @@ class OllamaAdapter:
         payload={'model':self.model,'messages':[{'role':'system','content':SYSTEM_PROMPT},{'role':'user','content':prompt}],'stream':False,'think':False,'options':{'num_ctx':self.settings.ollama_num_ctx,'num_predict':max_output,'temperature':0}}
         if tools:payload['tools']=[{'type':'function','function':{'name':'architecture_context','description':'Request read-only context','parameters':ToolRequest.model_json_schema()}}]
         else:payload['format']=schema()
-        r=self.client.post('/api/chat',json=payload,timeout=max(.1,deadline-time.monotonic())); r.raise_for_status(); body=r.json()
-        if not body.get('done') or body.get('done_reason')=='length': raise DomainError('provider_output','Ollama response is incomplete')
-        if tools:
-            calls=body.get('message',{}).get('tool_calls',[])
-            if len(calls)!=1 or calls[0]['function']['name']!='architecture_context': raise DomainError('provider_output','Unexpected native tool request')
-            content=Envelope(operations=[],claims=[],tool=ToolRequest.model_validate(calls[0]['function']['arguments']),message='Native tool probe')
-        else:content=Envelope.model_validate_json(body['message']['content'])
+        remaining=deadline-time.monotonic()
+        if remaining<=0: raise DomainError('provider_timeout','Ollama response deadline passed before transmission. Your accepted architecture was preserved.',504)
+        try:
+            r=self.client.post('/api/chat',json=payload,timeout=remaining); r.raise_for_status(); body=r.json()
+        except httpx.TimeoutException as e:
+            seconds=max(1,math.ceil(remaining))
+            raise DomainError('provider_timeout',f'Ollama did not finish within the local response window ({seconds} seconds). Your accepted architecture was preserved. Retry with a smaller section or a faster local model.',504) from e
+        except httpx.HTTPStatusError as e:
+            status=e.response.status_code
+            error=DomainError('unavailable_provider',f'Ollama returned HTTP {status}. Check that Ollama and the selected local model are available, then retry. Your accepted architecture was preserved.',503)
+            error.status_code=status
+            raise error from e
+        except (TypeError,ValueError) as e:
+            raise DomainError('provider_output','Ollama returned a response that was not valid JSON. Your accepted architecture was preserved.') from e
+        if not isinstance(body,dict): raise DomainError('provider_output','Ollama returned a response that did not match the required architecture format. Your accepted architecture was preserved.')
+        if body.get('done_reason')=='length': raise DomainError('provider_output','Ollama reached its local response limit before completing a valid proposal. Your accepted architecture was preserved. Retry with a smaller section or a model that can return a shorter response.')
+        if not body.get('done'): raise DomainError('provider_output','Ollama returned an incomplete response. Your accepted architecture was preserved.')
+        try:
+            if tools:
+                calls=body.get('message',{}).get('tool_calls',[])
+                if len(calls)!=1 or calls[0]['function']['name']!='architecture_context': raise DomainError('provider_output','Ollama returned an unexpected context request. Your accepted architecture was preserved.')
+                content=Envelope(operations=[],claims=[],tool=ToolRequest.model_validate(calls[0]['function']['arguments']),message='Native tool probe')
+            else:content=Envelope.model_validate_json(body['message']['content'])
+        except (KeyError,TypeError,ValueError) as e:
+            raise DomainError('provider_output','Ollama returned a response that did not match the required architecture format. Your accepted architecture was preserved.') from e
         return ProviderResult(content=content,finish_status='completed',model=body.get('model',self.model),usage=Usage(input_tokens=body.get('prompt_eval_count',0),output_tokens=body.get('eval_count',0),latency_ms=(time.monotonic()-started)*1000))
     def generate_structured(self,prompt,max_output,deadline,cancel=None):return self._request(prompt,max_output,deadline,cancel)
     def invoke_tools(self,prompt,max_output,deadline,cancel=None):return self._request(prompt,max_output,deadline,cancel,True)

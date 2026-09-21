@@ -70,3 +70,19 @@ def test_document_port_text_is_normalized_without_choosing_ambiguous_ports():
     accepted=apply(project,proposal)
     assert {item.id:item.port for item in accepted.interfaces}=={'web-db':443,'db-web':5432,'ambiguous':None}
     assert proposal.findings==['ambiguous: port was left unknown because the supplied value was not one valid numeric port. Split the connection or provide one port.']
+
+def test_timed_out_local_run_is_not_replayed(tmp_path):
+    class TimedOutAdapter(FakeOllama):
+        calls=0
+        def generate_structured(self,*args):
+            self.calls+=1
+            raise DomainError('provider_timeout','Ollama did not finish within the local response window.',504)
+    store=Store(tmp_path/'db');project=store.create(Project());adapter=TimedOutAdapter()
+    req=RunRequest(**command(project,[{'op':'notes','value':{}}]).model_dump(),prompt='Add a workstation.',provider='ollama')
+    with pytest.raises(DomainError) as error:
+        assisted_run(store,project.id,req,Settings(),adapter)
+    assert error.value.code=='provider_timeout' and adapter.calls==1
+    assert store.get(project.id)==project
+    with store.connect() as db:
+        run=db.execute('SELECT status,result FROM runs WHERE id=?',(req.request_id,)).fetchone()
+    assert run['status']=='failed' and json.loads(run['result'])['code']=='provider_timeout'

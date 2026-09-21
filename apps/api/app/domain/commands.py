@@ -7,7 +7,7 @@ class DomainError(Exception):
     def __init__(self,code,message,status=422): self.code=code; self.message=message; self.status=status
 
 def validation_message(error:ValidationError)->str:
-    """Translate the one common user-editable connection error without hiding other validation detail."""
+    """Explain invalid architecture fields without exposing a Pydantic traceback."""
     invalid_ports=[]
     for issue in error.errors():
         location=issue.get('loc',())
@@ -18,7 +18,20 @@ def validation_message(error:ValidationError)->str:
         quoted=', '.join(f'“{value}”' for value in invalid_ports[:3])
         count='A connection port' if len(invalid_ports)==1 else f'{len(invalid_ports)} connection ports'
         return f'{count} could not be read: {quoted}. Enter only a number from 0 to 65535 in Port, for example 443; put the protocol, such as HTTPS or PostgreSQL, in Protocol. Your current design was not changed.'
-    return str(error)
+    labels={'interfaces':'Connection','components':'Component','deployments':'Deployment','systems':'System','zones':'Zone','claims':'Source claim','sources':'Source','decisions':'Question','constraints':'Constraint'}
+    details=[]
+    for issue in error.errors()[:3]:
+        location=issue.get('loc',())
+        if len(location)>=3 and location[0]=='interfaces' and location[2]=='enforcement':
+            details.append(f'Connection {location[1]+1}: enforcement must be a list of component IDs; use an empty list when unspecified.')
+            continue
+        path=[]
+        for part in location:
+            path.append(str(part+1) if isinstance(part,int) else labels.get(part,part.replace('_',' ')))
+        message=issue['msg'].removeprefix('Value error, ')
+        details.append(f'{" / ".join(path) or "Design"}: {message}.')
+    if error.error_count()>3:details.append(f'{error.error_count()-3} more fields need correction.')
+    return ' '.join(details)+' Your current design was not changed.'
 
 def apply(project:Project,change:ChangeSet)->Project:
     if change.project_id!=project.id: raise DomainError('invalid_input','Project mismatch')

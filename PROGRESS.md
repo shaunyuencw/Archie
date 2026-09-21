@@ -4,7 +4,7 @@ Updated: 21 September 2026, Mac continuation. **Presentable local prototype read
 
 ## Current checkpoint
 
-The Mac offline gate passes: **88 backend tests, 19 frontend unit tests, 21 browser journeys, TypeScript and production build**. Evidence: `reports/offline-gate.json`, `reports/m7-tests.xml`, `reports/browser-tests.json`. The application runs at <http://127.0.0.1:5173/>. No model calls occur in the offline gate.
+The Mac offline gate passes: **109 backend tests, 19 frontend unit tests, 21 browser journeys, TypeScript and production build**. Evidence: `reports/offline-gate.json`, `reports/m7-tests.xml`, `reports/browser-tests.json`. The application runs at <http://127.0.0.1:5173/>. No model calls occur in the offline gate.
 
 The restored checkpoint initially passed 25 backend tests, one frontend test and the build, but one browser journey failed due to a late view response. This was fixed alongside serialized local commands and captured file/project inputs, preventing rapid edits from using stale local state. External revision conflicts still reject. Baseline evidence is in `reports/mac-baseline`; earlier Windows reports and screenshots are preserved in `reports/windows-checkpoint` and historical live reports.
 
@@ -32,6 +32,7 @@ The default examples are now **Production service portal** (Client → Z1 applic
 - Panel arrows follow their state. Below 900 pixels, side panels start collapsed and open as overlays; the 640×800 browser case verifies usable drawing width and no body overflow.
 - Four technical specifications in Markdown/DOCX/PDF and 15 follow-up prompts: `docs/DEMO_SCENARIOS.md`. Separate authored mock DOCX fixtures support repeatable offline import and rename journeys. Ordinary natural-language specs and broader prompts require a live provider and have **not** been live-tested for this new pack.
 - Live document and prompt proposals convert one transport-qualified port such as `TCP 443` into canonical port `443`. Ambiguous values stay unknown with a review note; manual port errors now explain the required numeric value without exposing a raw schema trace. Reopen waits for queued saves.
+- Follow-up user imports exposed another provider shape mismatch: connection enforcement arrived as `"unknown"` instead of a list. Unknown/null placeholders now produce an unspecified list with a review note; valid component references remain and unresolved references reject. Nullable unknown enums are normalized, and other field validation errors are readable. The local 90-second timeout was traced to a request still generating at about 12 tokens/second; the bounded default local response window now scales to output size. Regression tests use mocked transports; a fresh complete live import after these fixes is unverified. See `reports/provider-input-recovery-20260921.md`.
 
 One bounded real OpenAI call verified the new advisory policy review; it cost an estimated US$0.01538 and preserved the accepted architecture (`reports/mac-policy-review-20260921.json`). All layout and wording work used no provider calls. The earlier prompt/document evidence below remains separate. Visual QA: 22 document pages and six current SVGs (`reports/demo-pack-qa/review.json`). New screenshots: `reports/archie-robotics-testbed.png` and `reports/archie-narrow-browser.png`. Dense Connection details labels can still partly cover short arrowheads; Architecture and System overview are clearer for the guided demo.
 
@@ -47,7 +48,7 @@ One bounded real OpenAI call verified the new advisory policy review; it cost an
 | Historical Windows OpenAI | Previous three-call Terra smoke passed at about $0.006948; `reports/smoke-openai.json` retained. |
 | Historical Windows Ollama | Qwen3:4b generation/tool/edit smoke failed validation; earlier 3.2 GB / 100% GPU / 4K observation retained. |
 
-Eight provider requests total in this continuation: five cloud and three local, within the eight-request / $0.50 test ceiling. Combined estimated OpenAI cost is **US$0.0897775**, using returned usage and configured rates, not an account bill. The eighth request was the new three-policy portal review, capped at US$0.075 with no retries. No paid re-run was used for UI iteration or the scope fix; saved output was replayed offline. Source citations remain subject to human interpretation review.
+Eight agent-run provider validation requests in this continuation: five cloud and three local, within the eight-request / $0.50 test ceiling. Combined estimated OpenAI cost for those checks is **US$0.0897775**, using returned usage and configured rates, not an account bill. The eighth request was the new three-policy portal review, capped at US$0.075 with no retries. Subsequent user-initiated imports are separate from this validation total. No paid re-run was used for UI iteration or the scope fix; saved output was replayed offline. Source citations remain subject to human interpretation review.
 
 The ignored `.env` now uses the requested 32,000 input / 6,000 output, six calls/action and $0.50/$1/$5/$12 action/document/day/project ceilings, with Terra/cloud/live opt-in. These are ceilings, not targets. Startup still selects mock. Distributed defaults remain mock/cloud-disabled. A key alone never authorizes paid calls.
 
@@ -59,7 +60,7 @@ Previous Windows host: Windows 11, Python 3.12.4, Node 24.19.0, RTX 3080 Ti Lapt
 
 Laptop/workspace screenshots: `reports/archie-mac-1280.png`, `reports/archie-mac-laptop.png`, `reports/archie-mac-focus.png`, `reports/archie-workbench.png` (1280×800, 1440×900 and 1600×1000; no horizontal overflow at 1280). Export visual evidence: `reports/mac-export-qa/review.json` (three SVG views, three narrative DOCX pages, 12 source PDF pages, 12 source DOCX pages).
 
-Capacity: 50 components / 100 interfaces load, edit, drag and reopen with intact references and zero model calls. Latest full-gate sample: render about 807 ms, saved/rendered placement edits 303–864 ms, reopen 236 ms, 60 drag frame samples p95 16.7 ms / max 16.8 ms. Timings include Playwright/poll overhead and parallel-test contention; they are not INP or guaranteed performance. `reports/browser-capacity-darwin.json`.
+Capacity: 50 components / 100 interfaces load, edit, drag and reopen with intact references and zero model calls. Latest full-gate sample: render about 1,331 ms, saved/rendered placement edits 209–881 ms, reopen 211 ms, 60 drag frame samples p95 16.8 ms / max 50 ms. Timings include Playwright/poll overhead and parallel-test contention; they are not INP or guaranteed performance. `reports/browser-capacity-darwin.json`.
 
 ## Milestones
 

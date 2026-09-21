@@ -36,6 +36,42 @@ def test_T11_malformed_truncation_and_refusal():
     a=OpenAIAdapter(Settings(),NS(responses=NS(create=lambda **k:NS(status='incomplete',output_text=''))))
     with pytest.raises(DomainError):a.generate_structured('x',100,time.monotonic()+5)
 
+def test_ollama_timeout_and_incomplete_output_have_actionable_messages(tmp_path):
+    def timeout(request):raise httpx.ReadTimeout('slow local model',request=request)
+    a=OllamaAdapter(Settings(),httpx.Client(base_url='http://localhost',transport=httpx.MockTransport(timeout)))
+    with pytest.raises(DomainError) as error:a.generate_structured('x',100,time.monotonic()+7)
+    assert error.value.code=='provider_timeout' and '7 seconds' in error.value.message and 'smaller section' in error.value.message
+    a=OllamaAdapter(Settings(),httpx.Client(base_url='http://localhost',transport=httpx.MockTransport(lambda r:httpx.Response(200,json={'done':True,'done_reason':'length','message':{'content':'{}'}}))))
+    with pytest.raises(DomainError) as error:a.generate_structured('x',100,time.monotonic()+7)
+    assert error.value.code=='provider_output' and 'response limit' in error.value.message
+    store=Store(tmp_path/'db')
+    with pytest.raises(DomainError,match='local response window'):
+        BudgetedProvider(store,Settings(),OllamaAdapter(Settings(),httpx.Client(base_url='http://localhost',transport=httpx.MockTransport(timeout)))).call('x','p','timeout')
+    assert usage_summary(store,'p')['records'][0]['details']=={'error_code':'provider_timeout'}
+
+def test_ollama_http_404_is_rejected_before_generation(tmp_path):
+    def missing(request):return httpx.Response(404,request=request,json={'error':'model not found'})
+    store=Store(tmp_path/'db');adapter=OllamaAdapter(Settings(),httpx.Client(base_url='http://localhost',transport=httpx.MockTransport(missing)))
+    with pytest.raises(DomainError,match='HTTP 404'):
+        BudgetedProvider(store,Settings(),adapter).call('x','p','missing')
+    assert usage_summary(store,'p')['records'][0]['status']=='rejected_before_generation'
+
+class CapturingLocal:
+    name='ollama';model='mocked-local'
+    def __init__(self):self.deadlines=[];self.max_outputs=[]
+    def generate_structured(self,prompt,max_output,deadline,cancel=None):
+        self.deadlines.append(deadline);self.max_outputs.append(max_output)
+        return ProviderResult(model=self.model,finish_status='completed',usage=Usage(),content=Envelope.model_validate(EMPTY))
+
+def test_local_default_deadline_scales_to_capped_output_and_explicit_deadline_is_preserved(tmp_path):
+    adapter=CapturingLocal();store=Store(tmp_path/'db');settings=Settings(ollama_num_ctx=8192,max_output=6000)
+    started=time.monotonic();BudgetedProvider(store,settings,adapter).call('x','p','first')
+    remaining=adapter.deadlines[-1]-started
+    assert adapter.max_outputs[-1]==1536 and 200<=remaining<=210
+    explicit=time.monotonic()+7
+    BudgetedProvider(store,settings,adapter).call('x','p','second',deadline=explicit)
+    assert adapter.deadlines[-1]==explicit
+
 class Fake:
     name='openai';model='gpt-5.4-mini'
     def generate_structured(self,*args):

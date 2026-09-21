@@ -1,0 +1,12 @@
+# Provider input recovery — 21 September 2026
+
+Two failures were reported from user-initiated imports after the earlier guided live checks. Those checks did not establish reliability for every technical specification.
+
+- OpenAI returned `enforcement: "unknown"` on three connections. The canonical field is a list of component references. The shared proposal boundary now converts null/unknown placeholders to an empty list and adds a review finding. Exact component IDs, including forward references in the same proposal, are retained; unresolvable references still reject the proposal. Null enum fields that support `unknown` use that explicit value. Existing transport-qualified port normalization remains in effect.
+- The local Ollama server log records the failed Qwen3:14b request ending at 21:58:56 +08:00, after exactly 90 seconds. Immediately before cancellation it reported 919 generated tokens and approximately 12.1 tokens/second. ARCHIE had requested up to 1,536 output tokens. This supports a client response-window mismatch; it does not prove that the eventual response would have been valid.
+- The default local response window now scales to the permitted output size, with a hard upper bound. Explicit caller deadlines remain authoritative. Local timeout errors stop the action without replay; incomplete and malformed output receive specific messages. Cloud deadlines, token/cost ceilings and the absence of cloud fallback are unchanged.
+- Domain validation errors now identify fields in readable text without raw Pydantic traces or documentation URLs.
+
+Regression evidence: `tests/test_provider_normalization.py` replays the three-connection failure through both provider selections, document interpretation, preview and explicit acceptance. It also checks preservation of known references and saved enforcement, rejection of malformed references, and strict manual validation. `tests/test_live_orchestrator.py` verifies that local timeouts are not replayed; `tests/test_providers.py` covers timeout sizing and transport diagnostics. The full offline gate passed: 109 backend tests, 19 frontend unit tests, 21 browser journeys, TypeScript and production build (`reports/offline-gate.json`).
+
+All verification for this fix uses local fixtures and mocked provider transports. No new model requests were made by the coding agent. A complete fresh real-provider import after this fix remains unverified; full Ollama reliability is still an open limitation.
