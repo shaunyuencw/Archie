@@ -5,27 +5,27 @@
     {
       "check": "backend",
       "exit_code": 0,
-      "seconds": 4.759
+      "seconds": 5.638
     },
     {
       "check": "typescript",
       "exit_code": 0,
-      "seconds": 1.485
+      "seconds": 2.743
     },
     {
       "check": "frontend-unit",
       "exit_code": 0,
-      "seconds": 0.76
+      "seconds": 1.604
     },
     {
       "check": "browser",
       "exit_code": 0,
-      "seconds": 27.713
+      "seconds": 46.471
     },
     {
       "check": "production-build",
       "exit_code": 0,
-      "seconds": 5.561
+      "seconds": 7.774
     }
   ]
 }

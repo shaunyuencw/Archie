@@ -1,6 +1,6 @@
-# Acceptance checkpoint — 21 September 2026
+# Acceptance checkpoint — 22 September 2026
 
-This matrix records the Mac continuation. The full offline gate passes (133 backend, 33 frontend unit, 31 browser journeys, TypeScript and production build). New product scenarios and library are covered by `apps/web/tests/product.spec.ts`. Mac handover is ready; full native Visio acceptance remains conditional. Fixture version is 1.0; historical Windows results are retained separately.
+This matrix records the Mac continuation. The full offline gate passes (133 backend, 33 frontend unit, 32 browser journeys, TypeScript and production build). New product scenarios and library are covered by `apps/web/tests/product.spec.ts`. Mac handover is ready; full native Visio acceptance remains conditional. Fixture version is 1.0; historical Windows results are retained separately.
 
 ## Product requirements
 
@@ -40,7 +40,7 @@ This matrix records the Mac continuation. The full offline gate passes (133 back
 | T04 | Passed | Null unknowns, bounded questions and persistent answers. |
 | T05 | Passed | Contradictory sources preserved. |
 | T06 | Passed | All implemented predicates run, independent of retrieval. |
-| T07 | Passed | `apps/web/tests/manual.spec.ts`, `pointer.spec.ts`, `presentation.spec.ts`, `layers-theme.spec.ts`; actual move/resize/connect/reconnect/delete and zero provider requests asserted. |
+| T07 | Passed | `apps/web/tests/manual.spec.ts`, `pointer.spec.ts`, `presentation.spec.ts`, `layers-theme.spec.ts`, `minimap.spec.ts`; actual move/resize/connect/reconnect/delete and zero provider requests asserted. |
 | T08 | Passed | Targeted prompt after manual positioning, accept/reject/undo; `history.spec.ts` verifies persistent review history and conditional prompt clearing, `background.spec.ts` verifies cross-project jobs and notifications. |
 | T09 | Passed | Stale semantic and presentation proposals rejected. |
 | T10 | Passed | Three views, narrative and interface table consistency. |

@@ -1,0 +1,25 @@
+{
+  "date": "2026-09-22",
+  "cause": "CSS reduced the panel to 135x85 while the internal SVG retained its 200x150 default; minimap panning and zooming were disabled.",
+  "fix": "Set shared MiniMap style dimensions to 160x100, remove conflicting CSS dimensions, enable pannable/zoomable, add click centering at current zoom and contrasting viewport outline.",
+  "focused_browser_test": "apps/web/tests/minimap.spec.ts",
+  "checks": [
+    "All miniature node rectangles fit in visible overview bounds",
+    "SVG and panel boundaries match",
+    "Click centres the requested diagram coordinate and preserves zoom",
+    "Real pointer drag pans the viewport",
+    "Wheel zoom changes main canvas scale",
+    "Viewport outline has at least 3:1 contrast in dark mode",
+    "Saved project snapshot remains identical",
+    "No mutating API requests or model calls during navigation"
+  ],
+  "visual_review": "archie-minimap.png inspected; intentionally panned and zoomed main view, complete layout retained in the overview with visible viewport rectangle.",
+  "offline_gate": {
+    "backend": 133,
+    "frontend_unit": 33,
+    "browser": 32,
+    "typescript": "passed",
+    "production_build": "passed"
+  },
+  "live_model_calls": 0
+}

@@ -1,10 +1,10 @@
 # ARCHIE — progress
 
-Updated: 21 September 2026, Mac continuation. **Presentable local prototype ready for a guided Terra-backed demonstration; estimated readiness 90%.** This is a product-readiness judgement, not a percentage of tests or a production-readiness claim. Full native-export acceptance remains open.
+Updated: 22 September 2026, Mac continuation. **Presentable local prototype ready for a guided Terra-backed demonstration; estimated readiness 90%.** This is a product-readiness judgement, not a percentage of tests or a production-readiness claim. Full native-export acceptance remains open.
 
 ## Current checkpoint
 
-The Mac offline gate passes: **133 backend tests, 33 frontend unit tests, 31 browser journeys, TypeScript and production build**. Evidence: `reports/offline-gate.json`, `reports/m7-tests.xml`, `reports/browser-tests.json`. The application runs at <http://127.0.0.1:5173/>. No model calls occur in the offline gate.
+The Mac offline gate passes: **133 backend tests, 33 frontend unit tests, 32 browser journeys, TypeScript and production build**. Evidence: `reports/offline-gate.json`, `reports/m7-tests.xml`, `reports/browser-tests.json`. The application runs at <http://127.0.0.1:5173/>. No model calls occur in the offline gate.
 
 The restored checkpoint initially passed 25 backend tests, one frontend test and the build, but one browser journey failed due to a late view response. This was fixed alongside serialized local commands and captured file/project inputs, preventing rapid edits from using stale local state. External revision conflicts still reject. Baseline evidence is in `reports/mac-baseline`; earlier Windows reports and screenshots are preserved in `reports/windows-checkpoint` and historical live reports.
 
@@ -54,6 +54,8 @@ Assets, components, system boxes, zones, connectors and connection labels now ex
 
 A remembered Light/Dark toggle now covers the canvas and the surrounding application. Default icons, labels, forms, tables and dialogs adapt; explicit object palette colors and exported presentation remain unchanged. Browser checks hit-test overlapping lines/labels/components and verify theme persistence, palette preservation and contrast on key surfaces. Screenshot: `reports/archie-dark-mode.png`; export QA: `reports/layers-theme-qa/`. No new model calls.
 
+Mini-map follow-up (22 September): matched its SVG and panel dimensions to remove clipping, enabled drag panning and wheel zoom, added click-to-centre and a theme-aware viewport outline. Navigation preserves architecture/layout state and makes no model calls.
+
 ## Real provider evidence
 
 | Area | Actual result |
@@ -78,7 +80,7 @@ Previous Windows host: Windows 11, Python 3.12.4, Node 24.19.0, RTX 3080 Ti Lapt
 
 Laptop/workspace screenshots: `reports/archie-mac-1280.png`, `reports/archie-mac-laptop.png`, `reports/archie-mac-focus.png`, `reports/archie-workbench.png` (1280×800, 1440×900 and 1600×1000; no horizontal overflow at 1280). Export visual evidence: `reports/mac-export-qa/review.json` (three SVG views, three narrative DOCX pages, 12 source PDF pages, 12 source DOCX pages).
 
-Capacity: 50 components / 100 interfaces load, edit, drag and reopen with intact references and zero model calls. Latest full-gate sample: render about 384 ms, saved/rendered placement edits 775–1,044 ms, reopen 193 ms, 60 drag frame samples p95 16.7 ms / max 16.8 ms. Timings include Playwright/poll overhead and parallel-test contention; they are not INP or guaranteed performance. `reports/browser-capacity-darwin.json`.
+Capacity: 50 components / 100 interfaces load, edit, drag and reopen with intact references and zero model calls. Latest full-gate sample: render about 1,110 ms, saved/rendered placement edits 1,592–2,022 ms, reopen 270 ms, 60 drag frame samples p95 16.8 ms / max 166.7 ms. Timings include Playwright/poll overhead and parallel-test contention; they are not INP or guaranteed performance. `reports/browser-capacity-darwin.json`.
 
 ## Milestones
 

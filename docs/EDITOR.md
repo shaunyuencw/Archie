@@ -4,6 +4,8 @@ The canvas is the main workspace. Collapse either side panel with its header but
 
 Click a component or connector to inspect it. Shift/Cmd/Ctrl-click adds to selection; drag empty canvas space for marquee selection. Drag a selected component to move the group. Hold Space to pan, or use the middle/right mouse button. The grid snaps to 16 diagram units; Option/Alt temporarily bypasses it. Arrow keys nudge by one unit, Shift+arrow by ten.
 
+The bottom-right **diagram overview** shows the whole layout and outlines your current viewport. Click it to centre the canvas on that spot, drag to pan, or scroll over it to zoom. Navigation changes only your view; it does not move components or create architecture edits. It works in light and dark mode.
+
 With the canvas focused:
 
 | Action | macOS | Windows |
