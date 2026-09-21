@@ -4,7 +4,18 @@ A local architecture PoC with a React Flow editor, FastAPI backend, SQLite persi
 
 **Mac presentation prototype checkpoint, 22 September 2026.** See [PROGRESS.md](PROGRESS.md) for implementation status and remaining work. This is not a claim that all M7 acceptance checks are complete.
 
-![Archie robotics testbed](reports/archie-robotics-testbed.png)
+## Overview and demo
+
+[Watch the 24-second demo (MP4)](archie_demo.mp4) · [Open the presentation slide](archie_slide.png) · [Open the poster](archie_poster.png)
+
+![ARCHIE overview: input your requirements, clarify the gaps, generate an architecture, and refine the design.](archie_slide.png)
+
+<details>
+<summary>View the ARCHIE poster</summary>
+
+<img src="archie_poster.png" alt="ARCHIE poster showing the workflow, architecture features, and robot assistant." width="480">
+
+</details>
 
 ## Start
 
@@ -31,6 +42,8 @@ On the canvas, drag connection segments and labels, resize boxes, choose from te
 Assistant work runs in the background, with project indicators and completion notices so you can browse another project while waiting. **History** keeps accepted and rejected proposals; accepting or rejecting a follow-up clears its submitted prompt unless you have already typed a new one. **Cancel** discards a running action's eventual result while preserving the accepted architecture; an in-flight provider request may still need to finish. See the editor guide below for the full workflow.
 
 Read [synthetic technical specs and follow-up prompts](docs/DEMO_SCENARIOS.md), [global policy library](docs/POLICIES.md), [canvas controls and shortcuts](docs/EDITOR.md), [setup and provider configuration](docs/SETUP.md), [demo walkthrough](docs/DEMO.md), [native Visio handover](docs/VISIO.md), and [checkpoint acceptance matrix](docs/ACCEPTANCE.md).
+
+![Archie workbench showing the robotics testbed architecture](reports/archie-robotics-testbed.png)
 
 ## Verification
 
