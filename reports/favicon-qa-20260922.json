@@ -1,0 +1,31 @@
+{
+  "date": "2026-09-22",
+  "scope": "Favicon HTML, served resource and browser image decoding only; application scripts/API requests blocked to preserve local projects. Chromium direct connections used after initial production-preview navigation timed out; curl confirmed preview server was reachable.",
+  "checks": [
+    {
+      "environment": "development",
+      "favicon": "/brand/archie-assistant.png",
+      "status": 200,
+      "content_type": "image/png",
+      "identical_to_existing_mascot": true,
+      "decoded_dimensions": {
+        "width": 1230,
+        "height": 1278
+      }
+    },
+    {
+      "environment": "production-build",
+      "favicon": "/brand/archie-assistant.png",
+      "status": 200,
+      "content_type": "image/png",
+      "identical_to_existing_mascot": true,
+      "decoded_dimensions": {
+        "width": 1230,
+        "height": 1278
+      }
+    }
+  ],
+  "typescript": "passed",
+  "production_build": "passed",
+  "full_suite": "Latest unchanged application gate: reports/offline-gate.json; not repeated for favicon metadata/documentation."
+}

@@ -2,7 +2,7 @@
 
 A local architecture PoC with a React Flow editor, FastAPI backend, SQLite persistence, source evidence, reviewed assistant changes, fictional policy checks and three views of one model.
 
-**Mac presentation prototype checkpoint, 21 September 2026.** See [PROGRESS.md](PROGRESS.md) for implementation status and remaining work. This is not a claim that all M7 acceptance checks are complete.
+**Mac presentation prototype checkpoint, 22 September 2026.** See [PROGRESS.md](PROGRESS.md) for implementation status and remaining work. This is not a claim that all M7 acceptance checks are complete.
 
 ![Archie robotics testbed](reports/archie-robotics-testbed.png)
 
@@ -26,6 +26,10 @@ bash scripts/dev.sh
 
 Open <http://127.0.0.1:5173/>. Choose **Production portal** or **Robotics testbed**, inspect the three views, select equipment, and edit properties. VAP references remain under **Legacy examples**. The robot assistant proposes changes for review before acceptance. Ctrl+C stops the development launcher.
 
+On the canvas, drag connection segments and labels, resize boxes, choose from ten color swatches, and right-click components or lines to change their layer order. The bottom-right diagram overview shows your viewport: click to centre, drag to pan, or scroll to zoom. The **Light / Dark** button remembers your theme. Archie's robot mascot also appears in the browser tab.
+
+Assistant work runs in the background, with project indicators and completion notices so you can browse another project while waiting. **History** keeps accepted and rejected proposals; accepting or rejecting a follow-up clears its submitted prompt unless you have already typed a new one. **Cancel** discards a running action's eventual result while preserving the accepted architecture; an in-flight provider request may still need to finish. See the editor guide below for the full workflow.
+
 Read [synthetic technical specs and follow-up prompts](docs/DEMO_SCENARIOS.md), [global policy library](docs/POLICIES.md), [canvas controls and shortcuts](docs/EDITOR.md), [setup and provider configuration](docs/SETUP.md), [demo walkthrough](docs/DEMO.md), [native Visio handover](docs/VISIO.md), and [checkpoint acceptance matrix](docs/ACCEPTANCE.md).
 
 ## Verification
@@ -45,7 +49,7 @@ Synthetic input sources and rendered DOCX/PDFs are under `fixtures/projects`. Po
 
 Distributed defaults are **mock** and **cloud disabled**. `.env` and local databases are excluded from Git. Mock interpretation supports authored fixture statements and a small set of edit prompts. OpenAI uses the Responses API; Ollama uses its native local endpoint. Every live runtime call passes through the budget wrapper; there is no automatic escalation or fallback to cloud.
 
-Real Terra prompt and DOCX journeys passed on the Mac in four requests (about $0.0744). Qwen3:14b passed a small extraction but failed a richer journey; use Terra for the main demo. Historical qwen3:4b/Windows results remain separate. See [Mac provider evidence](reports/mac-resume-20260921-providers.md).
+Real Terra prompt and DOCX journeys passed on the Mac in four requests (about $0.0744). Qwen3:14b passed a small extraction but failed a richer journey; use Terra for the main demo. The later Ollama response-budget and timeout fixes have offline coverage, but a fresh full live generation remains unverified. Historical qwen3:4b/Windows results remain separate. See [Mac provider evidence](reports/mac-resume-20260921-providers.md) and the latest limits in [PROGRESS.md](PROGRESS.md).
 
 SVG is an image export. The interactive Windows Visio helper creates native shapes/connectors when Visio is installed, but native editability is **unverified** on this host. Synthetic policies are fictional and do not represent organisational approval.
 

@@ -56,6 +56,8 @@ A remembered Light/Dark toggle now covers the canvas and the surrounding applica
 
 Mini-map follow-up (22 September): matched its SVG and panel dimensions to remove clipping, enabled drag panning and wheel zoom, added click-to-centre and a theme-aware viewport outline. Navigation preserves architecture/layout state and makes no model calls.
 
+Browser branding (22 September): the existing robot mascot is also the favicon. TypeScript, production build, and browser checks of the favicon link, served PNG and decoded image pass in development and the production build (`reports/favicon-qa-20260922.json`). Its provenance remains in `apps/web/public/brand/README.md`.
+
 ## Real provider evidence
 
 | Area | Actual result |
