@@ -1,0 +1,8 @@
+{
+  "id": "T06",
+  "name": "Policy and coverage",
+  "expected": "8 implemented plus 12 manual clauses",
+  "version": "1.0",
+  "authoring": "Agent-authored fixture; not an independent benchmark",
+  "runtime_retrieval": false
+}

@@ -1,0 +1,242 @@
+{
+  "logical": {
+    "type": "logical",
+    "revision": 0,
+    "placements": {
+      "vms": {
+        "x": 100.0,
+        "y": 100.0,
+        "width": 170,
+        "height": 85,
+        "visible": true,
+        "locked": false,
+        "label": null
+      },
+      "operator": {
+        "x": 350.0,
+        "y": 100.0,
+        "width": 170,
+        "height": 85,
+        "visible": true,
+        "locked": false,
+        "label": null
+      },
+      "configuration": {
+        "x": 600.0,
+        "y": 100.0,
+        "width": 170,
+        "height": 85,
+        "visible": true,
+        "locked": false,
+        "label": null
+      },
+      "management": {
+        "x": 100.0,
+        "y": 280.0,
+        "width": 170,
+        "height": 85,
+        "visible": true,
+        "locked": false,
+        "label": null
+      },
+      "analytics": {
+        "x": 350.0,
+        "y": 280.0,
+        "width": 170,
+        "height": 85,
+        "visible": true,
+        "locked": false,
+        "label": null
+      },
+      "c2": {
+        "x": 600.0,
+        "y": 280.0,
+        "width": 170,
+        "height": 85,
+        "visible": true,
+        "locked": false,
+        "label": null
+      },
+      "audit": {
+        "x": 100.0,
+        "y": 460.0,
+        "width": 170,
+        "height": 85,
+        "visible": true,
+        "locked": false,
+        "label": null
+      },
+      "enforcement": {
+        "x": 350.0,
+        "y": 460.0,
+        "width": 170,
+        "height": 85,
+        "visible": true,
+        "locked": false,
+        "label": null
+      }
+    },
+    "routes": {},
+    "mappings": {}
+  },
+  "sv1": {
+    "type": "sv1",
+    "revision": 0,
+    "placements": {
+      "vms": {
+        "x": 100.0,
+        "y": 100.0,
+        "width": 170,
+        "height": 85,
+        "visible": true,
+        "locked": false,
+        "label": null
+      },
+      "operator": {
+        "x": 350.0,
+        "y": 100.0,
+        "width": 170,
+        "height": 85,
+        "visible": true,
+        "locked": false,
+        "label": null
+      },
+      "configuration": {
+        "x": 600.0,
+        "y": 100.0,
+        "width": 170,
+        "height": 85,
+        "visible": true,
+        "locked": false,
+        "label": null
+      },
+      "management": {
+        "x": 100.0,
+        "y": 280.0,
+        "width": 170,
+        "height": 85,
+        "visible": true,
+        "locked": false,
+        "label": null
+      },
+      "analytics": {
+        "x": 350.0,
+        "y": 280.0,
+        "width": 170,
+        "height": 85,
+        "visible": true,
+        "locked": false,
+        "label": null
+      },
+      "c2": {
+        "x": 600.0,
+        "y": 280.0,
+        "width": 170,
+        "height": 85,
+        "visible": true,
+        "locked": false,
+        "label": null
+      },
+      "audit": {
+        "x": 100.0,
+        "y": 460.0,
+        "width": 170,
+        "height": 85,
+        "visible": true,
+        "locked": false,
+        "label": null
+      },
+      "enforcement": {
+        "x": 350.0,
+        "y": 460.0,
+        "width": 170,
+        "height": 85,
+        "visible": true,
+        "locked": false,
+        "label": null
+      }
+    },
+    "routes": {},
+    "mappings": {}
+  },
+  "sv2": {
+    "type": "sv2",
+    "revision": 0,
+    "placements": {
+      "vms": {
+        "x": 100.0,
+        "y": 100.0,
+        "width": 170,
+        "height": 85,
+        "visible": true,
+        "locked": false,
+        "label": null
+      },
+      "operator": {
+        "x": 350.0,
+        "y": 100.0,
+        "width": 170,
+        "height": 85,
+        "visible": true,
+        "locked": false,
+        "label": null
+      },
+      "configuration": {
+        "x": 600.0,
+        "y": 100.0,
+        "width": 170,
+        "height": 85,
+        "visible": true,
+        "locked": false,
+        "label": null
+      },
+      "management": {
+        "x": 100.0,
+        "y": 280.0,
+        "width": 170,
+        "height": 85,
+        "visible": true,
+        "locked": false,
+        "label": null
+      },
+      "analytics": {
+        "x": 350.0,
+        "y": 280.0,
+        "width": 170,
+        "height": 85,
+        "visible": true,
+        "locked": false,
+        "label": null
+      },
+      "c2": {
+        "x": 600.0,
+        "y": 280.0,
+        "width": 170,
+        "height": 85,
+        "visible": true,
+        "locked": false,
+        "label": null
+      },
+      "audit": {
+        "x": 100.0,
+        "y": 460.0,
+        "width": 170,
+        "height": 85,
+        "visible": true,
+        "locked": false,
+        "label": null
+      },
+      "enforcement": {
+        "x": 350.0,
+        "y": 460.0,
+        "width": 170,
+        "height": 85,
+        "visible": true,
+        "locked": false,
+        "label": null
+      }
+    },
+    "routes": {},
+    "mappings": {}
+  }
+}

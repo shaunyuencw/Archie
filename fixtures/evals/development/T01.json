@@ -1,0 +1,8 @@
+{
+  "id": "T01",
+  "name": "Prompt baseline",
+  "expected": "8 components, 4 interfaces, 4 zones; sizing undecided",
+  "version": "1.0",
+  "authoring": "Agent-authored fixture; not an independent benchmark",
+  "runtime_retrieval": false
+}

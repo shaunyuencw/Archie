@@ -1,0 +1,24 @@
+version: '1.0'
+label: SYNTHETIC — DEMONSTRATION ONLY
+views:
+  logical:
+    title: Logical
+    content: Application responsibilities and information flows grouped by declared zone
+    aggregation: None; one component node per canonical component
+    mapping: Node ID to component ID; edge ID to interface ID
+    required_fields: [name, role, purpose, data_direction]
+    unknowns: Show unknown explicitly; do not invent values
+  sv1:
+    title: SV-1-style
+    content: System interconnections with internal components aggregated
+    aggregation: Components by system_id; internal edges hidden; parallel system edges combined
+    mapping: System node to all component IDs; combined edge to all underlying interface IDs
+    required_fields: [system_id, name, purpose]
+    unknowns: Ungrouped components remain individual nodes
+  sv2:
+    title: SV-2-style
+    content: Component resource flows with protocol and session initiation
+    aggregation: None; full interface labels
+    mapping: Node ID to component ID; edge ID to interface ID
+    required_fields: [name, purpose, protocol, port, initiator, enforcement]
+    unknowns: Explicit question marks for unresolved fields

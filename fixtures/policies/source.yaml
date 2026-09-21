@@ -1,0 +1,23 @@
+version: '1.0'
+label: SYNTHETIC — DEMONSTRATION ONLY
+clauses:
+  - {id: DEMO-ZON-01, tags: [zone, deployment], text: Every in-scope networked deployment has a declared zone., exceptions: Explicit external system references are exempt., implementation: implemented}
+  - {id: DEMO-ADM-01, tags: [management, client], text: Client management access uses the declared management interface and never a direct processing service path., exceptions: None in this demonstration., implementation: implemented}
+  - {id: DEMO-FW-01, tags: [management, enforcement], text: Each cross-zone management session identifies its mediation or enforcement control by interface reference., exceptions: Same zone management sessions are exempt., implementation: implemented}
+  - {id: DEMO-NET-01, tags: [internet, dependency], text: A no-internet system has no required internet hosted dependency., exceptions: None in this demonstration., implementation: implemented}
+  - {id: DEMO-IF-01, tags: [session, protocol], text: Each network session identifies its initiator and protocol., exceptions: None in this demonstration., implementation: implemented}
+  - {id: DEMO-HA-01, tags: [resilience, availability], text: A resilience requirement has an explicit availability strategy., exceptions: Systems without a resilience requirement are exempt., implementation: implemented}
+  - {id: DEMO-AUD-01, tags: [management, audit], text: Management functions identify an audit destination., exceptions: None in this demonstration., implementation: implemented}
+  - {id: DEMO-DAT-01, tags: [storage, local], text: Local-only data is not assigned an external storage destination., exceptions: None in this demonstration., implementation: implemented}
+  - {id: DEMO-MAN-01, tags: [identity], text: Review identity lifecycle responsibilities with the owner., exceptions: None specified., implementation: manual_review}
+  - {id: DEMO-MAN-02, tags: [backup], text: Review backup restoration evidence and scope., exceptions: None specified., implementation: manual_review}
+  - {id: DEMO-MAN-03, tags: [patch], text: Review patch ownership and maintenance windows., exceptions: None specified., implementation: manual_review}
+  - {id: DEMO-MAN-04, tags: [physical], text: Review physical access assumptions at each site., exceptions: None specified., implementation: manual_review}
+  - {id: DEMO-MAN-05, tags: [privacy], text: Review personal information retention and authorised use., exceptions: None specified., implementation: manual_review}
+  - {id: DEMO-MAN-06, tags: [crypto], text: Review cryptographic key lifecycle and custody., exceptions: None specified., implementation: manual_review}
+  - {id: DEMO-MAN-07, tags: [supplier], text: Review supplier support and software provenance., exceptions: None specified., implementation: manual_review}
+  - {id: DEMO-MAN-08, tags: [monitoring], text: Review incident response and monitoring ownership., exceptions: None specified., implementation: manual_review}
+  - {id: DEMO-MAN-09, tags: [capacity], text: Review measured capacity against workload assumptions., exceptions: None specified., implementation: manual_review}
+  - {id: DEMO-MAN-10, tags: [accessibility], text: Review operator accessibility and operational usability., exceptions: None specified., implementation: manual_review}
+  - {id: DEMO-MAN-11, tags: [decommission], text: Review secure decommissioning procedures., exceptions: None specified., implementation: manual_review}
+  - {id: DEMO-MAN-12, tags: [ppm], text: Obtain human review of applicable organisational PPM requirements when supplied., exceptions: No real PPM requirements supplied., implementation: manual_review}

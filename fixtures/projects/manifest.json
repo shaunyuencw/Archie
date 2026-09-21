@@ -1,0 +1,74 @@
+[
+  {
+    "path": "projects/A/sow.docx",
+    "source_id": "A-sow",
+    "version": "1.0",
+    "sha256": "3fd92f1be5e2fc7377d895f0261f319f32723583ae33c72c5ec1a2052481b2cf"
+  },
+  {
+    "path": "projects/A/sow.pdf",
+    "source_id": "A-sow",
+    "version": "1.0",
+    "sha256": "649e34e6e783ad363fb1b49df5fc1868e8f19b9315492c22705c9e2a4264d6b3"
+  },
+  {
+    "path": "projects/A/spec.docx",
+    "source_id": "A-spec",
+    "version": "1.0",
+    "sha256": "6c6de6c4a3bae040571822fd057b5c90cf31466c022135cb0fa8cbb85475a859"
+  },
+  {
+    "path": "projects/A/spec.pdf",
+    "source_id": "A-spec",
+    "version": "1.0",
+    "sha256": "94721544a82fa6649117d44a227b70b9711268c1e358012065eaa2dfa491e77d"
+  },
+  {
+    "path": "projects/B/sow.docx",
+    "source_id": "B-sow",
+    "version": "1.0",
+    "sha256": "5f2cfa7ccfa4559f126c7e0584c3f242c72a55f57e64c4bc132f2503f5420441"
+  },
+  {
+    "path": "projects/B/sow.pdf",
+    "source_id": "B-sow",
+    "version": "1.0",
+    "sha256": "da55a28a8b6d346d075981730d5c51a05cd9feff5481318d0b50775d514b2444"
+  },
+  {
+    "path": "projects/B/spec.docx",
+    "source_id": "B-spec",
+    "version": "1.0",
+    "sha256": "1db09d251503ddb37f48409cd0f897d0bb928f376b440ac1aa3435d016d330bc"
+  },
+  {
+    "path": "projects/B/spec.pdf",
+    "source_id": "B-spec",
+    "version": "1.0",
+    "sha256": "22a68f69ae30942db2ba55c876b38e5b4d99e6d339a9a4158944d50d9250bc25"
+  },
+  {
+    "path": "projects/C/sow.docx",
+    "source_id": "C-sow",
+    "version": "1.0",
+    "sha256": "0e45c4c713025a473d5e39c023084553b1ce53e85d0040ba492d13228f3efce3"
+  },
+  {
+    "path": "projects/C/sow.pdf",
+    "source_id": "C-sow",
+    "version": "1.0",
+    "sha256": "fe5f1e75ff3f14b6f6ea3d65b11dbbd08b5e549ceb45fe3d41090a90c1fdc6fd"
+  },
+  {
+    "path": "projects/C/spec.docx",
+    "source_id": "C-spec",
+    "version": "1.0",
+    "sha256": "9573a87097e6a0daa5198894279ec39a22d82bc9ad1c75c8f1ea3ecc17410cb8"
+  },
+  {
+    "path": "projects/C/spec.pdf",
+    "source_id": "C-spec",
+    "version": "1.0",
+    "sha256": "ee8c6b1da652579f650ae8d75cf1e0c29a67c9a0c812b43c750c68ac6a57cd83"
+  }
+]

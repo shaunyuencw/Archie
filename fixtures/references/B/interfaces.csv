@@ -1,0 +1,5 @@
+id,source,target,purpose,data_direction,initiator,protocol
+video,vms,analytics,video,source_to_target,,RTSP
+events,management,c2,events,source_to_target,,
+administration,configuration,management,,bidirectional,,HTTPS
+integration,management,analytics,integration,bidirectional,,HTTPS

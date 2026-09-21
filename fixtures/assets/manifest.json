@@ -1,0 +1,472 @@
+[
+  {
+    "id": "server",
+    "type": "server",
+    "icon": "server.svg",
+    "tags": [
+      "server"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 170,
+      "height": 85
+    },
+    "licence": "ISC / Lucide 0.468.0"
+  },
+  {
+    "id": "gpu-server",
+    "type": "gpu-server",
+    "icon": "gpu-server.svg",
+    "tags": [
+      "gpu",
+      "server"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 170,
+      "height": 85
+    },
+    "licence": "ISC / Lucide 0.468.0"
+  },
+  {
+    "id": "application",
+    "type": "application",
+    "icon": "application.svg",
+    "tags": [
+      "application"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 170,
+      "height": 85
+    },
+    "licence": "ISC / Lucide 0.468.0"
+  },
+  {
+    "id": "analytics-engine",
+    "type": "analytics-engine",
+    "icon": "analytics-engine.svg",
+    "tags": [
+      "analytics",
+      "engine"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 170,
+      "height": 85
+    },
+    "licence": "ISC / Lucide 0.468.0"
+  },
+  {
+    "id": "database",
+    "type": "database",
+    "icon": "database.svg",
+    "tags": [
+      "database"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 170,
+      "height": 85
+    },
+    "licence": "ISC / Lucide 0.468.0"
+  },
+  {
+    "id": "storage",
+    "type": "storage",
+    "icon": "storage.svg",
+    "tags": [
+      "storage"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 170,
+      "height": 85
+    },
+    "licence": "ISC / Lucide 0.468.0"
+  },
+  {
+    "id": "firewall",
+    "type": "firewall",
+    "icon": "firewall.svg",
+    "tags": [
+      "firewall"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 170,
+      "height": 85
+    },
+    "licence": "ISC / Lucide 0.468.0"
+  },
+  {
+    "id": "switch",
+    "type": "switch",
+    "icon": "switch.svg",
+    "tags": [
+      "switch"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 170,
+      "height": 85
+    },
+    "licence": "ISC / Lucide 0.468.0"
+  },
+  {
+    "id": "router",
+    "type": "router",
+    "icon": "router.svg",
+    "tags": [
+      "router"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 170,
+      "height": 85
+    },
+    "licence": "ISC / Lucide 0.468.0"
+  },
+  {
+    "id": "gateway",
+    "type": "gateway",
+    "icon": "gateway.svg",
+    "tags": [
+      "gateway"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 170,
+      "height": 85
+    },
+    "licence": "ISC / Lucide 0.468.0"
+  },
+  {
+    "id": "proxy",
+    "type": "proxy",
+    "icon": "proxy.svg",
+    "tags": [
+      "proxy"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 170,
+      "height": 85
+    },
+    "licence": "ISC / Lucide 0.468.0"
+  },
+  {
+    "id": "load-balancer",
+    "type": "load-balancer",
+    "icon": "load-balancer.svg",
+    "tags": [
+      "load",
+      "balancer"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 170,
+      "height": 85
+    },
+    "licence": "ISC / Lucide 0.468.0"
+  },
+  {
+    "id": "workstation",
+    "type": "workstation",
+    "icon": "workstation.svg",
+    "tags": [
+      "workstation"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 170,
+      "height": 85
+    },
+    "licence": "ISC / Lucide 0.468.0"
+  },
+  {
+    "id": "camera",
+    "type": "camera",
+    "icon": "camera.svg",
+    "tags": [
+      "camera"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 170,
+      "height": 85
+    },
+    "licence": "ISC / Lucide 0.468.0"
+  },
+  {
+    "id": "identity-service",
+    "type": "identity-service",
+    "icon": "identity-service.svg",
+    "tags": [
+      "identity",
+      "service"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 170,
+      "height": 85
+    },
+    "licence": "ISC / Lucide 0.468.0"
+  },
+  {
+    "id": "audit-service",
+    "type": "audit-service",
+    "icon": "audit-service.svg",
+    "tags": [
+      "audit",
+      "service"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 170,
+      "height": 85
+    },
+    "licence": "ISC / Lucide 0.468.0"
+  },
+  {
+    "id": "event-broker",
+    "type": "event-broker",
+    "icon": "event-broker.svg",
+    "tags": [
+      "event",
+      "broker"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 170,
+      "height": 85
+    },
+    "licence": "ISC / Lucide 0.468.0"
+  },
+  {
+    "id": "api-service",
+    "type": "api-service",
+    "icon": "api-service.svg",
+    "tags": [
+      "api",
+      "service"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 170,
+      "height": 85
+    },
+    "licence": "ISC / Lucide 0.468.0"
+  },
+  {
+    "id": "external-system",
+    "type": "external-system",
+    "icon": "external-system.svg",
+    "tags": [
+      "external",
+      "system"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 170,
+      "height": 85
+    },
+    "licence": "ISC / Lucide 0.468.0"
+  },
+  {
+    "id": "network-zone",
+    "type": "network-zone",
+    "icon": "network-zone.svg",
+    "tags": [
+      "network",
+      "zone"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 170,
+      "height": 85
+    },
+    "licence": "ISC / Lucide 0.468.0"
+  },
+  {
+    "id": "system-boundary",
+    "type": "system-boundary",
+    "icon": "system-boundary.svg",
+    "tags": [
+      "system",
+      "boundary"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 170,
+      "height": 85
+    },
+    "licence": "ISC / Lucide 0.468.0"
+  },
+  {
+    "id": "site",
+    "type": "site",
+    "icon": "site.svg",
+    "tags": [
+      "site"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 170,
+      "height": 85
+    },
+    "licence": "ISC / Lucide 0.468.0"
+  },
+  {
+    "id": "generic-role-a",
+    "type": "generic-role-a",
+    "icon": "generic-role-a.svg",
+    "tags": [
+      "generic",
+      "role",
+      "a"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 170,
+      "height": 85
+    },
+    "licence": "ISC / Lucide 0.468.0"
+  },
+  {
+    "id": "generic-role-b",
+    "type": "generic-role-b",
+    "icon": "generic-role-b.svg",
+    "tags": [
+      "generic",
+      "role",
+      "b"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 170,
+      "height": 85
+    },
+    "licence": "ISC / Lucide 0.468.0"
+  }
+]

@@ -1,0 +1,8 @@
+{
+  "id": "T07",
+  "name": "Mouse operations",
+  "expected": "Manual operations have zero provider calls",
+  "version": "1.0",
+  "authoring": "Agent-authored fixture; not an independent benchmark",
+  "runtime_retrieval": false
+}

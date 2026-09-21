@@ -1,0 +1,8 @@
+{
+  "id": "T16",
+  "name": "Export template variant",
+  "expected": "Cross-export IDs; sanitised pattern; native Visio separate",
+  "version": "1.0",
+  "authoring": "Agent-authored fixture; not an independent benchmark",
+  "runtime_retrieval": false
+}
