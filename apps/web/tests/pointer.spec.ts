@@ -47,7 +47,7 @@ test('T07 pointer move, resize, connect, reconnect, delete and reopen make zero 
   await page.mouse.click(point.x,point.y);
   await expect(connector).toHaveClass(/selected/);
  }).toPass({timeout:5000});
- await drag(connector.locator('.react-flow__edgeupdater-target'),node('analytics').locator('[data-handleid="left"]'));
+ await drag(page.getByRole('button',{name:'Reconnect target of '+(edge.purpose||'purpose ?'),exact:true}),node('analytics').locator('[data-handleid="left"]'));
  await expect.poll(async()=>(await snapshot()).interfaces.find((e:any)=>e.id===edge.id).target).toBe('analytics');
  await page.getByRole('button',{name:'Save / reopen',exact:true}).click();
  await expect(page.getByRole('button',{name:'Undo',exact:true})).toBeEnabled();

@@ -115,11 +115,43 @@ def test_svg_preserves_presentation_colors_icon_alpha_and_canvas_label_offset():
     zone=root.find("s:g[@id='z']/s:rect",ns);assert zone.attrib['fill']=='#fef3c7' and zone.attrib['stroke']=='#92400e'
     edge=root.find("s:g[@id='i']",ns);path=edge.find('s:path',ns)
     assert path.attrib['stroke']=='#7c3aed'
-    label_group=root.find("s:g[@data-interface-label-for='i']",ns)
+    label_group=edge.find("s:g[@data-interface-label-for='i']",ns)
     assert all(text.attrib['fill']=='#be123c' for text in label_group.findall('s:text',ns))
     label_box=label_group.find('s:rect',ns)
     # The Canvas smooth-step base has a longest 124..250 segment at y=27; moved +30,-12.
     assert float(label_box.attrib['x'])+float(label_box.attrib['width'])/2==217
     assert float(label_box.attrib['y'])+float(label_box.attrib['height'])/2==15
-    assert raw.index(b'id="a"')<raw.index(b'data-interface-label-for="i"')
+    assert raw.index(b'data-interface-label-for="i"')<raw.index(b'id="a"')
     assert raw.index(b'id="b"')<raw.index(b'id="a"')
+
+
+def test_svg_layers_mix_containers_equipment_and_connectors_with_their_labels():
+    from apps.api.app.domain.models import Placement,Route
+    p=Project(components=[{'id':'a','name':'Application','role':'application','asset_id':'application'},
+                          {'id':'b','name':'Database','role':'database','asset_id':'database'}],
+              zones=[{'id':'z','name':'Zone'}],
+              deployments=[{'id':'deployment','component_id':'a','zone_id':'z'}],
+              interfaces=[{'id':'i','source':'a','target':'b','purpose':'Traffic'}])
+    ns={'s':'http://www.w3.org/2000/svg'}
+
+    def order():
+        root=ET.fromstring(export(p,'svg')[0])
+        ids=[group.attrib['id'] for group in root.findall('s:g',ns)]
+        edge=root.find("s:g[@id='i']",ns)
+        assert edge.find("s:g[@data-interface-label-for='i']",ns) is not None
+        return ids
+
+    # Old projects need no migration: zones, then connections, then equipment.
+    assert order()==['z','i','a','b']
+    p.views['logical'].routes['i']=Route(z_index=10000)
+    assert order()==['z','a','b','i']
+    p.views['logical'].routes['i'].z_index=-10000
+    assert order()==['i','z','a','b']
+    # A raised zone can cover unrelated equipment, but never its own contents.
+    p.views['logical'].placements['z']=Placement(z_index=1004)
+    p.views['logical'].placements['a']=Placement(z_index=-10000)
+    p.views['logical'].routes['i'].z_index=6
+    assert order()==['b','z','a','i']
+    # Components retain their previous relative z-index and can share edge layers.
+    p.views['logical'].placements['b']=Placement(z_index=7)
+    assert order()==['z','a','i','b']

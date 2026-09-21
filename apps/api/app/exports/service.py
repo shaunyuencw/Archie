@@ -189,27 +189,31 @@ def svg(p, kind):
             parts.append(f'<text x="{x + 13 if zone else x + w / 2}" y="{y + (27 if zone else 65) + i * 17}" font-family="Arial" font-size="{14 if zone else 13}" font-weight="600" text-anchor="{"start" if zone else "middle"}" fill="{text_color}">{escape(line)}</text>')
         parts.append(f'<text x="{x + 13 if zone else x + w / 2}" y="{y + (27 if zone else 65) + len(lines) * 17}" font-family="Arial" font-size="9" text-anchor="{"start" if zone else "middle"}" fill="{text_color}">{escape("SECURITY ZONE" if zone else n["role"])}</text></g>')
 
-    # Containers stay behind their children; within each layer group, persist the
-    # reader's bring-forward/send-backward order in the SVG paint order.
-    ordered_nodes=sorted(nodes.values(),key=lambda n:n.get('z_index',0))
-    for n in ordered_nodes:
-        if n['role'] == 'zone': draw_node(n, True)
-    label_parts=[]
-    for e, points in rendered_edges:
+    def draw_edge(e, points):
         path = 'M ' + ' L '.join(f'{x} {y}' for x, y in points)
         color = e['route'].line_color or ('#2782d4' if e['label'].startswith('video') else '#2b8b72' if e['label'].startswith('events') else '#b9783a' if e['label'].startswith('management') else '#718096')
         markers = (' marker-end="url(#flow-arrow)"' if e['data_direction'] in ['source_to_target', 'bidirectional'] else '') + (' marker-start="url(#flow-arrow)"' if e['data_direction'] in ['target_to_source', 'bidirectional'] else '')
         x, y, label_width, lines = labels[e['id']]
-        # Paths belong below equipment; labels mirror Canvas's overlay and stay readable
-        # above an explicitly coloured box.
-        parts.append(f'<g id="{escape(e["id"], quote=True)}" data-interface-ids="{escape(json.dumps(e["object_ids"]), quote=True)}"><path d="{path}" fill="none" stroke="{color}" stroke-width="1.8"{markers}/></g>')
-        label_parts.append(f'<g class="edge-label" data-interface-label-for="{escape(e["id"], quote=True)}"><rect x="{x - label_width / 2}" y="{y - len(lines) * 7 - 3}" width="{label_width}" height="{len(lines) * 14 + 6}" rx="3" fill="#f6f9fb" fill-opacity=".96"/>')
+        # A connector and its label form one layer, so neither can jump above
+        # another object after the reader has explicitly sent the line behind it.
+        parts.append(f'<g id="{escape(e["id"], quote=True)}" data-interface-ids="{escape(json.dumps(e["object_ids"]), quote=True)}"><path d="{path}" fill="none" stroke="{color}" stroke-width="1.8"{markers}/>')
+        parts.append(f'<g class="edge-label" data-interface-label-for="{escape(e["id"], quote=True)}"><rect x="{x - label_width / 2}" y="{y - len(lines) * 7 - 3}" width="{label_width}" height="{len(lines) * 14 + 6}" rx="3" fill="#f6f9fb" fill-opacity=".96"/>')
         for i, line in enumerate(lines):
-            label_parts.append(f'<text x="{x}" y="{y - len(lines) * 7 + 10 + i * 14}" font-family="Arial" font-size="10" text-anchor="middle" fill="{e["route"].text_color or "#466173"}">{escape(line)}</text>')
-        label_parts.append('</g>')
-    for n in ordered_nodes:
-        if n['role'] != 'zone': draw_node(n)
-    parts.extend(label_parts)
+            parts.append(f'<text x="{x}" y="{y - len(lines) * 7 + 10 + i * 14}" font-family="Arial" font-size="10" text-anchor="middle" fill="{e["route"].text_color or "#466173"}">{escape(line)}</text>')
+        parts.append('</g></g>')
+
+    def node_layer(n):
+        # Keep the legacy zone offset, while allowing lines and components to
+        # share an explicit stack. A container's contents always stay above it.
+        layer=n.get('z_index',0)-(1000 if n['role']=='zone' else 0)
+        parent=nodes.get(n['parentId'])
+        return max(layer,node_layer(parent)+1) if parent else layer
+
+    layers=[(node_layer(n),0 if n['role']=='zone' else 2,n,None) for n in nodes.values()]
+    layers.extend((e['route'].z_index,1,e,points) for e,points in rendered_edges)
+    for _,_,item,points in sorted(layers,key=lambda item:item[:2]):
+        if points is None:draw_node(item,item['role']=='zone')
+        else:draw_edge(item,points)
     return ''.join(parts) + '</svg>'
 
 def docx_bytes(p):

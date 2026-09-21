@@ -145,6 +145,7 @@ class Route(Record):
     label_offset: Point | None = None
     line_color: str | None = None
     text_color: str | None = None
+    z_index: int = Field(default=-1,ge=-10000,le=10000)
 
     @field_validator('line_color','text_color')
     @classmethod

@@ -126,6 +126,7 @@ export type Locked1 = boolean;
 export type Automatic = boolean;
 export type LineColor = string | null;
 export type TextColor1 = string | null;
+export type ZIndex1 = number;
 export type Notes = string;
 export type Id10 = string;
 export type ProjectId = string;
@@ -329,6 +330,7 @@ export interface Route {
   label_offset: Point | null;
   line_color: LineColor;
   text_color: TextColor1;
+  z_index: ZIndex1;
 }
 export interface Point {
   x: X1;

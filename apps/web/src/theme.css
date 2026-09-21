@@ -1,0 +1,168 @@
+:root { color-scheme: light; }
+.theme-toggle { white-space: nowrap; min-width: 68px; }
+.theme-toggle:focus-visible { outline: 2px solid #258c83; outline-offset: 3px; }
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --theme-page: #101923;
+  --theme-surface: #182430;
+  --theme-raised: #202f3d;
+  --theme-input: #13212d;
+  --theme-hover: #2a3e4e;
+  --theme-border: #364b5b;
+  --theme-text: #e0eaf2;
+  --theme-muted: #a8bbcc;
+  --theme-subtle: #93aabe;
+  --theme-accent: #70d5c7;
+  --theme-accent-surface: #203f40;
+  --theme-warning-surface: #3c3321;
+  --theme-warning-text: #f1d49b;
+  --theme-error-surface: #422b30;
+  --theme-error-text: #ffc0b5;
+  --diagram-edge-default: #a3b8ca;
+  --diagram-edge-video: #78bbf2;
+  --diagram-edge-events: #74cbb0;
+  --diagram-edge-management: #e3b36b;
+  --diagram-arrow: #93bdd0;
+}
+
+/* Only UI defaults change. Inline presentation colors remain authoritative. */
+:root[data-theme="dark"] body { background: var(--theme-page); color: var(--theme-text); }
+:root[data-theme="dark"] :is(header, .assistant, .inspector, .project-bar, nav, .content, footer, .review-actions) {
+  background: var(--theme-surface);
+  color: var(--theme-text);
+  border-color: var(--theme-border);
+}
+:root[data-theme="dark"] :is(button, input, select, textarea, .header-right select) {
+  background-color: var(--theme-input);
+  border-color: var(--theme-border);
+  color: var(--theme-text);
+}
+:root[data-theme="dark"] button:hover:not(:disabled) { background-color: var(--theme-hover); border-color: #648a98; }
+:root[data-theme="dark"] :is(input, textarea)::placeholder { color: var(--theme-subtle); opacity: 1; }
+:root[data-theme="dark"] :is(input, textarea, select, button, a, summary):focus-visible { outline-color: var(--theme-accent); }
+:root[data-theme="dark"] input:is([type="checkbox"], [type="radio"]) { accent-color: #70d5c7; }
+:root[data-theme="dark"] button.primary { background: #31749d; border-color: #31749d; color: #fff; }
+:root[data-theme="dark"] button.primary:hover:not(:disabled) { background: #3986b2; border-color: #65a3bd; }
+:root[data-theme="dark"] :is(small, .muted, .count, .brand-description, .cost-note, .inspector-note, .view-bar>span, footer,
+  .demo-picker>small, .demo-picker button span, .legacy-demos, .asset-group>summary span,
+  .content-heading p, .overview-component p, .overview-stats, .connection-summary p, .source-card>p,
+  .claim-note, .instance-label, .project-trash, .project-trash small, .policy-presets,
+  .policy-search>span, .policy-card details, .new-policy p, .policy-group-heading p,
+  .policy-group-heading>span, .policy-selection-bar small, .policy-categories button small,
+  .review-heading p, .review-items p, .review-evidence, .review-technical, .review-actions span,
+  .ai-policy-boundary, .ai-policy-coverage, .ai-policy-meta, .ai-policy-assessment>div>span,
+  .ai-policy-assessment cite, .policy-recommendations-heading>span, .policy-recommendations-note,
+  .policy-recommendation-reason, .policy-recommendation small, .proposal-history small,
+  .prompt-pack small, .clarification-option small, .selection-toolbar>span, .route-menu small) {
+  color: var(--theme-muted);
+}
+:root[data-theme="dark"] :is(.content-heading h2, .overview h2, .overview-stats b, .review-items h3,
+  .project-trash strong, .job-notice strong, .assistant-intro h2) { color: var(--theme-text); }
+:root[data-theme="dark"] :is(.badge, header>.badge, .policy-kind.implemented, .history-state.accepted, .instance-count) {
+  background: var(--theme-accent-surface); color: #a0e5d4; border-color: #456e66;
+}
+:root[data-theme="dark"] :is(.project-notice, .assistant-intro h2 span, .review-heading small) { color: var(--theme-accent); }
+:root[data-theme="dark"] :is(.project-trash li, .inspector-note, .redundancy-section,
+  .overview-stats, .overview-evidence, .review-totals, .review-actions, .job-notice+article,
+  .prompt-pack article) { border-color: var(--theme-border); }
+:root[data-theme="dark"] .brand-logo { background: #edf4f8; border-radius: 6px; padding: 2px 7px; }
+:root[data-theme="dark"] .welcome-logo { background: #edf4f8; border-radius: 14px; padding: 10px 18px; }
+:root[data-theme="dark"] .assistant-intro { background: linear-gradient(130deg, #203743, #203b36); border-color: var(--theme-border); }
+:root[data-theme="dark"] .assistant-intro p { color: var(--theme-muted); }
+
+/* Workspace tools, library, and panels. */
+:root[data-theme="dark"] :is(.view-bar, .upload, .palette button, .demo-picker button, .overview-zones>section,
+  .claim, .content .source-empty, .new-policy, .policy-categories button, .job-notifications,
+  .prompt-pack, .proposal-history article, .ai-policy-review, .review-items li, .review-technical pre) {
+  background: var(--theme-raised); border-color: var(--theme-border); color: var(--theme-text);
+}
+:root[data-theme="dark"] :is(.library-search, .source-card, .finding, .policy-card, .ai-policy-assessment,
+  .policy-recommendation, .selection-toolbar) { background: var(--theme-surface); border-color: var(--theme-border); }
+:root[data-theme="dark"] .library-search input { background: transparent; }
+:root[data-theme="dark"] :is(.library-search, .upload, .asset-group>summary, .source-passages summary,
+  .prompt-pack summary, .proposal-history summary, .interfaces-content .text-button) { color: #a5d6e8; }
+:root[data-theme="dark"] .workbench nav button { background: transparent; color: var(--theme-muted); }
+:root[data-theme="dark"] .workbench nav button.active { color: var(--theme-accent); border-bottom-color: var(--theme-accent); }
+:root[data-theme="dark"] .view-bar button.active { background: var(--theme-accent-surface); color: #b8eee3; border-color: #588d84; }
+:root[data-theme="dark"] .workbench .policy-categories { background: transparent; }
+:root[data-theme="dark"] .workbench .policy-categories button { background: var(--theme-raised); color: var(--theme-text); }
+:root[data-theme="dark"] .workbench .policy-categories button[aria-pressed="true"] { background: var(--theme-accent-surface); border: 1px solid #588d84; color: #b8eee3; }
+:root[data-theme="dark"] .policy-categories button b { background: #152b31; color: #bfddd6; }
+:root[data-theme="dark"] :is(.policy-kind, .history-state) { background: #344354; color: #d0deea; }
+:root[data-theme="dark"] :is(.policy-card>p, .claim blockquote) { color: #c6d6e3; }
+:root[data-theme="dark"] :is(.policy-card.selected, .policy-recommendation.chosen) { border-color: #67a894; }
+:root[data-theme="dark"] :is(.policy-selection-bar, .proposal, .question, .policy-recommendations) {
+  background: #1e3437; border-color: #3d6763; color: var(--theme-text);
+}
+:root[data-theme="dark"] .policy-recommendation.chosen { background: var(--theme-accent-surface); }
+:root[data-theme="dark"] :is(.source-passages article, .claim blockquote) { border-color: #587888; }
+:root[data-theme="dark"] :is(th, td) { border-color: var(--theme-border); }
+:root[data-theme="dark"] th { background: #243747; color: var(--theme-text); }
+:root[data-theme="dark"] tr:hover td { background: #263947; }
+:root[data-theme="dark"] .interface-editing { background: #203642; }
+:root[data-theme="dark"] .export-grid a { background: var(--theme-raised); border-color: var(--theme-border); color: #8bddd0; }
+:root[data-theme="dark"] .export-grid a:hover { background: var(--theme-hover); }
+:root[data-theme="dark"] :is(.open-decisions, .review-notes, .ai-policy-warning) { background: var(--theme-warning-surface); color: var(--theme-warning-text); }
+:root[data-theme="dark"] .proposal-findings { color: var(--theme-warning-text); }
+:root[data-theme="dark"] :is(.error, .ai-policy-error, .review-items .review-remove) { background: var(--theme-error-surface); color: var(--theme-error-text); border-color: #755055; }
+:root[data-theme="dark"] :is(.danger, .project-trash .empty-trash, .job-notice.failed span, .clarification-error, .policy-recommendations-error) { color: var(--theme-error-text); }
+:root[data-theme="dark"] .project-trash .empty-trash { border-color: #986168; }
+:root[data-theme="dark"] :is(.potential_conflict, .ai-policy-assessment.potential_concern) { border-left-color: #df926d; }
+:root[data-theme="dark"] :is(.insufficient_information, .ai-policy-assessment.insufficient_information) { border-left-color: #dbb66a; }
+
+/* Draft review, questions, and background activity. Dialogs/menus live outside the workbench. */
+:root[data-theme="dark"] .proposal-review { background: var(--theme-surface); color: var(--theme-text); border-color: var(--theme-border); box-shadow: 0 22px 80px #0008; }
+:root[data-theme="dark"] .proposal-review::backdrop { background: #040b13b3; }
+:root[data-theme="dark"] .review-totals span { background: #29424a; color: #b1e0e8; }
+:root[data-theme="dark"] .review-totals span:last-child { background: none; color: var(--theme-muted); }
+:root[data-theme="dark"] .review-totals .review-removal { background: var(--theme-error-surface); color: var(--theme-error-text); }
+:root[data-theme="dark"] .processing-plan { background: #213744; border-color: #426171; }
+:root[data-theme="dark"] .clarification-question .clarification-option { background: var(--theme-input); border-color: var(--theme-border); }
+:root[data-theme="dark"] .clarification-question .clarification-option.chosen { background: var(--theme-accent-surface); border-color: #77b7a8; }
+:root[data-theme="dark"] .ai-policy-assessment blockquote { background: #203638; border-color: #5b8c85; }
+:root[data-theme="dark"] .job-notice span:not(.job-spinner) { color: var(--theme-muted); }
+:root[data-theme="dark"] .job-notice.failed span { color: var(--theme-error-text); }
+:root[data-theme="dark"] .job-spinner { border-color: #466774; border-top-color: #8bded2; }
+:root[data-theme="dark"] .project-working { color: #b2d4e4; }
+:root[data-theme="dark"] .busy { background: #246c65; }
+
+/* Canvas defaults, without modifying saved palettes or exported presentation. */
+:root[data-theme="dark"] .canvas { background: var(--theme-page); }
+:root[data-theme="dark"] .canvas-hint { background: #182430ed; color: var(--theme-muted); }
+:root[data-theme="dark"] .empty { background: #101923ed; color: var(--theme-text); }
+:root[data-theme="dark"] .empty p { color: var(--theme-muted); }
+:root[data-theme="dark"] .arch-node { background: var(--theme-raised); border-color: #688191; }
+:root[data-theme="dark"] .arch-node:not(.zone-node) { background: transparent; border-color: transparent; }
+:root[data-theme="dark"] .zone-node { background: #1b2a3426; border-color: #a89470; }
+:root[data-theme="dark"] .zone-node strong { color: #d9c8a5; }
+:root[data-theme="dark"] .arch-node:not(.zone-node) :is(strong, small) { background: #101923f2; color: var(--theme-text); }
+:root[data-theme="dark"] .arch-node:not(.zone-node) small { color: var(--theme-muted); }
+:root[data-theme="dark"] .react-flow__node:is(:hover, .selected) .arch-node:not(.zone-node) { background: #263e4bc4; border-color: #70b5ab; }
+:root[data-theme="dark"] .react-flow__node.selected .arch-node { border-color: #8bded2; box-shadow: 0 0 0 2px #70d5c735; }
+:root[data-theme="dark"] .equipment-symbol :is(.primary-symbol, .stack-copy) { background: transparent; }
+:root[data-theme="dark"] :is(.palette img, .overview-component img, .arch-node .equipment-symbol img) { filter: brightness(0) invert(.9); }
+:root[data-theme="dark"] .arch-node .equipment-symbol img.hosted-control { background: transparent; border-color: #65867f; }
+:root[data-theme="dark"] .virtual-marker { background: #243f59; border-color: #4b7395; color: #c0def8; }
+:root[data-theme="dark"] .cloud-marker { background: #443822; border-color: #8c713c; color: #f6d390; }
+:root[data-theme="dark"] .arch-node .react-flow__handle { background: #75c5d3; border-color: #172934; }
+:root[data-theme="dark"] .react-flow__edgelabel-renderer .edge-label { background: #1b2d39f2; color: #c3d9e7; border-color: #4a637480; }
+:root[data-theme="dark"] .react-flow__edgelabel-renderer .edge-label-selected { background: #21433f; color: #b5e9dc; border-color: #5e9e8e; }
+:root[data-theme="dark"] :is(.node-menu, .route-menu) { background: var(--theme-surface); border-color: #567180; box-shadow: 0 5px 24px #0007; }
+:root[data-theme="dark"] .react-flow__edge.selected .react-flow__edgeupdater { fill: #172934; stroke: #79d2c0; }
+:root[data-theme="dark"] .route-segment:is(:hover, :focus-visible) { stroke: #70d5c735; }
+:root[data-theme="dark"] .presentation-color-controls .color-swatch.chosen { outline-color: #ecf5fa; }
+:root[data-theme="dark"] .react-flow__controls { box-shadow: 0 1px 6px #0005; }
+:root[data-theme="dark"] .react-flow__controls-button { background: #243543; color: #deebf5; fill: currentColor; border-color: #40586b; }
+:root[data-theme="dark"] .react-flow__controls-button:hover { background: #355061; }
+:root[data-theme="dark"] .react-flow__attribution { background: #182430d9; }
+:root[data-theme="dark"] .react-flow__attribution a { color: var(--theme-muted); }
+
+/* Custom fills get legible defaults in either theme; explicit text/icon colors win. */
+:root[data-theme] .arch-node[data-fill-tone="light"] :is(strong, small) { background: #f8fafce6; color: #1d3545; }
+:root[data-theme] .arch-node[data-fill-tone="light"] .equipment-symbol img { filter: none; }
+:root[data-theme] .arch-node[data-fill-tone="dark"] :is(strong, small) { background: #101923e6; color: #e0eaf2; }
+:root[data-theme] .arch-node[data-fill-tone="dark"] .equipment-symbol :is(.primary-symbol, .stack-copy, img.hosted-control) { background: transparent; }
+:root[data-theme] .arch-node[data-fill-tone="dark"] .equipment-symbol img { filter: brightness(0) invert(.9); }
+
+@media(max-width: 1150px) { .theme-toggle { min-width: 30px; padding: 7px; } .theme-toggle span { display: none; } }

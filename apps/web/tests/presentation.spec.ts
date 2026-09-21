@@ -74,14 +74,15 @@ test('presentation palette, movable connection labels, resize and layer order pe
  await web.click({button:'right'});await page.getByRole('menuitem',{name:'Bring forward',exact:true}).click();
  await expect.poll(async()=>(await currentProject(page)).views.logical.placements['portal-web'].z_index).toBe(front);
  await web.click({button:'right'});await page.getByRole('menuitem',{name:'Send to back'}).click();
- await expect.poll(async()=>(await currentProject(page)).views.logical.placements['portal-web'].z_index).toBe(0);
+ // Send to back keeps this asset above its own zone in the shared stack.
+ await expect.poll(async()=>{const p=(await currentProject(page)).views.logical.placements;return p['portal-web'].z_index-(p.z1.z_index-1000)}).toBe(1);
  await page.getByRole('button',{name:'Save / reopen'}).click();
  const saved=await currentProject(page);
  expect(saved.views.logical.placements['portal-web'].fill_color).toBe('#e0f2fe');
- expect(saved.views.logical.placements['portal-web'].z_index).toBe(0);
+ expect(saved.views.logical.placements['portal-web'].z_index).toBe(saved.views.logical.placements.z1.z_index-999);
  expect(saved.views.logical.routes['employee-web'].label_offset).toEqual(movedLabel);
  await page.getByRole('button',{name:'Undo',exact:true}).click();
- await expect.poll(async()=>(await currentProject(page)).views.logical.placements['portal-web'].z_index).toBeGreaterThan(0);
+ await expect.poll(async()=>(await currentProject(page)).views.logical.placements['portal-web'].z_index).toBe(front);
  await web.click();await page.getByRole('button',{name:'Set Asset icon color to Violet'}).scrollIntoViewIfNeeded();
  await page.screenshot({path:'../../reports/archie-presentation-palette.png',fullPage:true});
  expect(modelCalls).toHaveLength(0);

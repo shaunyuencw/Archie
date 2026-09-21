@@ -90,13 +90,23 @@ test('whole connector segments, direct line menu, reconnect and prompt preservat
 
  // Reconnecting is explicit and clears only this connector's now-stale waypoints.
  await selectConnector();
- const updater=connector.locator('.react-flow__edgeupdater-target');
+ const updater=page.getByRole('button',{name:'Reconnect target of '+(edge.purpose||'purpose ?'),exact:true});
  const target=page.locator(`.react-flow__node[data-id="${edge.target==='analytics'?'c2':'analytics'}"] [data-handleid="left"]`);
  const from=(await updater.boundingBox())!,to=(await target.boundingBox())!;
- expect(await page.evaluate(b=>document.elementFromPoint(b.x+b.width/2,b.y+b.height/2)?.closest('.react-flow__edge')?.getAttribute('data-id'),from)).toBe(edge.id);
+ expect(await page.evaluate(b=>document.elementFromPoint(b.x+b.width/2,b.y+b.height/2)?.getAttribute('data-edge-id'),from)).toBe(edge.id);
  await page.mouse.move(from.x+from.width/2,from.y+from.height/2);await page.mouse.down();
  await page.mouse.move(to.x+to.width/2,to.y+to.height/2,{steps:15});await page.mouse.up();
  await expect.poll(async()=>(await snapshot()).interfaces.find((i:any)=>i.id===edge.id).target).toBe(edge.target==='analytics'?'c2':'analytics');
  expect((await snapshot()).views.logical.routes[edge.id].points).toEqual([]);
+ // The independent overlay handles reconnect either end without changing layer order.
+ const sourceUpdater=page.getByRole('button',{name:'Reconnect source of '+(edge.purpose||'purpose ?'),exact:true});
+ await sourceUpdater.hover();
+ const sourceFrom=(await sourceUpdater.boundingBox())!;
+ const sourceTo=page.locator('.react-flow__node[data-id="operator"] [data-handleid="right"]');
+ const sourceBox=(await sourceTo.boundingBox())!;
+ await page.mouse.move(sourceFrom.x+sourceFrom.width/2,sourceFrom.y+sourceFrom.height/2);await page.mouse.down();
+ await page.mouse.move(sourceBox.x+sourceBox.width/2,sourceBox.y+sourceBox.height/2,{steps:12});await page.mouse.up();
+ await expect.poll(async()=>(await snapshot()).interfaces.find((i:any)=>i.id===edge.id).source).toBe('operator');
+ expect((await snapshot()).views.logical.routes[edge.id].source_handle).toBe('right');
  expect(modelCalls).toHaveLength(1);
 });

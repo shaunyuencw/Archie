@@ -4,7 +4,7 @@ Updated: 21 September 2026, Mac continuation. **Presentable local prototype read
 
 ## Current checkpoint
 
-The Mac offline gate passes: **131 backend tests, 25 frontend unit tests, 29 browser journeys, TypeScript and production build**. Evidence: `reports/offline-gate.json`, `reports/m7-tests.xml`, `reports/browser-tests.json`. The application runs at <http://127.0.0.1:5173/>. No model calls occur in the offline gate.
+The Mac offline gate passes: **133 backend tests, 33 frontend unit tests, 31 browser journeys, TypeScript and production build**. Evidence: `reports/offline-gate.json`, `reports/m7-tests.xml`, `reports/browser-tests.json`. The application runs at <http://127.0.0.1:5173/>. No model calls occur in the offline gate.
 
 The restored checkpoint initially passed 25 backend tests, one frontend test and the build, but one browser journey failed due to a late view response. This was fixed alongside serialized local commands and captured file/project inputs, preventing rapid edits from using stale local state. External revision conflicts still reject. Baseline evidence is in `reports/mac-baseline`; earlier Windows reports and screenshots are preserved in `reports/windows-checkpoint` and historical live reports.
 
@@ -14,7 +14,7 @@ The restored checkpoint initially passed 25 backend tests, one frontend test and
 - Undo and redo; Cmd/Ctrl copy, paste, duplicate and select-all; Delete/Backspace, Escape and arrow nudging. Typing fields keep their own shortcuts. Selection supports groups and marquee; group pointer moves commit together.
 - 16-unit snapping with temporary Option/Alt bypass. Dragging never silently reassigns a deployment zone; Inspector reassignment remains a reviewed change.
 - Connections use footprint-edge handles and zone-aware automatic handle selection. Selected connectors expose draggable segment controls; straight/right-angle styles, precise route coordinates and reliable endpoint reconnection remain editable. Unrelated prompts preserve manual routes and positions.
-- New external components no longer receive identical default positions. ELK arrangement loads on demand and preserves locked placements. The initial JS bundle is about 464 kB; the separate ELK chunk remains large.
+- New external components no longer receive identical default positions. ELK arrangement loads on demand and preserves locked placements. The initial JS bundle is about 469 kB; the separate ELK chunk remains large.
 - SVG equipment/zone styling, handles, arrows, bounds and labels aligned with the canvas. Rendered narrative DOCX and all synthetic DOCX/PDF inputs reviewed on this Mac. SVG is a review image, not native Visio.
 - Provider omissions/unsubstantiated scope stay unknown, with visible review findings. Saved live demo projects were corrected through versioned commands; original live reports remain unchanged.
 
@@ -48,6 +48,12 @@ One bounded real OpenAI call verified the new advisory policy review; it cost an
 
 This checkpoint used no additional live model calls, downloads or paid checks. Details and visual evidence: `reports/editor-background-followup-20260921.md`, `reports/presentation-qa/review.json`.
 
+## Shared layers and dark mode
+
+Assets, components, system boxes, zones, connectors and connection labels now expose the four layer commands. Lines and equipment share a stack, with their saved order preserved on selection, undo, reopen and SVG export. Zone movement carries its contents; children remain above their own zone. Selected endpoint handles float above the drawing independently, preserving reconnection while a line stays behind other objects.
+
+A remembered Light/Dark toggle now covers the canvas and the surrounding application. Default icons, labels, forms, tables and dialogs adapt; explicit object palette colors and exported presentation remain unchanged. Browser checks hit-test overlapping lines/labels/components and verify theme persistence, palette preservation and contrast on key surfaces. Screenshot: `reports/archie-dark-mode.png`; export QA: `reports/layers-theme-qa/`. No new model calls.
+
 ## Real provider evidence
 
 | Area | Actual result |
@@ -72,7 +78,7 @@ Previous Windows host: Windows 11, Python 3.12.4, Node 24.19.0, RTX 3080 Ti Lapt
 
 Laptop/workspace screenshots: `reports/archie-mac-1280.png`, `reports/archie-mac-laptop.png`, `reports/archie-mac-focus.png`, `reports/archie-workbench.png` (1280×800, 1440×900 and 1600×1000; no horizontal overflow at 1280). Export visual evidence: `reports/mac-export-qa/review.json` (three SVG views, three narrative DOCX pages, 12 source PDF pages, 12 source DOCX pages).
 
-Capacity: 50 components / 100 interfaces load, edit, drag and reopen with intact references and zero model calls. Latest full-gate sample: render about 364 ms, saved/rendered placement edits 915–978 ms, reopen 340 ms, 60 drag frame samples p95 16.7 ms / max 16.8 ms. Timings include Playwright/poll overhead and parallel-test contention; they are not INP or guaranteed performance. `reports/browser-capacity-darwin.json`.
+Capacity: 50 components / 100 interfaces load, edit, drag and reopen with intact references and zero model calls. Latest full-gate sample: render about 384 ms, saved/rendered placement edits 775–1,044 ms, reopen 193 ms, 60 drag frame samples p95 16.7 ms / max 16.8 ms. Timings include Playwright/poll overhead and parallel-test contention; they are not INP or guaranteed performance. `reports/browser-capacity-darwin.json`.
 
 ## Milestones
 

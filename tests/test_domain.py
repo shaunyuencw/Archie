@@ -51,6 +51,30 @@ def test_presentation_colors_are_hex_only_and_do_not_change_semantic_revision():
     assert p.views['logical'].placements['a'].fill_color=='#123456'
     assert p.views['logical'].placements['a'].z_index==4
 
+def test_connector_layers_round_trip_and_undo_without_semantic_changes(tmp_path):
+    assert Route().z_index==-1
+    with pytest.raises(ValidationError): Route(z_index=10001)
+    with pytest.raises(ValidationError): Route(z_index=-10001)
+    store=Store(tmp_path/'layers.sqlite')
+    p=store.create(Project(components=[{'id':'a','name':'A','role':'server'},
+                                       {'id':'b','name':'B','role':'server'}],
+                           zones=[{'id':'z','name':'Zone'}],
+                           interfaces=[{'id':'i','source':'a','target':'b'}]))
+    before=p.model_copy(deep=True)
+    p=store.commit(command(p,[
+        {'op':'placement','id':'z','value':{'z_index':1002}},
+        {'op':'placement','id':'a','value':{'z_index':1}},
+        {'op':'route','id':'i','value':{'z_index':3}},
+    ]))
+    assert p.revision==before.revision
+    assert p.views['logical'].revision==before.views['logical'].revision+1
+    assert p.views['logical'].routes['i'].z_index==3
+    assert Project.model_validate_json(p.model_dump_json())==p
+    assert Store(store.path).get(p.id)==p
+    p=store.undo(command(p,[{'op':'notes','value':{}}]))
+    assert p.views['logical'].routes==before.views['logical'].routes
+    assert p.views['logical'].placements==before.views['logical'].placements
+
 def test_host_and_redundancy_validation_and_transaction_undo(tmp_path):
     store=Store(tmp_path/'deployment.sqlite');p=store.create(Project())
     p=store.commit(command(p,[

@@ -1,0 +1,36 @@
+{
+  "reviewed_on": "2026-09-21",
+  "scope": "Shared layers and dark mode",
+  "offline_gate": {
+    "backend": 133,
+    "frontend_unit": 33,
+    "browser": 31,
+    "typescript": "passed",
+    "production_build": "passed"
+  },
+  "browser_evidence": [
+    "apps/web/tests/layers-theme.spec.ts",
+    "apps/web/tests/routes.spec.ts",
+    "apps/web/tests/presentation.spec.ts"
+  ],
+  "visuals": [
+    "../archie-dark-mode.png",
+    "export-layer-order.png",
+    "line-behind.svg",
+    "line-in-front.svg"
+  ],
+  "review": [
+    "Dark canvas, library, forms and inspector readable with pale custom fill and violet icon preserved",
+    "Menus, connection table, form input and proposal dialog key text contrast checked at least 4.5:1",
+    "Real DOM hit-testing verified component/connection/label order before and after front/back actions, selection, undo and reopen",
+    "Both source and target reconnection work via overlay handles without elevating the saved line layer",
+    "Export comparison visibly shows line and label behind the opaque asset, then above it",
+    "SVG order matches shared component/route stack; exports retain their paper theme"
+  ],
+  "limits": [
+    "Theme is a browser preference; explicit diagram palette colors remain authoritative",
+    "Children remain above their own zone; zone reorder carries its contents",
+    "Native Visio remains unverified",
+    "No new model calls or hardware measurements"
+  ]
+}

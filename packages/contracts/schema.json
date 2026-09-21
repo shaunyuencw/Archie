@@ -1133,6 +1133,13 @@
           ],
           "default": null,
           "title": "Text Color"
+        },
+        "z_index": {
+          "default": -1,
+          "maximum": 10000,
+          "minimum": -10000,
+          "title": "Z Index",
+          "type": "integer"
         }
       },
       "title": "Route",
@@ -1146,7 +1153,8 @@
         "automatic",
         "label_offset",
         "line_color",
-        "text_color"
+        "text_color",
+        "z_index"
       ]
     },
     "Source": {

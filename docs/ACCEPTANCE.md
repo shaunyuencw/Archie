@@ -1,6 +1,6 @@
 # Acceptance checkpoint — 21 September 2026
 
-This matrix records the Mac continuation. The full offline gate passes (131 backend, 25 frontend unit, 29 browser journeys, TypeScript and production build). New product scenarios and library are covered by `apps/web/tests/product.spec.ts`. Mac handover is ready; full native Visio acceptance remains conditional. Fixture version is 1.0; historical Windows results are retained separately.
+This matrix records the Mac continuation. The full offline gate passes (133 backend, 33 frontend unit, 31 browser journeys, TypeScript and production build). New product scenarios and library are covered by `apps/web/tests/product.spec.ts`. Mac handover is ready; full native Visio acceptance remains conditional. Fixture version is 1.0; historical Windows results are retained separately.
 
 ## Product requirements
 
@@ -10,7 +10,7 @@ This matrix records the Mac continuation. The full offline gate passes (131 back
 | F02 | Passed | Unknown fields, visible radio-card options and saved answers: ingestion and browser tests. |
 | F03 | Passed | `tests/test_policies.py` preserves the original eight checks/12 manual clauses; `tests/test_policy_library.py` verifies 42 global clauses, 11 available checks, project applicability, local drafts, library categories and three-tier/hybrid separation. `tests/test_policy_recommendations.py` covers optional rule-derived suggestions and atomic acceptance/undo. Optional advisory review is tested independently in `tests/test_policy_review.py`; one real three-policy Terra review passed. |
 | F04 | Passed | `tests/test_consistency.py`, manual browser journey: one model, three projections. |
-| F05 | Passed | Pointer move/resize/connect/reconnect/segment dragging and straight-line menu, draggable labels, ten-color presentation palettes, zone/component resize, four layer commands, groups, snapping, keyboard copy/paste/duplicate/delete/undo/redo, panels and reopening pass with zero manual provider requests. `reports/browser-tests.json`. |
+| F05 | Passed | Pointer move/resize/connect/reconnect/segment dragging and straight-line menu, draggable labels, ten-color presentation palettes, zone/component resize, four shared asset/connector layer commands, remembered dark mode, groups, snapping, keyboard copy/paste/duplicate/delete/undo/redo, panels and reopening pass with zero manual provider requests. `reports/browser-tests.json`. |
 | F06 | Passed | Prompt browser journey; stale semantic/view revisions rejected; layout and authored notes preserved. |
 | F07 | Passed | Readable Overview and editable Connections share semantic revision; authored notes retained. `tests/test_consistency.py`. |
 | F08 | Passed | Persistence tests, pattern sanitisation, project Trash/restore/confirmed purge, budget-ledger preservation prompt-pack import, durable background jobs and accepted/rejected proposal history (`tests/test_background_jobs.py`, `tests/test_proposal_history.py`). |
@@ -40,7 +40,7 @@ This matrix records the Mac continuation. The full offline gate passes (131 back
 | T04 | Passed | Null unknowns, bounded questions and persistent answers. |
 | T05 | Passed | Contradictory sources preserved. |
 | T06 | Passed | All implemented predicates run, independent of retrieval. |
-| T07 | Passed | `apps/web/tests/manual.spec.ts`, `pointer.spec.ts`, `presentation.spec.ts`; actual move/resize/connect/reconnect/delete and zero provider requests asserted. |
+| T07 | Passed | `apps/web/tests/manual.spec.ts`, `pointer.spec.ts`, `presentation.spec.ts`, `layers-theme.spec.ts`; actual move/resize/connect/reconnect/delete and zero provider requests asserted. |
 | T08 | Passed | Targeted prompt after manual positioning, accept/reject/undo; `history.spec.ts` verifies persistent review history and conditional prompt clearing, `background.spec.ts` verifies cross-project jobs and notifications. |
 | T09 | Passed | Stale semantic and presentation proposals rejected. |
 | T10 | Passed | Three views, narrative and interface table consistency. |
@@ -69,3 +69,5 @@ New demo visual QA: `reports/demo-pack-qa/review.json` records 22 inspected docu
 Product review screenshots: `reports/archie-specification-review.png`, `reports/archie-policy-review.png`, `reports/archie-clarification-questions.png`, `reports/archie-narrow-browser.png`. Compact demo before/after geometry and screenshots: `reports/demo-pack-qa/compact-layout/review.json`.
 
 Editor/background visual evidence: `reports/presentation-qa/review.json`, `reports/archie-presentation-palette.png`, `reports/archie-change-history.png`, `reports/archie-background-projects.png` and `reports/archie-cancel-action.png`. No new live request was made for these changes. The latest Ollama response-limit correction is verified with mocked transport only; a fresh complete live result remains unverified.
+
+Shared-layer/dark-mode follow-up: `layers-theme.spec.ts` verifies real overlap hit-testing for components, lines and labels, unchanged stacking on selection, undo/reopen, stored palette preservation and theme persistence/contrast. `routes.spec.ts` verifies both source and target endpoint reconnection. `tests/test_exports.py` verifies shared SVG ordering and child containment. Visual evidence: `reports/archie-dark-mode.png`, `reports/layers-theme-qa/`.
