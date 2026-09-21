@@ -64,3 +64,10 @@ def test_atomic_concurrent_reservation(tmp_path):
 
 def test_cost_reasoning_subset_not_double_counted():
     assert cost(Usage(input_tokens=5000,output_tokens=2000,reasoning_tokens=500),{'input':.75,'cache_read':.075,'cache_write':.75,'output':4.5})==.01275
+
+def test_requested_development_ceilings_leave_safe_defaults():
+    configured=Settings(max_input=32000,max_output=6000,max_calls=6)
+    assert configured.max_input==32000 and configured.max_output==6000
+    assert Settings().provider=='mock' and not Settings().allow_cloud
+    for overrides in [{'max_input':32001},{'max_output':6001}]:
+        with pytest.raises(ValueError):Settings(**overrides)

@@ -78,6 +78,11 @@ def undo(pid:str,c:ChangeSet):
     if pid!=c.project_id: raise DomainError('invalid_input','Project mismatch')
     return store.undo(c)
 
+@app.post('/api/projects/{pid}/redo',response_model=Project)
+def redo(pid:str,c:ChangeSet):
+    if pid!=c.project_id: raise DomainError('invalid_input','Project mismatch')
+    return store.redo(c)
+
 @app.get('/api/projects/{pid}/views/{kind}')
 def view(pid:str,kind:str):
     p=store.get(pid)
@@ -154,7 +159,10 @@ def findings(pid:str):return evaluate(store.get(pid))
 def policies(q:str=''):return lookup(q)
 
 @app.get('/api/settings')
-def settings():return {**Settings.environment().model_dump(),'price_date':pricing()['date'],'billing_prices':pricing()['models'],'local_profile':{'input':2500,'output':1024,'context':4096},'mode':'schema_action_envelope for live providers; native tools require capability verification','telemetry':False}
+def settings():
+    s=Settings.environment()
+    local={'input':min(s.max_input,2500 if s.ollama_num_ctx==4096 else 5500),'output':min(s.max_output,1024 if s.ollama_num_ctx==4096 else 1536),'context':s.ollama_num_ctx}
+    return {**s.model_dump(),'price_date':pricing()['date'],'billing_prices':pricing()['models'],'local_profile':local,'mode':'schema_action_envelope for live providers; native tools require capability verification','telemetry':False}
 
 @app.get('/api/projects/{pid}/usage')
 def usage(pid:str):return usage_summary(store,pid)

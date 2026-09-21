@@ -24,7 +24,13 @@ def apply(project:Project,change:ChangeSet)->Project:
             key='placements' if o.op=='placement' else 'routes'
             allowed={x['id'] for x in data['components']+data['zones']+data['systems']+data['interfaces']}
             if o.id not in allowed and not o.id.startswith('aggregate:'): raise DomainError('invalid_input','Unknown presentation object')
-            data['views'][o.view][key][o.id]=dict(data['views'][o.view][key].get(o.id,{}),**o.value)
+            previous=data['views'][o.view][key].get(o.id,{})
+            if o.op=='route' and not previous:
+                # The first manual bend/style edit keeps the displayed automatic handles.
+                from .views import view_graph
+                derived=next((e['route'] for e in view_graph(project,o.view)['edges'] if e['id']==o.id),None)
+                if derived: previous=derived.model_dump()
+            data['views'][o.view][key][o.id]=dict(previous,**o.value)
             touched.add(o.view); continue
         semantic=True
         if o.op=='notes': data['notes']=str(o.value.get('text','')); continue

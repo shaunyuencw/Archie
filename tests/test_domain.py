@@ -20,3 +20,22 @@ def test_temp_id_resolution_and_unknown():
     p=apply(p,command(p,[{'op':'add','entity':'components','id':'tmp:a','value':{'name':'A','role':'application'}},{'op':'add','entity':'deployments','id':'tmp:d','value':{'component_id':'tmp:a'}}]))
     assert p.deployments[0].component_id==p.components[0].id
     assert p.deployments[0].quantity is None
+
+def test_redo_restores_layout_and_rejects_stale_or_abandoned_branch(tmp_path):
+    store=Store(tmp_path/'history.sqlite'); p=store.create(Project())
+    p=store.commit(command(p,[{'op':'add','entity':'components','id':'a','value':{'name':'A','role':'server'}}]))
+    p=store.commit(command(p,[{'op':'placement','id':'a','value':{'x':123,'locked':True}}]))
+    old=p
+    p=store.undo(command(p,[{'op':'notes','value':{}}]))
+    p=store.undo(command(p,[{'op':'notes','value':{}}]))
+    assert not p.components
+    with pytest.raises(DomainError): store.redo(command(old,[{'op':'notes','value':{}}]))
+    p=store.redo(command(p,[{'op':'notes','value':{}}]))
+    assert len(p.components)==1
+    p=store.redo(command(p,[{'op':'notes','value':{}}]))
+    assert p.views['logical'].placements['a'].x==123 and p.revision>old.revision
+    p=store.undo(command(p,[{'op':'notes','value':{}}]))
+    p=store.commit(command(p,[{'op':'update','entity':'components','id':'a','value':{'name':'Branched'}}]))
+    with pytest.raises(DomainError,match='Nothing to redo'): store.redo(command(p,[{'op':'notes','value':{}}]))
+    p=store.undo(command(p,[{'op':'notes','value':{}}]))
+    assert p.components[0].name=='A'

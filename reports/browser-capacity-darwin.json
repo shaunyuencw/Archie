@@ -1,0 +1,27 @@
+{
+  "platform": "darwin",
+  "browser": "chromium",
+  "browser_version": "153.0.8010.12",
+  "viewport": {
+    "width": 1600,
+    "height": 1000
+  },
+  "components": 50,
+  "interfaces": 100,
+  "load_to_render_ms": 893.57,
+  "placement_edit_saved_and_rendered_ms": [
+    216.91,
+    444.73,
+    290.82
+  ],
+  "reopen_ms": 126.68,
+  "drag_frame_intervals_ms": {
+    "samples": 60,
+    "median": 16.7,
+    "p95": 16.8,
+    "maximum": 66.7
+  },
+  "model_calls": 0,
+  "references_preserved": true,
+  "measurement": "Single local browser run. Wall-clock UI timings include Playwright action and polling overhead; 60 requestAnimationFrame intervals sampled across a pointer drag. This is not an INP or hardware benchmark."
+}

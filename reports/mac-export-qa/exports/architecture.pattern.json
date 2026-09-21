@@ -1,0 +1,700 @@
+{
+  "id": "ba53e678-d7bc-40f1-aa2a-f41f3a989881",
+  "name": "Synthetic reusable architecture pattern",
+  "schema_version": "1.0",
+  "revision": 0,
+  "created_at": "2026-09-21T12:33:31.701150+00:00",
+  "updated_at": "2026-09-21T12:33:31.701336+00:00",
+  "synthetic": true,
+  "policy_version": "1.0",
+  "template_version": "1.0",
+  "systems": [
+    {
+      "id": "systems-1",
+      "name": "System 1",
+      "scope": "internal"
+    },
+    {
+      "id": "systems-2",
+      "name": "System 2",
+      "scope": "internal"
+    },
+    {
+      "id": "systems-3",
+      "name": "System 3",
+      "scope": "internal"
+    },
+    {
+      "id": "systems-4",
+      "name": "System 4",
+      "scope": "external"
+    }
+  ],
+  "zones": [
+    {
+      "id": "zones-1",
+      "name": "Zone 1"
+    },
+    {
+      "id": "zones-2",
+      "name": "Zone 2"
+    },
+    {
+      "id": "zones-3",
+      "name": "Zone 3"
+    },
+    {
+      "id": "zones-4",
+      "name": "Zone 4"
+    }
+  ],
+  "components": [
+    {
+      "id": "components-1",
+      "name": "application",
+      "role": "video management",
+      "system_id": "systems-1",
+      "status": "proposed",
+      "asset_id": "application",
+      "scope": "internal",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": []
+    },
+    {
+      "id": "components-2",
+      "name": "workstation",
+      "role": "operator",
+      "system_id": "systems-2",
+      "status": "proposed",
+      "asset_id": "workstation",
+      "scope": "internal",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": []
+    },
+    {
+      "id": "components-3",
+      "name": "workstation",
+      "role": "configuration",
+      "system_id": "systems-2",
+      "status": "proposed",
+      "asset_id": "workstation",
+      "scope": "internal",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": []
+    },
+    {
+      "id": "components-4",
+      "name": "api-service",
+      "role": "management integration",
+      "system_id": "systems-3",
+      "status": "proposed",
+      "asset_id": "api-service",
+      "scope": "internal",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": []
+    },
+    {
+      "id": "components-5",
+      "name": "analytics-engine",
+      "role": "analytics",
+      "system_id": "systems-3",
+      "status": "proposed",
+      "asset_id": "analytics-engine",
+      "scope": "internal",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": []
+    },
+    {
+      "id": "components-6",
+      "name": "external-system",
+      "role": "external command system",
+      "system_id": "systems-4",
+      "status": "proposed",
+      "asset_id": "external-system",
+      "scope": "external",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": []
+    },
+    {
+      "id": "components-7",
+      "name": "audit-service",
+      "role": "audit",
+      "system_id": "systems-3",
+      "status": "proposed",
+      "asset_id": "audit-service",
+      "scope": "internal",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": []
+    },
+    {
+      "id": "components-8",
+      "name": "firewall",
+      "role": "firewall",
+      "system_id": "systems-3",
+      "status": "proposed",
+      "asset_id": "firewall",
+      "scope": "internal",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": []
+    }
+  ],
+  "deployments": [
+    {
+      "id": "deployments-1",
+      "component_id": "components-1",
+      "zone_id": "zones-1",
+      "host": null,
+      "site": null,
+      "quantity": null
+    },
+    {
+      "id": "deployments-2",
+      "component_id": "components-2",
+      "zone_id": "zones-2",
+      "host": null,
+      "site": null,
+      "quantity": null
+    },
+    {
+      "id": "deployments-3",
+      "component_id": "components-3",
+      "zone_id": "zones-2",
+      "host": null,
+      "site": null,
+      "quantity": null
+    },
+    {
+      "id": "deployments-4",
+      "component_id": "components-4",
+      "zone_id": "zones-3",
+      "host": null,
+      "site": null,
+      "quantity": null
+    },
+    {
+      "id": "deployments-5",
+      "component_id": "components-5",
+      "zone_id": "zones-4",
+      "host": null,
+      "site": null,
+      "quantity": null
+    },
+    {
+      "id": "deployments-6",
+      "component_id": "components-6",
+      "zone_id": null,
+      "host": null,
+      "site": null,
+      "quantity": null
+    },
+    {
+      "id": "deployments-7",
+      "component_id": "components-7",
+      "zone_id": "zones-3",
+      "host": null,
+      "site": null,
+      "quantity": null
+    },
+    {
+      "id": "deployments-8",
+      "component_id": "components-8",
+      "zone_id": "zones-3",
+      "host": null,
+      "site": null,
+      "quantity": null
+    }
+  ],
+  "interfaces": [
+    {
+      "id": "interfaces-1",
+      "source": "components-1",
+      "target": "components-5",
+      "purpose": "video",
+      "data_direction": "unknown",
+      "initiator": null,
+      "protocol": null,
+      "port": null,
+      "enforcement": [],
+      "delivery": null,
+      "evidence": []
+    },
+    {
+      "id": "interfaces-2",
+      "source": "components-4",
+      "target": "components-6",
+      "purpose": "events",
+      "data_direction": "unknown",
+      "initiator": null,
+      "protocol": null,
+      "port": null,
+      "enforcement": [],
+      "delivery": null,
+      "evidence": []
+    },
+    {
+      "id": "interfaces-3",
+      "source": "components-3",
+      "target": "components-4",
+      "purpose": "management",
+      "data_direction": "unknown",
+      "initiator": null,
+      "protocol": null,
+      "port": null,
+      "enforcement": [],
+      "delivery": null,
+      "evidence": []
+    },
+    {
+      "id": "interfaces-4",
+      "source": "components-4",
+      "target": "components-5",
+      "purpose": "integration",
+      "data_direction": "unknown",
+      "initiator": null,
+      "protocol": null,
+      "port": null,
+      "enforcement": [],
+      "delivery": null,
+      "evidence": []
+    }
+  ],
+  "sources": [],
+  "claims": [],
+  "constraints": [
+    {
+      "id": "pattern-synthetic",
+      "scope": "project",
+      "key": "synthetic_pattern",
+      "value": true,
+      "evidence": []
+    }
+  ],
+  "decisions": [],
+  "views": {
+    "logical": {
+      "type": "logical",
+      "revision": 0,
+      "placements": {
+        "zones-1": {
+          "x": 40.0,
+          "y": 60.0,
+          "width": 530.0,
+          "height": 350.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "zones-2": {
+          "x": 620.0,
+          "y": 60.0,
+          "width": 530.0,
+          "height": 350.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "zones-3": {
+          "x": 40.0,
+          "y": 460.0,
+          "width": 530.0,
+          "height": 350.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "zones-4": {
+          "x": 620.0,
+          "y": 460.0,
+          "width": 530.0,
+          "height": 350.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "components-1": {
+          "x": 30.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "components-2": {
+          "x": 30.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "components-3": {
+          "x": 265.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "components-4": {
+          "x": 30.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "components-5": {
+          "x": 30.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "components-6": {
+          "x": 1200.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "components-7": {
+          "x": 265.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "components-8": {
+          "x": 30.0,
+          "y": 195.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        }
+      },
+      "routes": {},
+      "mappings": {
+        "zones-1": [
+          "zones-1"
+        ],
+        "zones-2": [
+          "zones-2"
+        ],
+        "zones-3": [
+          "zones-3"
+        ],
+        "zones-4": [
+          "zones-4"
+        ],
+        "components-1": [
+          "components-1"
+        ],
+        "components-2": [
+          "components-2"
+        ],
+        "components-3": [
+          "components-3"
+        ],
+        "components-4": [
+          "components-4"
+        ],
+        "components-5": [
+          "components-5"
+        ],
+        "components-6": [
+          "components-6"
+        ],
+        "components-7": [
+          "components-7"
+        ],
+        "components-8": [
+          "components-8"
+        ],
+        "interfaces-1": [
+          "interfaces-1"
+        ],
+        "interfaces-2": [
+          "interfaces-2"
+        ],
+        "interfaces-3": [
+          "interfaces-3"
+        ],
+        "interfaces-4": [
+          "interfaces-4"
+        ]
+      }
+    },
+    "sv1": {
+      "type": "sv1",
+      "revision": 0,
+      "placements": {
+        "systems-1": {
+          "x": 70.0,
+          "y": 90.0,
+          "width": 240.0,
+          "height": 125.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "systems-2": {
+          "x": 370.0,
+          "y": 90.0,
+          "width": 240.0,
+          "height": 125.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "systems-3": {
+          "x": 670.0,
+          "y": 90.0,
+          "width": 240.0,
+          "height": 125.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "systems-4": {
+          "x": 70.0,
+          "y": 320.0,
+          "width": 240.0,
+          "height": 125.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        }
+      },
+      "routes": {},
+      "mappings": {
+        "systems-1": [
+          "components-1"
+        ],
+        "systems-2": [
+          "components-2",
+          "components-3"
+        ],
+        "systems-3": [
+          "components-4",
+          "components-5",
+          "components-7",
+          "components-8"
+        ],
+        "systems-4": [
+          "components-6"
+        ],
+        "aggregate:systems-1:systems-3": [
+          "interfaces-1"
+        ],
+        "aggregate:systems-3:systems-4": [
+          "interfaces-2"
+        ],
+        "aggregate:systems-2:systems-3": [
+          "interfaces-3"
+        ]
+      }
+    },
+    "sv2": {
+      "type": "sv2",
+      "revision": 0,
+      "placements": {
+        "zones-1": {
+          "x": 40.0,
+          "y": 60.0,
+          "width": 530.0,
+          "height": 350.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "zones-2": {
+          "x": 620.0,
+          "y": 60.0,
+          "width": 530.0,
+          "height": 350.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "zones-3": {
+          "x": 40.0,
+          "y": 460.0,
+          "width": 530.0,
+          "height": 350.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "zones-4": {
+          "x": 620.0,
+          "y": 460.0,
+          "width": 530.0,
+          "height": 350.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "components-1": {
+          "x": 30.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "components-2": {
+          "x": 30.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "components-3": {
+          "x": 265.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "components-4": {
+          "x": 30.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "components-5": {
+          "x": 30.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "components-6": {
+          "x": 1200.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "components-7": {
+          "x": 265.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "components-8": {
+          "x": 30.0,
+          "y": 195.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        }
+      },
+      "routes": {},
+      "mappings": {
+        "zones-1": [
+          "zones-1"
+        ],
+        "zones-2": [
+          "zones-2"
+        ],
+        "zones-3": [
+          "zones-3"
+        ],
+        "zones-4": [
+          "zones-4"
+        ],
+        "components-1": [
+          "components-1"
+        ],
+        "components-2": [
+          "components-2"
+        ],
+        "components-3": [
+          "components-3"
+        ],
+        "components-4": [
+          "components-4"
+        ],
+        "components-5": [
+          "components-5"
+        ],
+        "components-6": [
+          "components-6"
+        ],
+        "components-7": [
+          "components-7"
+        ],
+        "components-8": [
+          "components-8"
+        ],
+        "interfaces-1": [
+          "interfaces-1"
+        ],
+        "interfaces-2": [
+          "interfaces-2"
+        ],
+        "interfaces-3": [
+          "interfaces-3"
+        ],
+        "interfaces-4": [
+          "interfaces-4"
+        ]
+      }
+    }
+  },
+  "notes": ""
+}

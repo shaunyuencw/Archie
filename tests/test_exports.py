@@ -25,3 +25,46 @@ def test_T16_exports_and_sanitised_pattern():
 def test_svg_escapes_markup():
     p=Project(components=[{'id':'safe','name':'<script>alert(1)</script>','role':'server','asset_id':'../../secret'}])
     raw,_=export(p,'svg');assert b'<script>' not in raw and b'&lt;script&gt;' in raw
+
+def test_svg_matches_equipment_ports_routes_and_flow_direction():
+    p=Project(components=[{'id':'a','name':'Application','role':'application','asset_id':'application'},
+                          {'id':'b','name':'Storage','role':'storage','asset_id':'storage'}],
+              zones=[{'id':'z','name':'Declared zone'}],
+              interfaces=[{'id':'i','source':'a','target':'b','data_direction':'bidirectional'}])
+    from apps.api.app.domain.models import Placement,Route
+    p.views['logical'].placements={'a':Placement(x=10,y=20,width=180,height=100),
+                                   'b':Placement(x=400,y=300,width=180,height=100)}
+    p.views['logical'].routes['i']=Route(source_handle='bottom',target_handle='top',points=[{'x':230,'y':210}])
+    root=ET.fromstring(export(p,'svg')[0]);ns={'s':'http://www.w3.org/2000/svg'}
+    equipment=root.find("s:g[@id='a']",ns);assert equipment.find('s:rect',ns) is None
+    assert equipment.find('s:image',ns).attrib['width']=='43'
+    assert root.find("s:g[@id='z']/s:rect",ns).attrib['stroke-dasharray']=='7 5'
+    path=root.find("s:g[@id='i']/s:path",ns).attrib
+    assert path['d'].startswith('M 100.0 120.0 ') and path['d'].endswith('490.0 300.0')
+    assert '230.0 210.0' in path['d']
+    assert path['marker-start']==path['marker-end']=='url(#flow-arrow)'
+    coordinates=[tuple(map(float,point.split())) for point in path['d'][2:].split(' L ')]
+    assert all(a[0]==b[0] or a[1]==b[1] for a,b in zip(coordinates,coordinates[1:]))
+    p.views['logical'].routes['i'].style='straight'
+    straight=ET.fromstring(export(p,'svg')[0]).find("s:g[@id='i']/s:path",ns)
+    assert straight.attrib['d']=='M 100.0 120.0 L 230.0 210.0 L 490.0 300.0'
+
+def test_svg_keeps_far_manual_routes_inside_image():
+    p=Project(components=[{'id':'a','name':'A','role':'application'},{'id':'b','name':'B','role':'application'}],
+              interfaces=[{'id':'i','source':'a','target':'b'}])
+    from apps.api.app.domain.models import Route
+    p.views['logical'].routes['i']=Route(points=[{'x':-450,'y':1500}])
+    root=ET.fromstring(export(p,'svg')[0]);x,y,width,height=map(float,root.attrib['viewBox'].split())
+    assert x < -450 < x+width and y < 1500 < y+height
+
+def test_reference_svg_interface_labels_do_not_cover_each_other():
+    p=Project.model_validate_json(Path('fixtures/references/A/project.json').read_text(encoding='utf-8'))
+    ns='{http://www.w3.org/2000/svg}'
+    for view in p.views:
+        root=ET.fromstring(export(p,'svg',view)[0]);boxes=[]
+        for group in root.iter(ns+'g'):
+            if 'data-interface-ids' not in group.attrib:continue
+            rect=group.find(ns+'rect');x,y,w,h=[float(rect.attrib[key]) for key in ['x','y','width','height']]
+            boxes.append((x,y,x+w,y+h))
+        assert all(not (a[0]<b[2] and a[2]>b[0] and a[1]<b[3] and a[3]>b[1])
+                   for i,a in enumerate(boxes) for b in boxes[i+1:])

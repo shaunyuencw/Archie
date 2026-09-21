@@ -33,13 +33,23 @@ def dispatch(tool,p):
 
 def proposal_from_envelope(p,source,envelope,source_alias=None):
     if not envelope.operations:raise DomainError('insufficient_context',envelope.message or 'No changes proposed')
-    claims=[]; ops=[]
+    claims=[]; ops=[]; uncertainties=[]
     for w in envelope.claims:
         if w.source_id not in {source.id,source_alias}: raise DomainError('provider_output','Evidence was not in the supplied source context')
         claims.append(Claim(id=uid(),source_id=source.id,source_version=source.version,locator=w.locator,excerpt=w.excerpt,target_id=w.target_id,field=w.field,value=json.loads(w.value_json),source_kind=source.kind,review='confirmed'))
     for w in envelope.operations:
         value=json.loads(w.value_json)
         if not isinstance(value,dict):raise DomainError('provider_output','Operation value must be an object')
+        # Domain defaults help manual creation; model omissions are unknown facts.
+        if w.op=='add' and w.entity in ['components','systems']:
+            if value.get('scope') is None:value['scope']='unknown'
+            if value['scope']!='unknown' and not any(
+                c.target_id==w.id and ((c.field=='scope' and c.value==value['scope']) or
+                                      (isinstance(c.value,dict) and c.value.get('scope')==value['scope']))
+                for c in claims
+            ):
+                uncertainties.append(f'{w.id}: scope kept unknown because no matching scope claim was supplied.')
+                value['scope']='unknown'
         if w.entity=='components':
             if value.get('asset_id','') is None:value['asset_id']='generic-role-a'
             if value.get('scope','') is None:value['scope']='unknown'
@@ -48,12 +58,12 @@ def proposal_from_envelope(p,source,envelope,source_alias=None):
         if w.entity in ['components','interfaces','constraints'] and w.op=='add':value['evidence']=evidence
         ops.append(Operation(op=w.op,entity=w.entity,id=w.id,value=value))
     all_ops=[Operation(op='update' if any(x.id==source.id for x in p.sources) else 'add',entity='sources',id=source.id,value=source.model_dump(exclude={'id'}))]+[Operation(op='add',entity='claims',id=c.id,value=c.model_dump(exclude={'id'})) for c in claims]+ops
-    proposed=command(p,all_ops,origin='assistant')
+    proposed=command(p,all_ops,origin='assistant',findings=uncertainties)
     candidate=apply(p,proposed)
     proposed.operations.extend(question_ops(candidate))
     return proposed
 
-def assisted_run(store,pid,req,settings=None,adapter=None):
+def assisted_run(store,pid,req,settings=None,adapter=None,live_run=None,deadline=None):
     p=store.get(pid);apply(p,req)
     s=settings or Settings.environment()
     if req.provider=='openai' and not s.allow_cloud:raise DomainError('budget_exceeded','OpenAI requires APP_ALLOW_CLOUD=true; a key alone does not authorize calls.')
@@ -72,7 +82,7 @@ def assisted_run(store,pid,req,settings=None,adapter=None):
     try:
         for step in range(min(3,s.max_calls)):
             try:
-                output=budget.call(prompt,pid,run_id,'edit' if p.components else 'draft',cancel)
+                output=budget.call(prompt,pid,run_id,'edit' if p.components else 'draft',cancel,deadline=deadline,live_run=live_run)
                 if output.content.tool:
                     tool_result=dispatch(output.content.tool,p)
                     prompt=json.dumps({'initial':json.loads(prompt),'tool_result':tool_result},separators=(',',':'))

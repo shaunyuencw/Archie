@@ -1,0 +1,26 @@
+{
+  "offline": true,
+  "platform": "darwin",
+  "checks": [
+    {
+      "check": "backend",
+      "exit_code": 0,
+      "seconds": 5.92
+    },
+    {
+      "check": "typescript",
+      "exit_code": 0,
+      "seconds": 1.412
+    },
+    {
+      "check": "frontend-unit",
+      "exit_code": 0,
+      "seconds": 0.937
+    },
+    {
+      "check": "browser",
+      "exit_code": 1,
+      "seconds": 11.503
+    }
+  ]
+}

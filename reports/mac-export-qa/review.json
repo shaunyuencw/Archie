@@ -1,0 +1,50 @@
+{
+  "date": "2026-09-21",
+  "platform": "macOS / Apple Silicon",
+  "provider_calls": 0,
+  "narrative_docx": {
+    "source": "exports/architecture.docx",
+    "renderer": "Bundled LibreOffice via documents/render_docx.py",
+    "pages": 3,
+    "visual_review": "passed: all three rendered pages inspected; no clipping or split source bullet paragraphs",
+    "images": "docx-narrative-final/page-*.png"
+  },
+  "source_pdfs": {
+    "files": 6,
+    "pages": 12,
+    "renderer": "Poppler pdftoppm",
+    "visual_review": "passed: both pages of each synthetic SoW and specification inspected; tables and headings visible",
+    "details": "source-pdf-rendering.json"
+  },
+  "source_docx": {
+    "files": 6,
+    "pages": 12,
+    "renderer": "Bundled LibreOffice via documents/render_docx.py",
+    "visual_review": "passed: both pages of each source inspected; compact historical tables retained, administration ID wraps in its narrow cell without clipping",
+    "details": "source-docx-rendering.json"
+  },
+  "svg": {
+    "views": [
+      "logical",
+      "sv1",
+      "sv2"
+    ],
+    "renderer": "Playwright Chromium 153.0.8010.12",
+    "visual_review": "reviewed: transparent equipment icons, dashed zones, labels and semantic data-flow arrows visible; reference interface labels do not cover each other",
+    "tests": "export-tests.xml",
+    "limitations": [
+      "Simple handle-aware orthogonal routes do not avoid every unrelated node. Raw reference placements retain some connector crossings, especially SV-1. Manual waypoints or Arrange view should be used for a polished presentation.",
+      "SVG is a review image. It is not a native editable Visio export.",
+      "Export uses the same persisted handles and waypoint anchors, with deterministic SVG elbows and label placement; pixel-identical React Flow rendering is not claimed."
+    ]
+  },
+  "native_visio": {
+    "status": "unverified",
+    "reason": "No licensed compatible Windows desktop Visio host in this Mac verification session."
+  },
+  "browser_capacity": {
+    "evidence": "../browser-capacity-darwin.json",
+    "test": "apps/web/tests/capacity.spec.ts",
+    "notes": "Full offline gate reruns this check and refreshes its single-run measurements. Earlier Windows evidence preserved separately."
+  }
+}

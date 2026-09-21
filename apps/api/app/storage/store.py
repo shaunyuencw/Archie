@@ -56,6 +56,8 @@ class Store:
             prior=db.execute('SELECT result FROM requests WHERE project_id=? AND request_id=?',(c.project_id,c.request_id)).fetchone()
             if prior: return Project.model_validate_json(prior[0])
             p=self.get(c.project_id,db); result=apply(p,c)
+            # A new edit after undo starts a new branch; abandoned redo entries cannot replay.
+            db.execute('DELETE FROM history WHERE project_id=? AND undone=1',(p.id,))
             db.execute('UPDATE projects SET snapshot=? WHERE id=?',(result.model_dump_json(),p.id))
             db.execute('INSERT INTO history(project_id,before,after) VALUES(?,?,?)',(p.id,p.model_dump_json(),result.model_dump_json()))
             db.execute('DELETE FROM history WHERE project_id=? AND seq NOT IN (SELECT seq FROM history WHERE project_id=? ORDER BY seq DESC LIMIT 60)',(p.id,p.id))
@@ -74,3 +76,15 @@ class Store:
             db.execute('UPDATE projects SET snapshot=? WHERE id=?',(old.model_dump_json(),p.id))
             db.execute('UPDATE history SET undone=1 WHERE seq=?',(row['seq'],))
         return old
+    def redo(self,c):
+        with self.connect() as db:
+            db.execute('BEGIN IMMEDIATE'); p=self.get(c.project_id,db)
+            apply(p,c)
+            row=db.execute('SELECT * FROM history WHERE project_id=? AND undone=1 ORDER BY seq ASC LIMIT 1',(p.id,)).fetchone()
+            if not row: raise DomainError('invalid_input','Nothing to redo')
+            restored=Project.model_validate_json(row['after'])
+            restored.revision=p.revision+1; restored.updated_at=now()
+            for k,v in restored.views.items(): v.revision=p.views[k].revision+1
+            db.execute('UPDATE projects SET snapshot=? WHERE id=?',(restored.model_dump_json(),p.id))
+            db.execute('UPDATE history SET undone=0 WHERE seq=?',(row['seq'],))
+        return restored

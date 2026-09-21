@@ -1,0 +1,100 @@
+{
+  "run_id": "mac-resume-20260921",
+  "total_requests": 7,
+  "hard_ceiling_requests": 8,
+  "hard_ceiling_usd": 0.5,
+  "total_estimated_api_usd": 0.0743975,
+  "records": [
+    {
+      "provider": "openai",
+      "model": "gpt-5.6-terra",
+      "status": "completed",
+      "reserved": 0.0800475,
+      "cost": 0.007238,
+      "details": {
+        "input_tokens": 649,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "output_tokens": 495,
+        "reasoning_tokens": 0,
+        "latency_ms": 7408.085833005316
+      }
+    },
+    {
+      "provider": "openai",
+      "model": "gpt-5.6-terra",
+      "status": "completed",
+      "reserved": 0.0803725,
+      "cost": 0.012074,
+      "details": {
+        "input_tokens": 673,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "output_tokens": 894,
+        "reasoning_tokens": 0,
+        "latency_ms": 8884.887624997646
+      }
+    },
+    {
+      "provider": "openai",
+      "model": "gpt-5.6-terra",
+      "status": "completed",
+      "reserved": 0.0799125,
+      "cost": 0.003042,
+      "details": {
+        "input_tokens": 693,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "output_tokens": 138,
+        "reasoning_tokens": 0,
+        "latency_ms": 3055.088875000365
+      }
+    },
+    {
+      "provider": "openai",
+      "model": "gpt-5.6-terra",
+      "status": "completed",
+      "reserved": 0.09554,
+      "cost": 0.0520435,
+      "details": {
+        "input_tokens": 3,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 2431,
+        "output_tokens": 3830,
+        "reasoning_tokens": 0,
+        "latency_ms": 26993.339208995167
+      }
+    },
+    {
+      "provider": "ollama",
+      "model": "qwen3:14b",
+      "status": "unresolved",
+      "reserved": 0.0,
+      "cost": null,
+      "details": {}
+    },
+    {
+      "provider": "ollama",
+      "model": "qwen3:14b",
+      "status": "unresolved",
+      "reserved": 0.0,
+      "cost": null,
+      "details": {}
+    },
+    {
+      "provider": "ollama",
+      "model": "qwen3:14b",
+      "status": "completed",
+      "reserved": 0.0,
+      "cost": 0.0,
+      "details": {
+        "input_tokens": 250,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "output_tokens": 464,
+        "reasoning_tokens": 0,
+        "latency_ms": 43894.605334004154
+      }
+    }
+  ]
+}

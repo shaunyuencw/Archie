@@ -1,0 +1,1791 @@
+{
+  "id": "0bbe6e98-5971-43dd-87dd-941ed6c7511b",
+  "name": "ARCHIE openai live document journey",
+  "schema_version": "1.0",
+  "revision": 3,
+  "created_at": "2026-09-21T12:26:55.335780+00:00",
+  "updated_at": "2026-09-21T12:36:22.930891+00:00",
+  "synthetic": true,
+  "policy_version": "1.0",
+  "template_version": "1.0",
+  "systems": [
+    {
+      "id": "vms-system",
+      "name": "VMS",
+      "scope": "internal"
+    },
+    {
+      "id": "client-system",
+      "name": "Client",
+      "scope": "internal"
+    },
+    {
+      "id": "vap-system",
+      "name": "VAP",
+      "scope": "internal"
+    },
+    {
+      "id": "c2-system",
+      "name": "C2",
+      "scope": "external"
+    }
+  ],
+  "zones": [
+    {
+      "id": "infrastructure",
+      "name": "Infrastructure"
+    },
+    {
+      "id": "client",
+      "name": "Client"
+    },
+    {
+      "id": "z1",
+      "name": "Z1"
+    },
+    {
+      "id": "z2",
+      "name": "Z2"
+    }
+  ],
+  "components": [
+    {
+      "id": "vms",
+      "name": "VMS",
+      "role": "video management",
+      "system_id": "vms-system",
+      "status": "existing",
+      "asset_id": "application",
+      "scope": "unknown",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "582a35af-1188-486a-bc60-f7e9d2a2c60e"
+      ]
+    },
+    {
+      "id": "operator",
+      "name": "Operator workstation",
+      "role": "operator",
+      "system_id": "client-system",
+      "status": "existing",
+      "asset_id": "workstation",
+      "scope": "unknown",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "9e94a8c0-0b3f-466b-9656-3d79345bb8e5"
+      ]
+    },
+    {
+      "id": "configuration",
+      "name": "Configuration workstation",
+      "role": "configuration",
+      "system_id": "client-system",
+      "status": "existing",
+      "asset_id": "workstation",
+      "scope": "unknown",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "dbd7d177-a7fc-4208-af50-301e49a80852"
+      ]
+    },
+    {
+      "id": "management",
+      "name": "VAP management",
+      "role": "management integration",
+      "system_id": "vap-system",
+      "status": "new",
+      "asset_id": "server",
+      "scope": "unknown",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "11ab4474-59e8-453e-bd56-48646e889d17"
+      ]
+    },
+    {
+      "id": "analytics",
+      "name": "VAP analytics",
+      "role": "analytics",
+      "system_id": "vap-system",
+      "status": "new",
+      "asset_id": "server",
+      "scope": "unknown",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "edf8d869-62d5-4451-b541-307156be2ff9"
+      ]
+    },
+    {
+      "id": "c2",
+      "name": "C2",
+      "role": "external command system",
+      "system_id": "c2-system",
+      "status": "existing",
+      "asset_id": "server",
+      "scope": "external",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "914431cc-12fe-4d96-aab7-94a9cbc4a3cd"
+      ]
+    },
+    {
+      "id": "audit",
+      "name": "Audit destination",
+      "role": "audit",
+      "system_id": "vap-system",
+      "status": "proposed",
+      "asset_id": "server",
+      "scope": "unknown",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "3ec0c2aa-8ba7-471c-b014-83144f035aac"
+      ]
+    },
+    {
+      "id": "enforcement",
+      "name": "Management enforcement",
+      "role": "firewall",
+      "system_id": "vap-system",
+      "status": "proposed",
+      "asset_id": "server",
+      "scope": "unknown",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "074b3b9b-09cb-4ede-8e65-c1f452b936f6"
+      ]
+    }
+  ],
+  "deployments": [
+    {
+      "id": "8e2de6a2-bd7d-529f-8bb4-203dd778f52d",
+      "component_id": "vms",
+      "zone_id": "infrastructure",
+      "host": null,
+      "site": null,
+      "quantity": null
+    },
+    {
+      "id": "a95e0f1b-0e3b-5657-a7e3-07e9db34e169",
+      "component_id": "operator",
+      "zone_id": "client",
+      "host": null,
+      "site": null,
+      "quantity": 1
+    },
+    {
+      "id": "c05e9fab-0bde-50c3-b5e5-6a2e385530ec",
+      "component_id": "configuration",
+      "zone_id": "client",
+      "host": null,
+      "site": null,
+      "quantity": 1
+    },
+    {
+      "id": "3315b2c2-54a1-507f-9221-452a1f48b00c",
+      "component_id": "management",
+      "zone_id": "z1",
+      "host": null,
+      "site": null,
+      "quantity": null
+    },
+    {
+      "id": "0a214241-dbd5-5ea0-a00b-b90737d848a6",
+      "component_id": "analytics",
+      "zone_id": "z2",
+      "host": null,
+      "site": null,
+      "quantity": null
+    },
+    {
+      "id": "e3a91dab-572a-57a9-a2e5-b0821805a2d7",
+      "component_id": "audit",
+      "zone_id": "z1",
+      "host": null,
+      "site": null,
+      "quantity": null
+    },
+    {
+      "id": "3c8af336-12a8-5817-b516-02aca308f3e8",
+      "component_id": "enforcement",
+      "zone_id": "z1",
+      "host": null,
+      "site": null,
+      "quantity": null
+    }
+  ],
+  "interfaces": [
+    {
+      "id": "video",
+      "source": "vms",
+      "target": "analytics",
+      "purpose": "video",
+      "data_direction": "source_to_target",
+      "initiator": null,
+      "protocol": "RTSP",
+      "port": null,
+      "enforcement": [],
+      "delivery": null,
+      "evidence": [
+        "6a7670c2-b0cf-44ba-a792-c788112b3b4d"
+      ]
+    },
+    {
+      "id": "events",
+      "source": "management",
+      "target": "c2",
+      "purpose": "events",
+      "data_direction": "source_to_target",
+      "initiator": null,
+      "protocol": null,
+      "port": null,
+      "enforcement": [],
+      "delivery": null,
+      "evidence": [
+        "4967b2e6-81e2-4a23-baf7-a8cb17fbf86e"
+      ]
+    },
+    {
+      "id": "administration",
+      "source": "configuration",
+      "target": "management",
+      "purpose": "management",
+      "data_direction": "bidirectional",
+      "initiator": null,
+      "protocol": "HTTPS",
+      "port": null,
+      "enforcement": [],
+      "delivery": null,
+      "evidence": [
+        "1e899854-7c48-4043-ad8a-96dfebf91f46"
+      ]
+    },
+    {
+      "id": "integration",
+      "source": "management",
+      "target": "analytics",
+      "purpose": "integration",
+      "data_direction": "bidirectional",
+      "initiator": null,
+      "protocol": "HTTPS",
+      "port": null,
+      "enforcement": [],
+      "delivery": null,
+      "evidence": [
+        "ee8eac92-e4b0-4794-9884-627e87a01149"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "33dbcfc7-e130-4d57-bbb1-ace7376c2b5c",
+      "name": "sow.docx",
+      "version": "1.0",
+      "kind": "document",
+      "sha256": "5f2cfa7ccfa4559f126c7e0584c3f242c72a55f57e64c4bc132f2503f5420441",
+      "canonical_id": "B-sow",
+      "variants": [
+        "5f2cfa7ccfa4559f126c7e0584c3f242c72a55f57e64c4bc132f2503f5420441"
+      ],
+      "passages": [
+        {
+          "locator": "paragraph/1",
+          "heading": "",
+          "text": "Incomplete integration statement of work",
+          "page": null
+        },
+        {
+          "locator": "paragraph/2",
+          "heading": "",
+          "text": "SYNTHETIC — DEMONSTRATION ONLY",
+          "page": null
+        },
+        {
+          "locator": "paragraph/3",
+          "heading": "",
+          "text": "Version 1.0 | Fixture date 21 September 2026",
+          "page": null
+        },
+        {
+          "locator": "paragraph/4",
+          "heading": "Purpose and scope",
+          "text": "Purpose and scope",
+          "page": null
+        },
+        {
+          "locator": "paragraph/5",
+          "heading": "Purpose and scope",
+          "text": "Prepare a partial architecture for review. Event delivery, session initiation, administration route and availability strategy are not decided. Reviewers must choose these explicitly; do not infer ports or server counts.",
+          "page": null
+        },
+        {
+          "locator": "paragraph/6",
+          "heading": "Systems and placement",
+          "text": "Systems and placement",
+          "page": null
+        },
+        {
+          "locator": "paragraph/7",
+          "heading": "Systems and placement",
+          "text": "Review guidance: null means not specified. Data direction is distinct from the session initiator. Icons do not prove enforcement or resilience. Equipment sizing needs a separate human decision.",
+          "page": null
+        },
+        {
+          "locator": "paragraph/9",
+          "heading": "Interfaces and decisions",
+          "text": "Interfaces and decisions",
+          "page": null
+        },
+        {
+          "locator": "paragraph/10",
+          "heading": "Interfaces and decisions",
+          "text": "Review guidance: null means not specified. Data direction is distinct from the session initiator. Icons do not prove enforcement or resilience. Equipment sizing needs a separate human decision.",
+          "page": null
+        },
+        {
+          "locator": "table/1/row/1/cell/1",
+          "heading": "Table 1",
+          "text": "ID",
+          "page": null
+        },
+        {
+          "locator": "table/1/row/1/cell/2",
+          "heading": "Table 1",
+          "text": "Source requirement",
+          "page": null
+        },
+        {
+          "locator": "table/1/row/2/cell/1",
+          "heading": "Table 1",
+          "text": "vms-system",
+          "page": null
+        },
+        {
+          "locator": "table/1/row/2/cell/2",
+          "heading": "Table 1",
+          "text": "System vms-system: name=\"VMS\"; scope=\"internal\"",
+          "page": null
+        },
+        {
+          "locator": "table/1/row/3/cell/1",
+          "heading": "Table 1",
+          "text": "client-system",
+          "page": null
+        },
+        {
+          "locator": "table/1/row/3/cell/2",
+          "heading": "Table 1",
+          "text": "System client-system: name=\"Client\"; scope=\"internal\"",
+          "page": null
+        },
+        {
+          "locator": "table/1/row/4/cell/1",
+          "heading": "Table 1",
+          "text": "vap-system",
+          "page": null
+        },
+        {
+          "locator": "table/1/row/4/cell/2",
+          "heading": "Table 1",
+          "text": "System vap-system: name=\"VAP\"; scope=\"internal\"",
+          "page": null
+        },
+        {
+          "locator": "table/1/row/5/cell/1",
+          "heading": "Table 1",
+          "text": "c2-system",
+          "page": null
+        },
+        {
+          "locator": "table/1/row/5/cell/2",
+          "heading": "Table 1",
+          "text": "System c2-system: name=\"C2\"; scope=\"external\"",
+          "page": null
+        },
+        {
+          "locator": "table/1/row/6/cell/1",
+          "heading": "Table 1",
+          "text": "infrastructure",
+          "page": null
+        },
+        {
+          "locator": "table/1/row/6/cell/2",
+          "heading": "Table 1",
+          "text": "Zone infrastructure: name=\"Infrastructure\"",
+          "page": null
+        },
+        {
+          "locator": "table/1/row/7/cell/1",
+          "heading": "Table 1",
+          "text": "client",
+          "page": null
+        },
+        {
+          "locator": "table/1/row/7/cell/2",
+          "heading": "Table 1",
+          "text": "Zone client: name=\"Client\"",
+          "page": null
+        },
+        {
+          "locator": "table/1/row/8/cell/1",
+          "heading": "Table 1",
+          "text": "z1",
+          "page": null
+        },
+        {
+          "locator": "table/1/row/8/cell/2",
+          "heading": "Table 1",
+          "text": "Zone z1: name=\"Z1\"",
+          "page": null
+        },
+        {
+          "locator": "table/1/row/9/cell/1",
+          "heading": "Table 1",
+          "text": "z2",
+          "page": null
+        },
+        {
+          "locator": "table/1/row/9/cell/2",
+          "heading": "Table 1",
+          "text": "Zone z2: name=\"Z2\"",
+          "page": null
+        },
+        {
+          "locator": "table/1/row/10/cell/1",
+          "heading": "Table 1",
+          "text": "vms",
+          "page": null
+        },
+        {
+          "locator": "table/1/row/10/cell/2",
+          "heading": "Table 1",
+          "text": "Component vms: name=\"VMS\"; role=\"video management\"; system_id=\"vms-system\"; zone_id=\"infrastructure\"; status=\"existing\"; asset_id=\"application\"",
+          "page": null
+        },
+        {
+          "locator": "table/1/row/11/cell/1",
+          "heading": "Table 1",
+          "text": "operator",
+          "page": null
+        },
+        {
+          "locator": "table/1/row/11/cell/2",
+          "heading": "Table 1",
+          "text": "Component operator: name=\"Operator workstation\"; role=\"operator\"; system_id=\"client-system\"; zone_id=\"client\"; status=\"existing\"; asset_id=\"workstation\"; quantity=1",
+          "page": null
+        },
+        {
+          "locator": "table/1/row/12/cell/1",
+          "heading": "Table 1",
+          "text": "configuration",
+          "page": null
+        },
+        {
+          "locator": "table/1/row/12/cell/2",
+          "heading": "Table 1",
+          "text": "Component configuration: name=\"Configuration workstation\"; role=\"configuration\"; system_id=\"client-system\"; zone_id=\"client\"; status=\"existing\"; asset_id=\"workstation\"; quantity=1",
+          "page": null
+        },
+        {
+          "locator": "table/1/row/13/cell/1",
+          "heading": "Table 1",
+          "text": "management",
+          "page": null
+        },
+        {
+          "locator": "table/1/row/13/cell/2",
+          "heading": "Table 1",
+          "text": "Component management: name=\"VAP management\"; role=\"management integration\"; system_id=\"vap-system\"; zone_id=\"z1\"; status=\"new\"; asset_id=\"api-service\"; audit_destination=\"audit\"",
+          "page": null
+        },
+        {
+          "locator": "table/1/row/14/cell/1",
+          "heading": "Table 1",
+          "text": "analytics",
+          "page": null
+        },
+        {
+          "locator": "table/1/row/14/cell/2",
+          "heading": "Table 1",
+          "text": "Component analytics: name=\"VAP analytics\"; role=\"analytics\"; system_id=\"vap-system\"; zone_id=\"z2\"; status=\"new\"; asset_id=\"analytics-engine\"",
+          "page": null
+        },
+        {
+          "locator": "table/1/row/15/cell/1",
+          "heading": "Table 1",
+          "text": "c2",
+          "page": null
+        },
+        {
+          "locator": "table/1/row/15/cell/2",
+          "heading": "Table 1",
+          "text": "Component c2: name=\"C2\"; role=\"external command system\"; system_id=\"c2-system\"; zone_id=null; status=\"existing\"; asset_id=\"external-system\"; scope=\"external\"",
+          "page": null
+        },
+        {
+          "locator": "table/1/row/16/cell/1",
+          "heading": "Table 1",
+          "text": "audit",
+          "page": null
+        },
+        {
+          "locator": "table/1/row/16/cell/2",
+          "heading": "Table 1",
+          "text": "Component audit: name=\"Audit destination\"; role=\"audit\"; system_id=\"vap-system\"; zone_id=\"z1\"; status=\"proposed\"; asset_id=\"audit-service\"",
+          "page": null
+        },
+        {
+          "locator": "table/1/row/17/cell/1",
+          "heading": "Table 1",
+          "text": "enforcement",
+          "page": null
+        },
+        {
+          "locator": "table/1/row/17/cell/2",
+          "heading": "Table 1",
+          "text": "Component enforcement: name=\"Management enforcement\"; role=\"firewall\"; system_id=\"vap-system\"; zone_id=\"z1\"; status=\"proposed\"; asset_id=\"firewall\"",
+          "page": null
+        },
+        {
+          "locator": "table/2/row/1/cell/1",
+          "heading": "Table 2",
+          "text": "ID",
+          "page": null
+        },
+        {
+          "locator": "table/2/row/1/cell/2",
+          "heading": "Table 2",
+          "text": "Source requirement",
+          "page": null
+        },
+        {
+          "locator": "table/2/row/2/cell/1",
+          "heading": "Table 2",
+          "text": "video",
+          "page": null
+        },
+        {
+          "locator": "table/2/row/2/cell/2",
+          "heading": "Table 2",
+          "text": "Interface video: source=\"vms\"; target=\"analytics\"; purpose=\"video\"; data_direction=\"source_to_target\"; initiator=null; protocol=\"RTSP\"; port=null",
+          "page": null
+        },
+        {
+          "locator": "table/2/row/3/cell/1",
+          "heading": "Table 2",
+          "text": "events",
+          "page": null
+        },
+        {
+          "locator": "table/2/row/3/cell/2",
+          "heading": "Table 2",
+          "text": "Interface events: source=\"management\"; target=\"c2\"; purpose=\"events\"; data_direction=\"source_to_target\"; initiator=null; protocol=null; delivery=null",
+          "page": null
+        },
+        {
+          "locator": "table/2/row/4/cell/1",
+          "heading": "Table 2",
+          "text": "administration",
+          "page": null
+        },
+        {
+          "locator": "table/2/row/4/cell/2",
+          "heading": "Table 2",
+          "text": "Interface administration: source=\"configuration\"; target=\"management\"; purpose=null; data_direction=\"bidirectional\"; initiator=null; protocol=\"HTTPS\"; enforcement=[]",
+          "page": null
+        },
+        {
+          "locator": "table/2/row/5/cell/1",
+          "heading": "Table 2",
+          "text": "integration",
+          "page": null
+        },
+        {
+          "locator": "table/2/row/5/cell/2",
+          "heading": "Table 2",
+          "text": "Interface integration: source=\"management\"; target=\"analytics\"; purpose=\"integration\"; data_direction=\"bidirectional\"; initiator=null; protocol=\"HTTPS\"",
+          "page": null
+        },
+        {
+          "locator": "table/2/row/6/cell/1",
+          "heading": "Table 2",
+          "text": "capacity",
+          "page": null
+        },
+        {
+          "locator": "table/2/row/6/cell/2",
+          "heading": "Table 2",
+          "text": "Constraint capacity: key=\"capacity_streams\"; value=100",
+          "page": null
+        },
+        {
+          "locator": "table/2/row/7/cell/1",
+          "heading": "Table 2",
+          "text": "sizing",
+          "page": null
+        },
+        {
+          "locator": "table/2/row/7/cell/2",
+          "heading": "Table 2",
+          "text": "Constraint sizing: key=\"equipment_sizing\"; value=\"undecided\"",
+          "page": null
+        },
+        {
+          "locator": "table/2/row/8/cell/1",
+          "heading": "Table 2",
+          "text": "offline",
+          "page": null
+        },
+        {
+          "locator": "table/2/row/8/cell/2",
+          "heading": "Table 2",
+          "text": "Constraint offline: key=\"no_internet\"; value=true",
+          "page": null
+        },
+        {
+          "locator": "table/2/row/9/cell/1",
+          "heading": "Table 2",
+          "text": "resilience",
+          "page": null
+        },
+        {
+          "locator": "table/2/row/9/cell/2",
+          "heading": "Table 2",
+          "text": "Constraint resilience: key=\"resilience_required\"; value=false",
+          "page": null
+        },
+        {
+          "locator": "table/2/row/10/cell/1",
+          "heading": "Table 2",
+          "text": "availability",
+          "page": null
+        },
+        {
+          "locator": "table/2/row/10/cell/2",
+          "heading": "Table 2",
+          "text": "Constraint availability: key=\"availability_strategy\"; value=null",
+          "page": null
+        }
+      ],
+      "processed": [
+        "paragraph/1",
+        "paragraph/2",
+        "paragraph/3",
+        "paragraph/4",
+        "paragraph/5",
+        "paragraph/6",
+        "paragraph/7",
+        "paragraph/9",
+        "paragraph/10",
+        "table/1/row/1/cell/1",
+        "table/1/row/1/cell/2",
+        "table/1/row/2/cell/1",
+        "table/1/row/2/cell/2",
+        "table/1/row/3/cell/1",
+        "table/1/row/3/cell/2",
+        "table/1/row/4/cell/1",
+        "table/1/row/4/cell/2",
+        "table/1/row/5/cell/1",
+        "table/1/row/5/cell/2",
+        "table/1/row/6/cell/1",
+        "table/1/row/6/cell/2",
+        "table/1/row/7/cell/1",
+        "table/1/row/7/cell/2",
+        "table/1/row/8/cell/1",
+        "table/1/row/8/cell/2",
+        "table/1/row/9/cell/1",
+        "table/1/row/9/cell/2",
+        "table/1/row/10/cell/1",
+        "table/1/row/10/cell/2",
+        "table/1/row/11/cell/1",
+        "table/1/row/11/cell/2",
+        "table/1/row/12/cell/1",
+        "table/1/row/12/cell/2",
+        "table/1/row/13/cell/1",
+        "table/1/row/13/cell/2",
+        "table/1/row/14/cell/1",
+        "table/1/row/14/cell/2",
+        "table/1/row/15/cell/1",
+        "table/1/row/15/cell/2",
+        "table/1/row/16/cell/1",
+        "table/1/row/16/cell/2",
+        "table/1/row/17/cell/1",
+        "table/1/row/17/cell/2",
+        "table/2/row/1/cell/1",
+        "table/2/row/1/cell/2",
+        "table/2/row/2/cell/1",
+        "table/2/row/2/cell/2",
+        "table/2/row/3/cell/1",
+        "table/2/row/3/cell/2",
+        "table/2/row/4/cell/1",
+        "table/2/row/4/cell/2",
+        "table/2/row/5/cell/1",
+        "table/2/row/5/cell/2",
+        "table/2/row/6/cell/1",
+        "table/2/row/6/cell/2",
+        "table/2/row/7/cell/1",
+        "table/2/row/7/cell/2",
+        "table/2/row/8/cell/1",
+        "table/2/row/8/cell/2",
+        "table/2/row/9/cell/1",
+        "table/2/row/9/cell/2",
+        "table/2/row/10/cell/1",
+        "table/2/row/10/cell/2"
+      ],
+      "unprocessed": [],
+      "unsupported_pages": []
+    }
+  ],
+  "claims": [
+    {
+      "id": "bd03522f-211a-4c9e-8b14-972835c74405",
+      "source_id": "33dbcfc7-e130-4d57-bbb1-ace7376c2b5c",
+      "source_version": "1.0",
+      "locator": "table/1/row/2/cell/2",
+      "excerpt": "System vms-system: name=\"VMS\"; scope=\"internal\"",
+      "target_id": "vms-system",
+      "field": "system",
+      "value": {
+        "name": "VMS",
+        "scope": "internal"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "2348787e-ebaa-46f1-a39e-77f35e83c211",
+      "source_id": "33dbcfc7-e130-4d57-bbb1-ace7376c2b5c",
+      "source_version": "1.0",
+      "locator": "table/1/row/3/cell/2",
+      "excerpt": "System client-system: name=\"Client\"; scope=\"internal\"",
+      "target_id": "client-system",
+      "field": "system",
+      "value": {
+        "name": "Client",
+        "scope": "internal"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "c0fb80d5-2af3-4164-80fa-659d5b270eba",
+      "source_id": "33dbcfc7-e130-4d57-bbb1-ace7376c2b5c",
+      "source_version": "1.0",
+      "locator": "table/1/row/4/cell/2",
+      "excerpt": "System vap-system: name=\"VAP\"; scope=\"internal\"",
+      "target_id": "vap-system",
+      "field": "system",
+      "value": {
+        "name": "VAP",
+        "scope": "internal"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "46b6f3e8-3b43-4cd7-86eb-af55b1e40b9e",
+      "source_id": "33dbcfc7-e130-4d57-bbb1-ace7376c2b5c",
+      "source_version": "1.0",
+      "locator": "table/1/row/5/cell/2",
+      "excerpt": "System c2-system: name=\"C2\"; scope=\"external\"",
+      "target_id": "c2-system",
+      "field": "system",
+      "value": {
+        "name": "C2",
+        "scope": "external"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "45e5e515-e5ba-4373-a5de-9636ceccc54f",
+      "source_id": "33dbcfc7-e130-4d57-bbb1-ace7376c2b5c",
+      "source_version": "1.0",
+      "locator": "table/1/row/6/cell/2",
+      "excerpt": "Zone infrastructure: name=\"Infrastructure\"",
+      "target_id": "infrastructure",
+      "field": "zone",
+      "value": {
+        "name": "Infrastructure"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "97396cd3-c496-46d6-86f4-2d0c2df6fc1c",
+      "source_id": "33dbcfc7-e130-4d57-bbb1-ace7376c2b5c",
+      "source_version": "1.0",
+      "locator": "table/1/row/7/cell/2",
+      "excerpt": "Zone client: name=\"Client\"",
+      "target_id": "client",
+      "field": "zone",
+      "value": {
+        "name": "Client"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "539d0c73-be02-4118-a18f-9bd1938f98c7",
+      "source_id": "33dbcfc7-e130-4d57-bbb1-ace7376c2b5c",
+      "source_version": "1.0",
+      "locator": "table/1/row/8/cell/2",
+      "excerpt": "Zone z1: name=\"Z1\"",
+      "target_id": "z1",
+      "field": "zone",
+      "value": {
+        "name": "Z1"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "585858fa-8cb6-402a-ac2c-3044a32d4e57",
+      "source_id": "33dbcfc7-e130-4d57-bbb1-ace7376c2b5c",
+      "source_version": "1.0",
+      "locator": "table/1/row/9/cell/2",
+      "excerpt": "Zone z2: name=\"Z2\"",
+      "target_id": "z2",
+      "field": "zone",
+      "value": {
+        "name": "Z2"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "582a35af-1188-486a-bc60-f7e9d2a2c60e",
+      "source_id": "33dbcfc7-e130-4d57-bbb1-ace7376c2b5c",
+      "source_version": "1.0",
+      "locator": "table/1/row/10/cell/2",
+      "excerpt": "Component vms: name=\"VMS\"; role=\"video management\"; system_id=\"vms-system\"; zone_id=\"infrastructure\"; status=\"existing\"; asset_id=\"application\"",
+      "target_id": "vms",
+      "field": "component",
+      "value": {
+        "name": "VMS",
+        "role": "video management",
+        "asset_id": "application",
+        "system_id": "vms-system",
+        "status": "existing"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "754f7cb2-fa14-472d-8456-4d6f38cc363e",
+      "source_id": "33dbcfc7-e130-4d57-bbb1-ace7376c2b5c",
+      "source_version": "1.0",
+      "locator": "table/1/row/10/cell/2",
+      "excerpt": "Component vms: name=\"VMS\"; role=\"video management\"; system_id=\"vms-system\"; zone_id=\"infrastructure\"; status=\"existing\"; asset_id=\"application\"",
+      "target_id": "8e2de6a2-bd7d-529f-8bb4-203dd778f52d",
+      "field": "deployment",
+      "value": {
+        "component_id": "vms",
+        "zone_id": "infrastructure"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "9e94a8c0-0b3f-466b-9656-3d79345bb8e5",
+      "source_id": "33dbcfc7-e130-4d57-bbb1-ace7376c2b5c",
+      "source_version": "1.0",
+      "locator": "table/1/row/11/cell/2",
+      "excerpt": "Component operator: name=\"Operator workstation\"; role=\"operator\"; system_id=\"client-system\"; zone_id=\"client\"; status=\"existing\"; asset_id=\"workstation\"; quantity=1",
+      "target_id": "operator",
+      "field": "component",
+      "value": {
+        "name": "Operator workstation",
+        "role": "operator",
+        "asset_id": "workstation",
+        "system_id": "client-system",
+        "status": "existing"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "8d49f40e-ca63-4925-b23b-a4a8d7f465e6",
+      "source_id": "33dbcfc7-e130-4d57-bbb1-ace7376c2b5c",
+      "source_version": "1.0",
+      "locator": "table/1/row/11/cell/2",
+      "excerpt": "Component operator: name=\"Operator workstation\"; role=\"operator\"; system_id=\"client-system\"; zone_id=\"client\"; status=\"existing\"; asset_id=\"workstation\"; quantity=1",
+      "target_id": "a95e0f1b-0e3b-5657-a7e3-07e9db34e169",
+      "field": "deployment",
+      "value": {
+        "component_id": "operator",
+        "zone_id": "client",
+        "quantity": 1
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "dbd7d177-a7fc-4208-af50-301e49a80852",
+      "source_id": "33dbcfc7-e130-4d57-bbb1-ace7376c2b5c",
+      "source_version": "1.0",
+      "locator": "table/1/row/12/cell/2",
+      "excerpt": "Component configuration: name=\"Configuration workstation\"; role=\"configuration\"; system_id=\"client-system\"; zone_id=\"client\"; status=\"existing\"; asset_id=\"workstation\"; quantity=1",
+      "target_id": "configuration",
+      "field": "component",
+      "value": {
+        "name": "Configuration workstation",
+        "role": "configuration",
+        "asset_id": "workstation",
+        "system_id": "client-system",
+        "status": "existing"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "bd4f3f95-a406-434a-87ea-a5bf047c1707",
+      "source_id": "33dbcfc7-e130-4d57-bbb1-ace7376c2b5c",
+      "source_version": "1.0",
+      "locator": "table/1/row/12/cell/2",
+      "excerpt": "Component configuration: name=\"Configuration workstation\"; role=\"configuration\"; system_id=\"client-system\"; zone_id=\"client\"; status=\"existing\"; asset_id=\"workstation\"; quantity=1",
+      "target_id": "c05e9fab-0bde-50c3-b5e5-6a2e385530ec",
+      "field": "deployment",
+      "value": {
+        "component_id": "configuration",
+        "zone_id": "client",
+        "quantity": 1
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "11ab4474-59e8-453e-bd56-48646e889d17",
+      "source_id": "33dbcfc7-e130-4d57-bbb1-ace7376c2b5c",
+      "source_version": "1.0",
+      "locator": "table/1/row/13/cell/2",
+      "excerpt": "Component management: name=\"VAP management\"; role=\"management integration\"; system_id=\"vap-system\"; zone_id=\"z1\"; status=\"new\"; asset_id=\"api-service\"; audit_destination=\"audit\"",
+      "target_id": "management",
+      "field": "component",
+      "value": {
+        "name": "VAP management",
+        "role": "management integration",
+        "system_id": "vap-system",
+        "status": "new"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "3575ea2c-85c5-4b8f-a898-3d4a7379c67a",
+      "source_id": "33dbcfc7-e130-4d57-bbb1-ace7376c2b5c",
+      "source_version": "1.0",
+      "locator": "table/1/row/13/cell/2",
+      "excerpt": "Component management: name=\"VAP management\"; role=\"management integration\"; system_id=\"vap-system\"; zone_id=\"z1\"; status=\"new\"; asset_id=\"api-service\"; audit_destination=\"audit\"",
+      "target_id": "3315b2c2-54a1-507f-9221-452a1f48b00c",
+      "field": "deployment",
+      "value": {
+        "component_id": "management",
+        "zone_id": "z1"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "edf8d869-62d5-4451-b541-307156be2ff9",
+      "source_id": "33dbcfc7-e130-4d57-bbb1-ace7376c2b5c",
+      "source_version": "1.0",
+      "locator": "table/1/row/14/cell/2",
+      "excerpt": "Component analytics: name=\"VAP analytics\"; role=\"analytics\"; system_id=\"vap-system\"; zone_id=\"z2\"; status=\"new\"; asset_id=\"analytics-engine\"",
+      "target_id": "analytics",
+      "field": "component",
+      "value": {
+        "name": "VAP analytics",
+        "role": "analytics",
+        "system_id": "vap-system",
+        "status": "new"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "1744384d-95b7-4091-93e4-e769481f98e7",
+      "source_id": "33dbcfc7-e130-4d57-bbb1-ace7376c2b5c",
+      "source_version": "1.0",
+      "locator": "table/1/row/14/cell/2",
+      "excerpt": "Component analytics: name=\"VAP analytics\"; role=\"analytics\"; system_id=\"vap-system\"; zone_id=\"z2\"; status=\"new\"; asset_id=\"analytics-engine\"",
+      "target_id": "0a214241-dbd5-5ea0-a00b-b90737d848a6",
+      "field": "deployment",
+      "value": {
+        "component_id": "analytics",
+        "zone_id": "z2"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "914431cc-12fe-4d96-aab7-94a9cbc4a3cd",
+      "source_id": "33dbcfc7-e130-4d57-bbb1-ace7376c2b5c",
+      "source_version": "1.0",
+      "locator": "table/1/row/15/cell/2",
+      "excerpt": "Component c2: name=\"C2\"; role=\"external command system\"; system_id=\"c2-system\"; zone_id=null; status=\"existing\"; asset_id=\"external-system\"; scope=\"external\"",
+      "target_id": "c2",
+      "field": "component",
+      "value": {
+        "name": "C2",
+        "role": "external command system",
+        "system_id": "c2-system",
+        "status": "existing",
+        "scope": "external"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "3ec0c2aa-8ba7-471c-b014-83144f035aac",
+      "source_id": "33dbcfc7-e130-4d57-bbb1-ace7376c2b5c",
+      "source_version": "1.0",
+      "locator": "table/1/row/16/cell/2",
+      "excerpt": "Component audit: name=\"Audit destination\"; role=\"audit\"; system_id=\"vap-system\"; zone_id=\"z1\"; status=\"proposed\"; asset_id=\"audit-service\"",
+      "target_id": "audit",
+      "field": "component",
+      "value": {
+        "name": "Audit destination",
+        "role": "audit",
+        "system_id": "vap-system",
+        "status": "proposed"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "7a36599d-6c1d-4766-9ccb-8f3ade6a530a",
+      "source_id": "33dbcfc7-e130-4d57-bbb1-ace7376c2b5c",
+      "source_version": "1.0",
+      "locator": "table/1/row/16/cell/2",
+      "excerpt": "Component audit: name=\"Audit destination\"; role=\"audit\"; system_id=\"vap-system\"; zone_id=\"z1\"; status=\"proposed\"; asset_id=\"audit-service\"",
+      "target_id": "e3a91dab-572a-57a9-a2e5-b0821805a2d7",
+      "field": "deployment",
+      "value": {
+        "component_id": "audit",
+        "zone_id": "z1"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "074b3b9b-09cb-4ede-8e65-c1f452b936f6",
+      "source_id": "33dbcfc7-e130-4d57-bbb1-ace7376c2b5c",
+      "source_version": "1.0",
+      "locator": "table/1/row/17/cell/2",
+      "excerpt": "Component enforcement: name=\"Management enforcement\"; role=\"firewall\"; system_id=\"vap-system\"; zone_id=\"z1\"; status=\"proposed\"; asset_id=\"firewall\"",
+      "target_id": "enforcement",
+      "field": "component",
+      "value": {
+        "name": "Management enforcement",
+        "role": "firewall",
+        "system_id": "vap-system",
+        "status": "proposed"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "9e6ca91f-aba0-4267-b451-f648c6d94e7e",
+      "source_id": "33dbcfc7-e130-4d57-bbb1-ace7376c2b5c",
+      "source_version": "1.0",
+      "locator": "table/1/row/17/cell/2",
+      "excerpt": "Component enforcement: name=\"Management enforcement\"; role=\"firewall\"; system_id=\"vap-system\"; zone_id=\"z1\"; status=\"proposed\"; asset_id=\"firewall\"",
+      "target_id": "3c8af336-12a8-5817-b516-02aca308f3e8",
+      "field": "deployment",
+      "value": {
+        "component_id": "enforcement",
+        "zone_id": "z1"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "6a7670c2-b0cf-44ba-a792-c788112b3b4d",
+      "source_id": "33dbcfc7-e130-4d57-bbb1-ace7376c2b5c",
+      "source_version": "1.0",
+      "locator": "table/2/row/2/cell/2",
+      "excerpt": "Interface video: source=\"vms\"; target=\"analytics\"; purpose=\"video\"; data_direction=\"source_to_target\"; initiator=null; protocol=\"RTSP\"; port=null",
+      "target_id": "video",
+      "field": "interface",
+      "value": {
+        "source": "vms",
+        "target": "analytics",
+        "purpose": "video",
+        "data_direction": "source_to_target",
+        "initiator": null,
+        "protocol": "RTSP",
+        "port": null
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "4967b2e6-81e2-4a23-baf7-a8cb17fbf86e",
+      "source_id": "33dbcfc7-e130-4d57-bbb1-ace7376c2b5c",
+      "source_version": "1.0",
+      "locator": "table/2/row/3/cell/2",
+      "excerpt": "Interface events: source=\"management\"; target=\"c2\"; purpose=\"events\"; data_direction=\"source_to_target\"; initiator=null; protocol=null; delivery=null",
+      "target_id": "events",
+      "field": "interface",
+      "value": {
+        "source": "management",
+        "target": "c2",
+        "purpose": "events",
+        "data_direction": "source_to_target",
+        "initiator": null,
+        "protocol": null
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "1e899854-7c48-4043-ad8a-96dfebf91f46",
+      "source_id": "33dbcfc7-e130-4d57-bbb1-ace7376c2b5c",
+      "source_version": "1.0",
+      "locator": "table/2/row/4/cell/2",
+      "excerpt": "Interface administration: source=\"configuration\"; target=\"management\"; purpose=null; data_direction=\"bidirectional\"; initiator=null; protocol=\"HTTPS\"; enforcement=[]",
+      "target_id": "administration",
+      "field": "interface",
+      "value": {
+        "source": "configuration",
+        "target": "management",
+        "data_direction": "bidirectional",
+        "initiator": null,
+        "protocol": "HTTPS",
+        "enforcement": []
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "ee8eac92-e4b0-4794-9884-627e87a01149",
+      "source_id": "33dbcfc7-e130-4d57-bbb1-ace7376c2b5c",
+      "source_version": "1.0",
+      "locator": "table/2/row/5/cell/2",
+      "excerpt": "Interface integration: source=\"management\"; target=\"analytics\"; purpose=\"integration\"; data_direction=\"bidirectional\"; initiator=null; protocol=\"HTTPS\"",
+      "target_id": "integration",
+      "field": "interface",
+      "value": {
+        "source": "management",
+        "target": "analytics",
+        "purpose": "integration",
+        "data_direction": "bidirectional",
+        "initiator": null,
+        "protocol": "HTTPS"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "9707f80d-0891-4ddc-9b60-8e18d697f352",
+      "source_id": "33dbcfc7-e130-4d57-bbb1-ace7376c2b5c",
+      "source_version": "1.0",
+      "locator": "table/2/row/6/cell/2",
+      "excerpt": "Constraint capacity: key=\"capacity_streams\"; value=100",
+      "target_id": "capacity",
+      "field": "constraint",
+      "value": {
+        "key": "capacity_streams",
+        "value": 100
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "127ce712-f450-49bd-ba7e-d64cd1ea35b9",
+      "source_id": "33dbcfc7-e130-4d57-bbb1-ace7376c2b5c",
+      "source_version": "1.0",
+      "locator": "table/2/row/7/cell/2",
+      "excerpt": "Constraint sizing: key=\"equipment_sizing\"; value=\"undecided\"",
+      "target_id": "sizing",
+      "field": "constraint",
+      "value": {
+        "key": "equipment_sizing",
+        "value": "undecided"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "fe8d11c6-d192-4dd3-9192-ac7a4e79483c",
+      "source_id": "33dbcfc7-e130-4d57-bbb1-ace7376c2b5c",
+      "source_version": "1.0",
+      "locator": "table/2/row/8/cell/2",
+      "excerpt": "Constraint offline: key=\"no_internet\"; value=true",
+      "target_id": "offline",
+      "field": "constraint",
+      "value": {
+        "key": "no_internet",
+        "value": true
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "ad2eb151-0580-4af0-ad4a-66641a5523b1",
+      "source_id": "33dbcfc7-e130-4d57-bbb1-ace7376c2b5c",
+      "source_version": "1.0",
+      "locator": "table/2/row/9/cell/2",
+      "excerpt": "Constraint resilience: key=\"resilience_required\"; value=false",
+      "target_id": "resilience",
+      "field": "constraint",
+      "value": {
+        "key": "resilience_required",
+        "value": false
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "8d7744e9-b72d-4295-b5f0-a417879ca884",
+      "source_id": "33dbcfc7-e130-4d57-bbb1-ace7376c2b5c",
+      "source_version": "1.0",
+      "locator": "table/2/row/10/cell/2",
+      "excerpt": "Constraint availability: key=\"availability_strategy\"; value=null",
+      "target_id": "availability",
+      "field": "constraint",
+      "value": {
+        "key": "availability_strategy",
+        "value": null
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    }
+  ],
+  "constraints": [
+    {
+      "id": "capacity",
+      "scope": "project",
+      "key": "capacity_streams",
+      "value": 100,
+      "evidence": [
+        "9707f80d-0891-4ddc-9b60-8e18d697f352"
+      ]
+    },
+    {
+      "id": "sizing",
+      "scope": "project",
+      "key": "equipment_sizing",
+      "value": "undecided",
+      "evidence": [
+        "127ce712-f450-49bd-ba7e-d64cd1ea35b9"
+      ]
+    },
+    {
+      "id": "offline",
+      "scope": "project",
+      "key": "no_internet",
+      "value": true,
+      "evidence": [
+        "fe8d11c6-d192-4dd3-9192-ac7a4e79483c"
+      ]
+    },
+    {
+      "id": "resilience",
+      "scope": "project",
+      "key": "resilience_required",
+      "value": false,
+      "evidence": [
+        "ad2eb151-0580-4af0-ad4a-66641a5523b1"
+      ]
+    },
+    {
+      "id": "availability",
+      "scope": "project",
+      "key": "availability_strategy",
+      "value": null,
+      "evidence": [
+        "8d7744e9-b72d-4295-b5f0-a417879ca884"
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "id": "question-purpose-administration",
+      "question": "What is the administration route purpose for administration?",
+      "target_id": "administration",
+      "field": "purpose",
+      "options": [
+        "management",
+        "integration",
+        "video"
+      ],
+      "answer": "management",
+      "state": "answered",
+      "evidence": [
+        "1e899854-7c48-4043-ad8a-96dfebf91f46"
+      ]
+    },
+    {
+      "id": "question-initiator-video",
+      "question": "Who initiates video?",
+      "target_id": "video",
+      "field": "initiator",
+      "options": [
+        "vms",
+        "analytics"
+      ],
+      "answer": null,
+      "state": "unknown",
+      "evidence": [
+        "6a7670c2-b0cf-44ba-a792-c788112b3b4d"
+      ]
+    },
+    {
+      "id": "question-delivery-events",
+      "question": "How are events delivered?",
+      "target_id": "events",
+      "field": "delivery",
+      "options": [
+        "push",
+        "pull"
+      ],
+      "answer": null,
+      "state": "unknown",
+      "evidence": [
+        "4967b2e6-81e2-4a23-baf7-a8cb17fbf86e"
+      ]
+    },
+    {
+      "id": "question-initiator-events",
+      "question": "Who initiates events?",
+      "target_id": "events",
+      "field": "initiator",
+      "options": [
+        "management",
+        "c2"
+      ],
+      "answer": null,
+      "state": "unknown",
+      "evidence": [
+        "4967b2e6-81e2-4a23-baf7-a8cb17fbf86e"
+      ]
+    }
+  ],
+  "views": {
+    "logical": {
+      "type": "logical",
+      "revision": 0,
+      "placements": {
+        "infrastructure": {
+          "x": 40.0,
+          "y": 60.0,
+          "width": 530.0,
+          "height": 350.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "client": {
+          "x": 620.0,
+          "y": 60.0,
+          "width": 530.0,
+          "height": 350.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "z1": {
+          "x": 40.0,
+          "y": 460.0,
+          "width": 530.0,
+          "height": 350.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "z2": {
+          "x": 620.0,
+          "y": 460.0,
+          "width": 530.0,
+          "height": 350.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "vms": {
+          "x": 30.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "operator": {
+          "x": 30.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "configuration": {
+          "x": 265.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "management": {
+          "x": 30.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "analytics": {
+          "x": 30.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "c2": {
+          "x": 1200.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "audit": {
+          "x": 265.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "enforcement": {
+          "x": 30.0,
+          "y": 195.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        }
+      },
+      "routes": {},
+      "mappings": {
+        "infrastructure": [
+          "infrastructure"
+        ],
+        "client": [
+          "client"
+        ],
+        "z1": [
+          "z1"
+        ],
+        "z2": [
+          "z2"
+        ],
+        "vms": [
+          "vms"
+        ],
+        "operator": [
+          "operator"
+        ],
+        "configuration": [
+          "configuration"
+        ],
+        "management": [
+          "management"
+        ],
+        "analytics": [
+          "analytics"
+        ],
+        "c2": [
+          "c2"
+        ],
+        "audit": [
+          "audit"
+        ],
+        "enforcement": [
+          "enforcement"
+        ],
+        "video": [
+          "video"
+        ],
+        "events": [
+          "events"
+        ],
+        "administration": [
+          "administration"
+        ],
+        "integration": [
+          "integration"
+        ]
+      }
+    },
+    "sv1": {
+      "type": "sv1",
+      "revision": 0,
+      "placements": {
+        "vms-system": {
+          "x": 70.0,
+          "y": 90.0,
+          "width": 240.0,
+          "height": 125.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "client-system": {
+          "x": 370.0,
+          "y": 90.0,
+          "width": 240.0,
+          "height": 125.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "vap-system": {
+          "x": 670.0,
+          "y": 90.0,
+          "width": 240.0,
+          "height": 125.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "c2-system": {
+          "x": 70.0,
+          "y": 320.0,
+          "width": 240.0,
+          "height": 125.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        }
+      },
+      "routes": {},
+      "mappings": {
+        "vms-system": [
+          "vms"
+        ],
+        "client-system": [
+          "operator",
+          "configuration"
+        ],
+        "vap-system": [
+          "management",
+          "analytics",
+          "audit",
+          "enforcement"
+        ],
+        "c2-system": [
+          "c2"
+        ],
+        "aggregate:vms-system:vap-system": [
+          "video"
+        ],
+        "aggregate:vap-system:c2-system": [
+          "events"
+        ],
+        "aggregate:client-system:vap-system": [
+          "administration"
+        ]
+      }
+    },
+    "sv2": {
+      "type": "sv2",
+      "revision": 0,
+      "placements": {
+        "infrastructure": {
+          "x": 40.0,
+          "y": 60.0,
+          "width": 530.0,
+          "height": 350.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "client": {
+          "x": 620.0,
+          "y": 60.0,
+          "width": 530.0,
+          "height": 350.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "z1": {
+          "x": 40.0,
+          "y": 460.0,
+          "width": 530.0,
+          "height": 350.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "z2": {
+          "x": 620.0,
+          "y": 460.0,
+          "width": 530.0,
+          "height": 350.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "vms": {
+          "x": 30.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "operator": {
+          "x": 30.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "configuration": {
+          "x": 265.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "management": {
+          "x": 30.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "analytics": {
+          "x": 30.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "c2": {
+          "x": 1200.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "audit": {
+          "x": 265.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "enforcement": {
+          "x": 30.0,
+          "y": 195.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        }
+      },
+      "routes": {},
+      "mappings": {
+        "infrastructure": [
+          "infrastructure"
+        ],
+        "client": [
+          "client"
+        ],
+        "z1": [
+          "z1"
+        ],
+        "z2": [
+          "z2"
+        ],
+        "vms": [
+          "vms"
+        ],
+        "operator": [
+          "operator"
+        ],
+        "configuration": [
+          "configuration"
+        ],
+        "management": [
+          "management"
+        ],
+        "analytics": [
+          "analytics"
+        ],
+        "c2": [
+          "c2"
+        ],
+        "audit": [
+          "audit"
+        ],
+        "enforcement": [
+          "enforcement"
+        ],
+        "video": [
+          "video"
+        ],
+        "events": [
+          "events"
+        ],
+        "administration": [
+          "administration"
+        ],
+        "integration": [
+          "integration"
+        ]
+      }
+    }
+  },
+  "notes": ""
+}

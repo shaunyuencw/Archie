@@ -1,12 +1,12 @@
 {
   "config": {
     "argv": [
-      "C:\\Users\\userAdmin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
-      "C:\\Users\\userAdmin\\Desktop\\Codex\\Archie\\apps\\web\\node_modules\\@playwright\\test\\cli.js",
+      "/Users/shauny/.nvm/versions/node/v22.23.1/bin/node",
+      "/Users/shauny/Developer/Archie/apps/web/node_modules/@playwright/test/cli.js",
       "test"
     ],
-    "configFile": "C:\\Users\\userAdmin\\Desktop\\Codex\\Archie\\apps\\web\\playwright.config.ts",
-    "rootDir": "C:/Users/userAdmin/Desktop/Codex/Archie/apps/web/tests",
+    "configFile": "/Users/shauny/Developer/Archie/apps/web/playwright.config.ts",
+    "rootDir": "/Users/shauny/Developer/Archie/apps/web/tests",
     "failOnFlakyTests": false,
     "forbidOnly": false,
     "fullyParallel": false,
@@ -17,20 +17,20 @@
     "grepInvert": null,
     "maxFailures": 0,
     "metadata": {
-      "actualWorkers": 5
+      "actualWorkers": 6
     },
     "preserveOutput": "always",
     "projects": [
       {
-        "outputDir": "C:/Users/userAdmin/Desktop/Codex/Archie/apps/web/test-results",
+        "outputDir": "/Users/shauny/Developer/Archie/apps/web/test-results",
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
-          "actualWorkers": 5
+          "actualWorkers": 6
         },
         "id": "",
         "name": "",
-        "testDir": "C:/Users/userAdmin/Desktop/Codex/Archie/apps/web/tests",
+        "testDir": "/Users/shauny/Developer/Archie/apps/web/tests",
         "testIgnore": [],
         "testMatch": [
           "**/*.@(spec|test).?(c|m)[jt]s?(x)"
@@ -60,7 +60,7 @@
     "updateSnapshots": "missing",
     "updateSourceMethod": "patch",
     "version": "1.63.0",
-    "workers": 10,
+    "workers": 6,
     "webServer": null
   },
   "suites": [
@@ -86,12 +86,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3334,
+                  "duration": 1615,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-21T09:49:10.029Z",
+                  "startTime": "2026-09-21T12:41:16.899Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -102,6 +102,192 @@
           "id": "c7f19e806919ac620bf8-4a856a224aef5996f2f7",
           "file": "branding.spec.ts",
           "line": 2,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "capacity.spec.ts",
+      "file": "capacity.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "T14 browser loads, edits and reopens 50 components and 100 interfaces",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 4127,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-21T12:41:16.901Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "65b6a4de6fbf056e5da4-00d1fe5266f6508e2243",
+          "file": "capacity.spec.ts",
+          "line": 5,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "editor.spec.ts",
+      "file": "editor.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "canvas shortcuts, groups, clipboard, delete and history preserve references without AI",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 2,
+                  "status": "passed",
+                  "duration": 3614,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-21T12:41:16.888Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d2f56d7d370f0ba02e91-ae0ae841ba3ed755a7a2",
+          "file": "editor.spec.ts",
+          "line": 4,
+          "column": 1
+        },
+        {
+          "title": "panels collapse, resize and persist on laptop; component library filters",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 2,
+                  "status": "passed",
+                  "duration": 1170,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-21T12:41:20.789Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d2f56d7d370f0ba02e91-969c6d019afe67c55a08",
+          "file": "editor.spec.ts",
+          "line": 30,
+          "column": 1
+        },
+        {
+          "title": "late view responses cannot replace the selected view",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 2,
+                  "status": "passed",
+                  "duration": 1339,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-21T12:41:21.966Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d2f56d7d370f0ba02e91-6f8fd47e4276f7b0c332",
+          "file": "editor.spec.ts",
+          "line": 45,
+          "column": 1
+        },
+        {
+          "title": "group pointer movement and Option snapping preserve architectural deployment zones",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 2,
+                  "status": "passed",
+                  "duration": 1219,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-21T12:41:23.312Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d2f56d7d370f0ba02e91-f1e1124a39cb898ad5f4",
+          "file": "editor.spec.ts",
+          "line": 53,
           "column": 1
         }
       ]
@@ -125,15 +311,15 @@
               "projectName": "",
               "results": [
                 {
-                  "workerIndex": 1,
-                  "parallelIndex": 1,
+                  "workerIndex": 3,
+                  "parallelIndex": 3,
                   "status": "passed",
-                  "duration": 3736,
+                  "duration": 1951,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-21T09:49:10.052Z",
+                  "startTime": "2026-09-21T12:41:16.892Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -167,15 +353,15 @@
               "projectName": "",
               "results": [
                 {
-                  "workerIndex": 2,
-                  "parallelIndex": 2,
+                  "workerIndex": 4,
+                  "parallelIndex": 4,
                   "status": "passed",
-                  "duration": 4755,
+                  "duration": 2877,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-21T09:49:10.044Z",
+                  "startTime": "2026-09-21T12:41:16.884Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -209,15 +395,15 @@
               "projectName": "",
               "results": [
                 {
-                  "workerIndex": 3,
-                  "parallelIndex": 3,
+                  "workerIndex": 5,
+                  "parallelIndex": 5,
                   "status": "passed",
-                  "duration": 5381,
+                  "duration": 3930,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-21T09:49:10.046Z",
+                  "startTime": "2026-09-21T12:41:16.889Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -243,15 +429,15 @@
               "projectName": "",
               "results": [
                 {
-                  "workerIndex": 3,
-                  "parallelIndex": 3,
+                  "workerIndex": 5,
+                  "parallelIndex": 5,
                   "status": "passed",
-                  "duration": 1226,
+                  "duration": 727,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-21T09:49:16.043Z",
+                  "startTime": "2026-09-21T12:41:21.123Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -285,15 +471,15 @@
               "projectName": "",
               "results": [
                 {
-                  "workerIndex": 4,
-                  "parallelIndex": 4,
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 4407,
+                  "duration": 1570,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-21T09:49:10.076Z",
+                  "startTime": "2026-09-21T12:41:18.810Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -307,13 +493,55 @@
           "column": 1
         }
       ]
+    },
+    {
+      "title": "routes.spec.ts",
+      "file": "routes.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "manual connector waypoints, line style, reconnect and prompt preservation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 3,
+                  "status": "passed",
+                  "duration": 2192,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-21T12:41:19.141Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "598fdabf36083b33787e-a6fd7f6f3cf0b38a9cd3",
+          "file": "routes.spec.ts",
+          "line": 3,
+          "column": 1
+        }
+      ]
     }
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-09-21T09:49:05.312Z",
-    "duration": 13418.765000000001,
-    "expected": 6,
+    "startTime": "2026-09-21T12:41:15.243Z",
+    "duration": 9330.431,
+    "expected": 12,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

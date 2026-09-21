@@ -1,21 +1,17 @@
-# Engineering checkpoint — 21 September 2026
+# Engineering checkpoint — 21 September 2026, Mac continuation
 
-The user requested a stable stopping point and a push to `shaunyuencw/Archie` before leaving. M0–M4 have individual checkpoints. M5 consistency and M6 exports are implemented; M7 handover remains in progress. See root `PROGRESS.md` and `docs/ACCEPTANCE.md` for the honest completion matrix.
+Mac presentation-prototype checkpoint. M0–M5 pass; M6 cross-platform exports and M7 Mac handover verified. Native Visio acceptance remains open. Estimated guided-demo readiness 90%; this is a judgement, not test coverage or production readiness. See `PROGRESS.md` and `docs/ACCEPTANCE.md`.
 
-Implemented: canonical model and validated commands, SQLite revisions/undo, deterministic synthetic packs, React Flow editing and three projections, local document ingestion and exact evidence, fact review/questions, eight rule checks plus 12 manual clauses, bounded providers and budget ledger, prompt changes, cached narrative, JSON/SVG/DOCX/Markdown/CSV exports, sanitised pattern import/export, native Visio helper, Archie logo/robot.
+Implemented this pass: pnpm/Node/Python startup portability, stale-view cancellation and serialized local commands, backend redo/branch invalidation, canvas keyboard and clipboard/group edits, 16-unit snapping with Option bypass, explicit zone reassignment, draggable routes and dependable endpoint hit targets, inferred directional handles, non-overlapping external defaults, collapsible/resizable persisted panels/focus/search, compact visual hierarchy, deferred ELK loading, updated SVG/DOCX rendering, conservative provider scope evidence guard.
 
-Verification: 25 backend tests passed in the latest recorded run. Final full offline runner results are in `reports/offline-gate.json`; detailed browser results in `reports/browser-tests.json`. Production build passes with a bundle-size warning. TypeScript and frontend unit test pass. Latest Visio helper passes PowerShell syntax parsing; native execution is unavailable.
+Final offline gate: **35 backend, 7 frontend unit, 12 browser journeys, TypeScript, production build — passed** (`reports/offline-gate.json`). Existing tests were retained. Additional evidence includes actual pointer groups, snapping, undo/redo/copy/paste/delete, input shortcut isolation, route/prompt preservation, zero model calls for canvas work and 50/100 capacity. Initial Mac baseline failure and previous Windows results retained separately.
 
-Live evidence: Terra extraction/native-tool/targeted-edit smoke passes at about $0.006948 for that three-call run. Previous attempts are preserved separately. Qwen3:4b connects but latest extraction/tool/edit candidates fail validation; rejected output does not mutate accepted state. No hidden cloud fallback or automatic model downloads. User-authorised local cloud settings are ignored by Git; distributed defaults remain mock/cloud-off.
+Live: Terra A/B flows passed in four requests including one repair, estimated $0.0743975. Qwen3:14b small extraction passed (one request); richer flow failed safely (two attempts). Shared seven requests stayed below eight/$0.50. No escalation, cloud fallback or downloads. Report: `reports/mac-resume-20260921-providers.md`. Unsupported scope found in live-output review was corrected via offline replay and versioned commands in current saved demos; original evidence preserved.
 
-Environment: Windows 11, Python 3.12.4, Node 24.19.0, RTX 3080 Ti Laptop GPU (16,384 MiB), 68,334,067,712 bytes RAM. Visio COM is absent. Mac/M2 Max untested. No peak VRAM measurement or human time-savings experiment.
+Environment: macOS 26.6.2, M2 Max, 32 GiB, Python 3.12.0, Node 22.23.1, pnpm 11.19.0, Chromium 153.0.8010.12, Ollama 0.34.2. Qwen14B observed 10 GB loaded / 100% GPU / 8192 context, not peak sampling. Historical Windows RTX evidence remains in `reports/windows-checkpoint` and prior smoke reports.
 
-Remaining after this checkpoint:
+QA: all source DOCX/PDF pages, three narrative pages and three SVG views inspected (`reports/mac-export-qa/review.json`). Browser capacity records 50 components/100 interfaces with intact references and zero provider requests. Initial application JS reduced to ~403 kB/~130 kB gzip; on-demand ELK chunk still triggers size warning. Starlette test client emits a dependency deprecation warning.
 
-1. Final SVG appearance alignment with the updated equipment canvas; rendered PDF/DOCX visual QA (LibreOffice unavailable for DOCX).
-2. Browser capacity measurements at 50 components/100 interfaces; backend capacity test already passes.
-3. Optional real live-document integration check, only within explicitly authorised budgets; mocked transport tests pass.
-4. Native Visio manual checklist on a licensed Windows desktop. Logical/SV-2 handover is implemented; SV-1 aggregation and exact manual bends are not in the helper.
-5. Final M7 source archive and acceptance review. Do not claim all milestones or all live providers complete.
+Remaining: P0 none known for verified guided Terra demo; P1 dense automatic-routing intersections, no alignment guides, full Ollama reliability; P2 licensed Windows native Visio and refreshed Windows execution. No native VSDX claim or measured human time savings.
 
-Next task: resume these remaining M7 checks without repeating paid smoke tests or rebuilding working modules for style.
+Launch: `bash scripts/dev.sh`; offline gate: `bash scripts/test.sh`; initial dependencies: `bash scripts/setup.sh`. Handover archive excludes `.env`, local databases and dependencies. Next task: native-host Visio verification or scoped routing/local-model work. Do not rerun paid calls for wording/layout.

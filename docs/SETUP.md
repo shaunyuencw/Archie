@@ -1,6 +1,8 @@
 # Setup and operation
 
-The tested host is Windows 11, Python 3.12.4, Node 24.19.0 and Microsoft Edge. Dependencies are pinned in `requirements.lock`, `apps/web/package-lock.json` and the alternative pnpm lockfile. macOS commands are supplied but have not been executed on an M2 Max.
+Verified Mac: macOS 26.6.2, M2 Max, 32 GiB unified memory, Python 3.12.0, Node 22.23.1, pnpm 11.19.0 and Playwright Chromium 153.0.8010.12. Historical Windows 11 / Python 3.12.4 / Node 24.19.0 / Edge evidence remains in `reports/windows-checkpoint` and prior live reports. Dependencies are pinned in `requirements.lock` and `apps/web/pnpm-lock.yaml`.
+
+The Mac launcher preserves a supported active Node, or chooses an already installed Node 22/24/Homebrew runtime when the shell default is unsupported. This Mac's shell default was Node 21.5.0 / Python 3.10.9; setup selected installed Python 3.12 and Node 22 without changing shell configuration. Install pnpm 11 (or provide Corepack) before first setup.
 
 1. Clone the repository and open a terminal at its root.
 2. Run `./scripts/setup.ps1` on Windows or `bash scripts/setup.sh` on macOS. Setup preserves an existing `.env`. It downloads software dependencies, not language-model weights.
@@ -22,9 +24,9 @@ Copy `.env.example` to `.env` if needed. Put the OpenAI key only in `OPENAI_API_
 
 For explicitly authorised cloud use, set `APP_ALLOW_CLOUD=true`, supply the key and select OpenAI in the app. Default model is `gpt-5.4-mini`; the tested alternative is `gpt-5.6-terra`. Price configuration and date are in `config/pricing.json`. Unknown billing models are blocked until pricing is configured. Runtime limits do not cap the coding agent's own usage or the whole OpenAI account.
 
-Defaults: $0.10/action, $0.20/document action, $1/day, $5/project; four calls/action with smaller task limits. The local user's authorised configuration raises the first three to $0.15/$0.30/$1.50, but it is excluded from the repository. Reservations include in-flight requests and survive restart. Ambiguous failures retain their reservation. Settings shows effective limits; mouse edits, layout, deterministic narrative and exports do not call a model.
+Defaults: $0.10/action, $0.20/document action, $1/day, $5/project; four calls/action with smaller task limits. The authorised ignored `.env` on this Mac uses `OPENAI_MODEL=gpt-5.6-terra`, 32,000 input / 6,000 output tokens, six calls/action, and $0.50/action, $1/document, $5/day, $12/project ceilings. `APP_LIVE_TESTS=true` and cloud opt-in are enabled for the authorised workflow; startup still selects mock. These are hard ceilings, not targets. Reservations include in-flight requests and survive restart. Ambiguous failures retain their reservation. Settings shows effective limits; mouse edits, layout, deterministic narrative and exports do not call a model.
 
-Ollama: install Ollama separately, provide an already installed `qwen3:4b`, keep `OLLAMA_BASE_URL=http://127.0.0.1:11434`, and select Ollama. No weights are downloaded by startup or tests. The local profile uses 4K context and serial execution. The current small model fails some reference/tool checks, and rejected output does not change accepted architecture. It never falls back to OpenAI.
+Ollama is installed and running here (0.34.2). The selected already-installed `qwen3:14b` is Q4_K_M, 14.8B, with 8,192 context; observed loaded memory was 10 GB / 100% GPU, not a peak measurement. Its small extraction passed, but the richer two-component journey failed. Historical qwen3:4b remains separately recorded. No models are downloaded by setup/tests, and there is no cloud fallback. Local requests have smaller task token caps and serial execution.
 
 ## Commands
 
@@ -35,14 +37,24 @@ Use `.venv/Scripts/python.exe` on Windows or `.venv/bin/python` on macOS before 
 | `scripts/seed.py` | Regenerate synthetic fixture categories deterministically. |
 | `scripts/contracts.py` then `node scripts/contracts.mjs` | Derive web contracts after canonical schema changes. |
 | `scripts/doctor.py` | Read-only environment report, no secrets or model downloads. |
-| `scripts/test.py` | Full offline gate; exits on the first failing step. |
+| `scripts/test.py` (Mac: `bash scripts/test.sh`) | Full offline gate; exits on the first failing step. |
 | `scripts/evaluate.py` | Compare fixture extraction against authored component/interface facts. |
 | `scripts/export_samples.py` | Regenerate snapshot exports. |
 | `scripts/smoke.py --provider ollama` | Explicit local smoke using installed model. |
 | `scripts/smoke.py --provider openai --live --max-calls 10 --budget-usd 0.50` | Explicit paid smoke, subject to application limits; current script performs three checks, within that ceiling. |
 
-Browser tests run separate services on ports 18000 and 15173 and use an isolated database. They leave the demo services on 8000/5173 alone. Windows uses installed Edge. On macOS, from `apps/web`, run `npx playwright install chromium` once before testing. Setup/browser installation needs internet; mock operation and tests thereafter do not require a model connection.
+Browser tests run separate services on ports 18000 and 15173 and use an isolated database. They leave the demo services on 8000/5173 alone. Windows uses installed Edge. On macOS, from `apps/web`, run `pnpm exec playwright install chromium` once before testing. Setup/browser installation needs internet; mock operation and tests thereafter do not require a model connection.
 
 ## Current limits
 
 Synthetic inputs only for live providers; text PDF and DOCX only, no OCR. Uploads are limited to 10 MB, expanded DOCX to 50 MB. Batches report remaining sections; cloud document processing has a separate reviewable preflight. The mock interpreter recognises authored fixture records and a small prompt grammar, not arbitrary prose. Capacity is capped at 50 components/100 interfaces. No organisation-specific compliance approval, native Visio verification, real-world accuracy or human time-saving result is claimed.
+
+## Verified Mac launch
+
+```sh
+cd /Users/shauny/Developer/Archie
+bash scripts/setup.sh   # first time, or when dependencies change
+bash scripts/dev.sh
+```
+
+For the offline gate use `bash scripts/test.sh`. The launcher keeps ports 8000 and 5173 on loopback. Stop an existing launcher with Ctrl+C before starting another. After `.env` changes, restart the backend.

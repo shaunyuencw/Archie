@@ -1,0 +1,113 @@
+{
+  "action": "Conservative scope normalization of saved Mac demo projects",
+  "network_calls": 0,
+  "source_report": "reports/mac-resume-20260921-openai/report.json",
+  "historical_snapshots": "Original flow-a-project.json and flow-b-project.json are unchanged. Only current SQLite projects changed through versioned preview/commit commands.",
+  "projects": [
+    {
+      "flow": "A",
+      "project_id": "b2f1d4f9-03e4-4713-867c-1a9a00299d94",
+      "project_name": "ARCHIE openai live prompt journey",
+      "before_revision": 3,
+      "current_revision": 4,
+      "change_id": "c7a8f14b-f16c-4e48-9f3e-4bab3150f694",
+      "fields": [
+        {
+          "entity": "systems",
+          "id": "f0a1d569-379e-5d4f-8e6a-292129c41308",
+          "name": "Event manager",
+          "field": "scope",
+          "before": "internal",
+          "after": "unknown",
+          "reason": "No matching confirmed scope field/record claim; same conservative guard as provider additions."
+        },
+        {
+          "entity": "components",
+          "id": "496b338f-3fd5-5c2c-909e-4b5cdb1a5a43",
+          "name": "Event manager",
+          "field": "scope",
+          "before": "internal",
+          "after": "unknown",
+          "reason": "No matching confirmed scope field/record claim; same conservative guard as provider additions."
+        }
+      ],
+      "manual_presentation_preserved": true,
+      "model_calls": 0
+    },
+    {
+      "flow": "B",
+      "project_id": "0bbe6e98-5971-43dd-87dd-941ed6c7511b",
+      "project_name": "ARCHIE openai live document journey",
+      "before_revision": 2,
+      "current_revision": 3,
+      "change_id": "ade5a5f6-614d-43ce-817a-c00ea6c06b6e",
+      "fields": [
+        {
+          "entity": "components",
+          "id": "vms",
+          "name": "VMS",
+          "field": "scope",
+          "before": "internal",
+          "after": "unknown",
+          "reason": "No matching confirmed scope field/record claim; same conservative guard as provider additions."
+        },
+        {
+          "entity": "components",
+          "id": "operator",
+          "name": "Operator workstation",
+          "field": "scope",
+          "before": "internal",
+          "after": "unknown",
+          "reason": "No matching confirmed scope field/record claim; same conservative guard as provider additions."
+        },
+        {
+          "entity": "components",
+          "id": "configuration",
+          "name": "Configuration workstation",
+          "field": "scope",
+          "before": "internal",
+          "after": "unknown",
+          "reason": "No matching confirmed scope field/record claim; same conservative guard as provider additions."
+        },
+        {
+          "entity": "components",
+          "id": "management",
+          "name": "VAP management",
+          "field": "scope",
+          "before": "internal",
+          "after": "unknown",
+          "reason": "No matching confirmed scope field/record claim; same conservative guard as provider additions."
+        },
+        {
+          "entity": "components",
+          "id": "analytics",
+          "name": "VAP analytics",
+          "field": "scope",
+          "before": "internal",
+          "after": "unknown",
+          "reason": "No matching confirmed scope field/record claim; same conservative guard as provider additions."
+        },
+        {
+          "entity": "components",
+          "id": "audit",
+          "name": "Audit destination",
+          "field": "scope",
+          "before": "internal",
+          "after": "unknown",
+          "reason": "No matching confirmed scope field/record claim; same conservative guard as provider additions."
+        },
+        {
+          "entity": "components",
+          "id": "enforcement",
+          "name": "Management enforcement",
+          "field": "scope",
+          "before": "internal",
+          "after": "unknown",
+          "reason": "No matching confirmed scope field/record claim; same conservative guard as provider additions."
+        }
+      ],
+      "manual_presentation_preserved": true,
+      "model_calls": 0
+    }
+  ]
+}

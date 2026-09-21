@@ -1,0 +1,1220 @@
+{
+  "id": "reference-A",
+  "name": "A reference — SYNTHETIC — DEMONSTRATION ONLY",
+  "schema_version": "1.0",
+  "revision": 0,
+  "created_at": "2026-09-21T00:00:00+00:00",
+  "updated_at": "2026-09-21T00:00:00+00:00",
+  "synthetic": true,
+  "policy_version": "1.0",
+  "template_version": "1.0",
+  "systems": [
+    {
+      "id": "vms-system",
+      "name": "VMS",
+      "scope": "internal"
+    },
+    {
+      "id": "client-system",
+      "name": "Client",
+      "scope": "internal"
+    },
+    {
+      "id": "vap-system",
+      "name": "VAP",
+      "scope": "internal"
+    },
+    {
+      "id": "c2-system",
+      "name": "C2",
+      "scope": "external"
+    }
+  ],
+  "zones": [
+    {
+      "id": "infrastructure",
+      "name": "Infrastructure"
+    },
+    {
+      "id": "client",
+      "name": "Client"
+    },
+    {
+      "id": "z1",
+      "name": "Z1"
+    },
+    {
+      "id": "z2",
+      "name": "Z2"
+    }
+  ],
+  "components": [
+    {
+      "id": "vms",
+      "name": "VMS",
+      "role": "video management",
+      "system_id": "vms-system",
+      "status": "existing",
+      "asset_id": "application",
+      "scope": "internal",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "claim-vms"
+      ]
+    },
+    {
+      "id": "operator",
+      "name": "Operator workstation",
+      "role": "operator",
+      "system_id": "client-system",
+      "status": "existing",
+      "asset_id": "workstation",
+      "scope": "internal",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "claim-operator"
+      ]
+    },
+    {
+      "id": "configuration",
+      "name": "Configuration workstation",
+      "role": "configuration",
+      "system_id": "client-system",
+      "status": "existing",
+      "asset_id": "workstation",
+      "scope": "internal",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "claim-configuration"
+      ]
+    },
+    {
+      "id": "management",
+      "name": "VAP management",
+      "role": "management integration",
+      "system_id": "vap-system",
+      "status": "new",
+      "asset_id": "api-service",
+      "scope": "internal",
+      "audit_destination": "audit",
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "claim-management"
+      ]
+    },
+    {
+      "id": "analytics",
+      "name": "VAP analytics",
+      "role": "analytics",
+      "system_id": "vap-system",
+      "status": "new",
+      "asset_id": "analytics-engine",
+      "scope": "internal",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "claim-analytics"
+      ]
+    },
+    {
+      "id": "c2",
+      "name": "C2",
+      "role": "external command system",
+      "system_id": "c2-system",
+      "status": "existing",
+      "asset_id": "external-system",
+      "scope": "external",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "claim-c2"
+      ]
+    },
+    {
+      "id": "audit",
+      "name": "Audit destination",
+      "role": "audit",
+      "system_id": "vap-system",
+      "status": "proposed",
+      "asset_id": "audit-service",
+      "scope": "internal",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "claim-audit"
+      ]
+    },
+    {
+      "id": "enforcement",
+      "name": "Management enforcement",
+      "role": "firewall",
+      "system_id": "vap-system",
+      "status": "proposed",
+      "asset_id": "firewall",
+      "scope": "internal",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "claim-enforcement"
+      ]
+    }
+  ],
+  "deployments": [
+    {
+      "id": "deployment-vms",
+      "component_id": "vms",
+      "zone_id": "infrastructure",
+      "host": null,
+      "site": null,
+      "quantity": null
+    },
+    {
+      "id": "deployment-operator",
+      "component_id": "operator",
+      "zone_id": "client",
+      "host": null,
+      "site": null,
+      "quantity": 1
+    },
+    {
+      "id": "deployment-configuration",
+      "component_id": "configuration",
+      "zone_id": "client",
+      "host": null,
+      "site": null,
+      "quantity": 1
+    },
+    {
+      "id": "deployment-management",
+      "component_id": "management",
+      "zone_id": "z1",
+      "host": null,
+      "site": null,
+      "quantity": null
+    },
+    {
+      "id": "deployment-analytics",
+      "component_id": "analytics",
+      "zone_id": "z2",
+      "host": null,
+      "site": null,
+      "quantity": null
+    },
+    {
+      "id": "deployment-c2",
+      "component_id": "c2",
+      "zone_id": null,
+      "host": null,
+      "site": null,
+      "quantity": null
+    },
+    {
+      "id": "deployment-audit",
+      "component_id": "audit",
+      "zone_id": "z1",
+      "host": null,
+      "site": null,
+      "quantity": null
+    },
+    {
+      "id": "deployment-enforcement",
+      "component_id": "enforcement",
+      "zone_id": "z1",
+      "host": null,
+      "site": null,
+      "quantity": null
+    }
+  ],
+  "interfaces": [
+    {
+      "id": "video",
+      "source": "vms",
+      "target": "analytics",
+      "purpose": "video",
+      "data_direction": "source_to_target",
+      "initiator": "analytics",
+      "protocol": "RTSP",
+      "port": null,
+      "enforcement": [],
+      "delivery": null,
+      "evidence": [
+        "claim-video"
+      ]
+    },
+    {
+      "id": "events",
+      "source": "management",
+      "target": "c2",
+      "purpose": "events",
+      "data_direction": "source_to_target",
+      "initiator": "management",
+      "protocol": "HTTPS",
+      "port": null,
+      "enforcement": [],
+      "delivery": "push",
+      "evidence": [
+        "claim-events"
+      ]
+    },
+    {
+      "id": "administration",
+      "source": "configuration",
+      "target": "management",
+      "purpose": "management",
+      "data_direction": "bidirectional",
+      "initiator": "configuration",
+      "protocol": "HTTPS",
+      "port": null,
+      "enforcement": [
+        "enforcement"
+      ],
+      "delivery": null,
+      "evidence": [
+        "claim-administration"
+      ]
+    },
+    {
+      "id": "integration",
+      "source": "management",
+      "target": "analytics",
+      "purpose": "integration",
+      "data_direction": "bidirectional",
+      "initiator": "management",
+      "protocol": "HTTPS",
+      "port": null,
+      "enforcement": [],
+      "delivery": null,
+      "evidence": [
+        "claim-integration"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "reference-source",
+      "name": "A authored facts",
+      "version": "1.0",
+      "kind": "document",
+      "sha256": "fixture",
+      "canonical_id": "A-reference",
+      "variants": [],
+      "passages": [
+        {
+          "locator": "row/1",
+          "heading": "",
+          "text": "System vms-system: name=\"VMS\"; scope=\"internal\"",
+          "page": null
+        },
+        {
+          "locator": "row/2",
+          "heading": "",
+          "text": "System client-system: name=\"Client\"; scope=\"internal\"",
+          "page": null
+        },
+        {
+          "locator": "row/3",
+          "heading": "",
+          "text": "System vap-system: name=\"VAP\"; scope=\"internal\"",
+          "page": null
+        },
+        {
+          "locator": "row/4",
+          "heading": "",
+          "text": "System c2-system: name=\"C2\"; scope=\"external\"",
+          "page": null
+        },
+        {
+          "locator": "row/5",
+          "heading": "",
+          "text": "Zone infrastructure: name=\"Infrastructure\"",
+          "page": null
+        },
+        {
+          "locator": "row/6",
+          "heading": "",
+          "text": "Zone client: name=\"Client\"",
+          "page": null
+        },
+        {
+          "locator": "row/7",
+          "heading": "",
+          "text": "Zone z1: name=\"Z1\"",
+          "page": null
+        },
+        {
+          "locator": "row/8",
+          "heading": "",
+          "text": "Zone z2: name=\"Z2\"",
+          "page": null
+        },
+        {
+          "locator": "row/9",
+          "heading": "",
+          "text": "Component vms: name=\"VMS\"; role=\"video management\"; system_id=\"vms-system\"; zone_id=\"infrastructure\"; status=\"existing\"; asset_id=\"application\"",
+          "page": null
+        },
+        {
+          "locator": "row/10",
+          "heading": "",
+          "text": "Component operator: name=\"Operator workstation\"; role=\"operator\"; system_id=\"client-system\"; zone_id=\"client\"; status=\"existing\"; asset_id=\"workstation\"; quantity=1",
+          "page": null
+        },
+        {
+          "locator": "row/11",
+          "heading": "",
+          "text": "Component configuration: name=\"Configuration workstation\"; role=\"configuration\"; system_id=\"client-system\"; zone_id=\"client\"; status=\"existing\"; asset_id=\"workstation\"; quantity=1",
+          "page": null
+        },
+        {
+          "locator": "row/12",
+          "heading": "",
+          "text": "Component management: name=\"VAP management\"; role=\"management integration\"; system_id=\"vap-system\"; zone_id=\"z1\"; status=\"new\"; asset_id=\"api-service\"; audit_destination=\"audit\"",
+          "page": null
+        },
+        {
+          "locator": "row/13",
+          "heading": "",
+          "text": "Component analytics: name=\"VAP analytics\"; role=\"analytics\"; system_id=\"vap-system\"; zone_id=\"z2\"; status=\"new\"; asset_id=\"analytics-engine\"",
+          "page": null
+        },
+        {
+          "locator": "row/14",
+          "heading": "",
+          "text": "Component c2: name=\"C2\"; role=\"external command system\"; system_id=\"c2-system\"; zone_id=null; status=\"existing\"; asset_id=\"external-system\"; scope=\"external\"",
+          "page": null
+        },
+        {
+          "locator": "row/15",
+          "heading": "",
+          "text": "Component audit: name=\"Audit destination\"; role=\"audit\"; system_id=\"vap-system\"; zone_id=\"z1\"; status=\"proposed\"; asset_id=\"audit-service\"",
+          "page": null
+        },
+        {
+          "locator": "row/16",
+          "heading": "",
+          "text": "Component enforcement: name=\"Management enforcement\"; role=\"firewall\"; system_id=\"vap-system\"; zone_id=\"z1\"; status=\"proposed\"; asset_id=\"firewall\"",
+          "page": null
+        },
+        {
+          "locator": "row/17",
+          "heading": "",
+          "text": "Interface video: source=\"vms\"; target=\"analytics\"; purpose=\"video\"; data_direction=\"source_to_target\"; initiator=\"analytics\"; protocol=\"RTSP\"; port=null",
+          "page": null
+        },
+        {
+          "locator": "row/18",
+          "heading": "",
+          "text": "Interface events: source=\"management\"; target=\"c2\"; purpose=\"events\"; data_direction=\"source_to_target\"; initiator=\"management\"; protocol=\"HTTPS\"; delivery=\"push\"",
+          "page": null
+        },
+        {
+          "locator": "row/19",
+          "heading": "",
+          "text": "Interface administration: source=\"configuration\"; target=\"management\"; purpose=\"management\"; data_direction=\"bidirectional\"; initiator=\"configuration\"; protocol=\"HTTPS\"; enforcement=[\"enforcement\"]",
+          "page": null
+        },
+        {
+          "locator": "row/20",
+          "heading": "",
+          "text": "Interface integration: source=\"management\"; target=\"analytics\"; purpose=\"integration\"; data_direction=\"bidirectional\"; initiator=\"management\"; protocol=\"HTTPS\"",
+          "page": null
+        },
+        {
+          "locator": "row/21",
+          "heading": "",
+          "text": "Constraint capacity: key=\"capacity_streams\"; value=100",
+          "page": null
+        },
+        {
+          "locator": "row/22",
+          "heading": "",
+          "text": "Constraint sizing: key=\"equipment_sizing\"; value=\"undecided\"",
+          "page": null
+        },
+        {
+          "locator": "row/23",
+          "heading": "",
+          "text": "Constraint offline: key=\"no_internet\"; value=true",
+          "page": null
+        },
+        {
+          "locator": "row/24",
+          "heading": "",
+          "text": "Constraint resilience: key=\"resilience_required\"; value=false",
+          "page": null
+        },
+        {
+          "locator": "row/25",
+          "heading": "",
+          "text": "Constraint availability: key=\"availability_strategy\"; value=\"single_instance\"",
+          "page": null
+        }
+      ],
+      "processed": [],
+      "unprocessed": [],
+      "unsupported_pages": []
+    }
+  ],
+  "claims": [
+    {
+      "id": "claim-vms-system",
+      "source_id": "reference-source",
+      "source_version": "1.0",
+      "locator": "row/1",
+      "excerpt": "System vms-system: name=\"VMS\"; scope=\"internal\"",
+      "target_id": "vms-system",
+      "field": "record",
+      "value": "System vms-system: name=\"VMS\"; scope=\"internal\"",
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-client-system",
+      "source_id": "reference-source",
+      "source_version": "1.0",
+      "locator": "row/2",
+      "excerpt": "System client-system: name=\"Client\"; scope=\"internal\"",
+      "target_id": "client-system",
+      "field": "record",
+      "value": "System client-system: name=\"Client\"; scope=\"internal\"",
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-vap-system",
+      "source_id": "reference-source",
+      "source_version": "1.0",
+      "locator": "row/3",
+      "excerpt": "System vap-system: name=\"VAP\"; scope=\"internal\"",
+      "target_id": "vap-system",
+      "field": "record",
+      "value": "System vap-system: name=\"VAP\"; scope=\"internal\"",
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-c2-system",
+      "source_id": "reference-source",
+      "source_version": "1.0",
+      "locator": "row/4",
+      "excerpt": "System c2-system: name=\"C2\"; scope=\"external\"",
+      "target_id": "c2-system",
+      "field": "record",
+      "value": "System c2-system: name=\"C2\"; scope=\"external\"",
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-infrastructure",
+      "source_id": "reference-source",
+      "source_version": "1.0",
+      "locator": "row/5",
+      "excerpt": "Zone infrastructure: name=\"Infrastructure\"",
+      "target_id": "infrastructure",
+      "field": "record",
+      "value": "Zone infrastructure: name=\"Infrastructure\"",
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-client",
+      "source_id": "reference-source",
+      "source_version": "1.0",
+      "locator": "row/6",
+      "excerpt": "Zone client: name=\"Client\"",
+      "target_id": "client",
+      "field": "record",
+      "value": "Zone client: name=\"Client\"",
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-z1",
+      "source_id": "reference-source",
+      "source_version": "1.0",
+      "locator": "row/7",
+      "excerpt": "Zone z1: name=\"Z1\"",
+      "target_id": "z1",
+      "field": "record",
+      "value": "Zone z1: name=\"Z1\"",
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-z2",
+      "source_id": "reference-source",
+      "source_version": "1.0",
+      "locator": "row/8",
+      "excerpt": "Zone z2: name=\"Z2\"",
+      "target_id": "z2",
+      "field": "record",
+      "value": "Zone z2: name=\"Z2\"",
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-vms",
+      "source_id": "reference-source",
+      "source_version": "1.0",
+      "locator": "row/9",
+      "excerpt": "Component vms: name=\"VMS\"; role=\"video management\"; system_id=\"vms-system\"; zone_id=\"infrastructure\"; status=\"existing\"; asset_id=\"application\"",
+      "target_id": "vms",
+      "field": "record",
+      "value": "Component vms: name=\"VMS\"; role=\"video management\"; system_id=\"vms-system\"; zone_id=\"infrastructure\"; status=\"existing\"; asset_id=\"application\"",
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-operator",
+      "source_id": "reference-source",
+      "source_version": "1.0",
+      "locator": "row/10",
+      "excerpt": "Component operator: name=\"Operator workstation\"; role=\"operator\"; system_id=\"client-system\"; zone_id=\"client\"; status=\"existing\"; asset_id=\"workstation\"; quantity=1",
+      "target_id": "operator",
+      "field": "record",
+      "value": "Component operator: name=\"Operator workstation\"; role=\"operator\"; system_id=\"client-system\"; zone_id=\"client\"; status=\"existing\"; asset_id=\"workstation\"; quantity=1",
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-configuration",
+      "source_id": "reference-source",
+      "source_version": "1.0",
+      "locator": "row/11",
+      "excerpt": "Component configuration: name=\"Configuration workstation\"; role=\"configuration\"; system_id=\"client-system\"; zone_id=\"client\"; status=\"existing\"; asset_id=\"workstation\"; quantity=1",
+      "target_id": "configuration",
+      "field": "record",
+      "value": "Component configuration: name=\"Configuration workstation\"; role=\"configuration\"; system_id=\"client-system\"; zone_id=\"client\"; status=\"existing\"; asset_id=\"workstation\"; quantity=1",
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-management",
+      "source_id": "reference-source",
+      "source_version": "1.0",
+      "locator": "row/12",
+      "excerpt": "Component management: name=\"VAP management\"; role=\"management integration\"; system_id=\"vap-system\"; zone_id=\"z1\"; status=\"new\"; asset_id=\"api-service\"; audit_destination=\"audit\"",
+      "target_id": "management",
+      "field": "record",
+      "value": "Component management: name=\"VAP management\"; role=\"management integration\"; system_id=\"vap-system\"; zone_id=\"z1\"; status=\"new\"; asset_id=\"api-service\"; audit_destination=\"audit\"",
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-analytics",
+      "source_id": "reference-source",
+      "source_version": "1.0",
+      "locator": "row/13",
+      "excerpt": "Component analytics: name=\"VAP analytics\"; role=\"analytics\"; system_id=\"vap-system\"; zone_id=\"z2\"; status=\"new\"; asset_id=\"analytics-engine\"",
+      "target_id": "analytics",
+      "field": "record",
+      "value": "Component analytics: name=\"VAP analytics\"; role=\"analytics\"; system_id=\"vap-system\"; zone_id=\"z2\"; status=\"new\"; asset_id=\"analytics-engine\"",
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-c2",
+      "source_id": "reference-source",
+      "source_version": "1.0",
+      "locator": "row/14",
+      "excerpt": "Component c2: name=\"C2\"; role=\"external command system\"; system_id=\"c2-system\"; zone_id=null; status=\"existing\"; asset_id=\"external-system\"; scope=\"external\"",
+      "target_id": "c2",
+      "field": "record",
+      "value": "Component c2: name=\"C2\"; role=\"external command system\"; system_id=\"c2-system\"; zone_id=null; status=\"existing\"; asset_id=\"external-system\"; scope=\"external\"",
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-audit",
+      "source_id": "reference-source",
+      "source_version": "1.0",
+      "locator": "row/15",
+      "excerpt": "Component audit: name=\"Audit destination\"; role=\"audit\"; system_id=\"vap-system\"; zone_id=\"z1\"; status=\"proposed\"; asset_id=\"audit-service\"",
+      "target_id": "audit",
+      "field": "record",
+      "value": "Component audit: name=\"Audit destination\"; role=\"audit\"; system_id=\"vap-system\"; zone_id=\"z1\"; status=\"proposed\"; asset_id=\"audit-service\"",
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-enforcement",
+      "source_id": "reference-source",
+      "source_version": "1.0",
+      "locator": "row/16",
+      "excerpt": "Component enforcement: name=\"Management enforcement\"; role=\"firewall\"; system_id=\"vap-system\"; zone_id=\"z1\"; status=\"proposed\"; asset_id=\"firewall\"",
+      "target_id": "enforcement",
+      "field": "record",
+      "value": "Component enforcement: name=\"Management enforcement\"; role=\"firewall\"; system_id=\"vap-system\"; zone_id=\"z1\"; status=\"proposed\"; asset_id=\"firewall\"",
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-video",
+      "source_id": "reference-source",
+      "source_version": "1.0",
+      "locator": "row/17",
+      "excerpt": "Interface video: source=\"vms\"; target=\"analytics\"; purpose=\"video\"; data_direction=\"source_to_target\"; initiator=\"analytics\"; protocol=\"RTSP\"; port=null",
+      "target_id": "video",
+      "field": "record",
+      "value": "Interface video: source=\"vms\"; target=\"analytics\"; purpose=\"video\"; data_direction=\"source_to_target\"; initiator=\"analytics\"; protocol=\"RTSP\"; port=null",
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-events",
+      "source_id": "reference-source",
+      "source_version": "1.0",
+      "locator": "row/18",
+      "excerpt": "Interface events: source=\"management\"; target=\"c2\"; purpose=\"events\"; data_direction=\"source_to_target\"; initiator=\"management\"; protocol=\"HTTPS\"; delivery=\"push\"",
+      "target_id": "events",
+      "field": "record",
+      "value": "Interface events: source=\"management\"; target=\"c2\"; purpose=\"events\"; data_direction=\"source_to_target\"; initiator=\"management\"; protocol=\"HTTPS\"; delivery=\"push\"",
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-administration",
+      "source_id": "reference-source",
+      "source_version": "1.0",
+      "locator": "row/19",
+      "excerpt": "Interface administration: source=\"configuration\"; target=\"management\"; purpose=\"management\"; data_direction=\"bidirectional\"; initiator=\"configuration\"; protocol=\"HTTPS\"; enforcement=[\"enforcement\"]",
+      "target_id": "administration",
+      "field": "record",
+      "value": "Interface administration: source=\"configuration\"; target=\"management\"; purpose=\"management\"; data_direction=\"bidirectional\"; initiator=\"configuration\"; protocol=\"HTTPS\"; enforcement=[\"enforcement\"]",
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-integration",
+      "source_id": "reference-source",
+      "source_version": "1.0",
+      "locator": "row/20",
+      "excerpt": "Interface integration: source=\"management\"; target=\"analytics\"; purpose=\"integration\"; data_direction=\"bidirectional\"; initiator=\"management\"; protocol=\"HTTPS\"",
+      "target_id": "integration",
+      "field": "record",
+      "value": "Interface integration: source=\"management\"; target=\"analytics\"; purpose=\"integration\"; data_direction=\"bidirectional\"; initiator=\"management\"; protocol=\"HTTPS\"",
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-capacity",
+      "source_id": "reference-source",
+      "source_version": "1.0",
+      "locator": "row/21",
+      "excerpt": "Constraint capacity: key=\"capacity_streams\"; value=100",
+      "target_id": "capacity",
+      "field": "record",
+      "value": "Constraint capacity: key=\"capacity_streams\"; value=100",
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-sizing",
+      "source_id": "reference-source",
+      "source_version": "1.0",
+      "locator": "row/22",
+      "excerpt": "Constraint sizing: key=\"equipment_sizing\"; value=\"undecided\"",
+      "target_id": "sizing",
+      "field": "record",
+      "value": "Constraint sizing: key=\"equipment_sizing\"; value=\"undecided\"",
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-offline",
+      "source_id": "reference-source",
+      "source_version": "1.0",
+      "locator": "row/23",
+      "excerpt": "Constraint offline: key=\"no_internet\"; value=true",
+      "target_id": "offline",
+      "field": "record",
+      "value": "Constraint offline: key=\"no_internet\"; value=true",
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-resilience",
+      "source_id": "reference-source",
+      "source_version": "1.0",
+      "locator": "row/24",
+      "excerpt": "Constraint resilience: key=\"resilience_required\"; value=false",
+      "target_id": "resilience",
+      "field": "record",
+      "value": "Constraint resilience: key=\"resilience_required\"; value=false",
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-availability",
+      "source_id": "reference-source",
+      "source_version": "1.0",
+      "locator": "row/25",
+      "excerpt": "Constraint availability: key=\"availability_strategy\"; value=\"single_instance\"",
+      "target_id": "availability",
+      "field": "record",
+      "value": "Constraint availability: key=\"availability_strategy\"; value=\"single_instance\"",
+      "source_kind": "document",
+      "review": "confirmed"
+    }
+  ],
+  "constraints": [
+    {
+      "id": "capacity",
+      "scope": "project",
+      "key": "capacity_streams",
+      "value": 100,
+      "evidence": []
+    },
+    {
+      "id": "sizing",
+      "scope": "project",
+      "key": "equipment_sizing",
+      "value": "undecided",
+      "evidence": []
+    },
+    {
+      "id": "offline",
+      "scope": "project",
+      "key": "no_internet",
+      "value": true,
+      "evidence": []
+    },
+    {
+      "id": "resilience",
+      "scope": "project",
+      "key": "resilience_required",
+      "value": false,
+      "evidence": []
+    },
+    {
+      "id": "availability",
+      "scope": "project",
+      "key": "availability_strategy",
+      "value": "single_instance",
+      "evidence": []
+    }
+  ],
+  "decisions": [],
+  "views": {
+    "logical": {
+      "type": "logical",
+      "revision": 0,
+      "placements": {
+        "infrastructure": {
+          "x": 40.0,
+          "y": 60.0,
+          "width": 530.0,
+          "height": 350.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "client": {
+          "x": 620.0,
+          "y": 60.0,
+          "width": 530.0,
+          "height": 350.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "z1": {
+          "x": 40.0,
+          "y": 460.0,
+          "width": 530.0,
+          "height": 350.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "z2": {
+          "x": 620.0,
+          "y": 460.0,
+          "width": 530.0,
+          "height": 350.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "vms": {
+          "x": 30.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "operator": {
+          "x": 30.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "configuration": {
+          "x": 265.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "management": {
+          "x": 30.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "analytics": {
+          "x": 30.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "c2": {
+          "x": 1200.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "audit": {
+          "x": 265.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "enforcement": {
+          "x": 30.0,
+          "y": 195.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        }
+      },
+      "routes": {},
+      "mappings": {
+        "infrastructure": [
+          "infrastructure"
+        ],
+        "client": [
+          "client"
+        ],
+        "z1": [
+          "z1"
+        ],
+        "z2": [
+          "z2"
+        ],
+        "vms": [
+          "vms"
+        ],
+        "operator": [
+          "operator"
+        ],
+        "configuration": [
+          "configuration"
+        ],
+        "management": [
+          "management"
+        ],
+        "analytics": [
+          "analytics"
+        ],
+        "c2": [
+          "c2"
+        ],
+        "audit": [
+          "audit"
+        ],
+        "enforcement": [
+          "enforcement"
+        ],
+        "video": [
+          "video"
+        ],
+        "events": [
+          "events"
+        ],
+        "administration": [
+          "administration"
+        ],
+        "integration": [
+          "integration"
+        ]
+      }
+    },
+    "sv1": {
+      "type": "sv1",
+      "revision": 0,
+      "placements": {
+        "vms-system": {
+          "x": 70.0,
+          "y": 90.0,
+          "width": 240.0,
+          "height": 125.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "client-system": {
+          "x": 370.0,
+          "y": 90.0,
+          "width": 240.0,
+          "height": 125.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "vap-system": {
+          "x": 670.0,
+          "y": 90.0,
+          "width": 240.0,
+          "height": 125.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "c2-system": {
+          "x": 70.0,
+          "y": 320.0,
+          "width": 240.0,
+          "height": 125.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        }
+      },
+      "routes": {},
+      "mappings": {
+        "vms-system": [
+          "vms"
+        ],
+        "client-system": [
+          "operator",
+          "configuration"
+        ],
+        "vap-system": [
+          "management",
+          "analytics",
+          "audit",
+          "enforcement"
+        ],
+        "c2-system": [
+          "c2"
+        ],
+        "aggregate:vms-system:vap-system": [
+          "video"
+        ],
+        "aggregate:vap-system:c2-system": [
+          "events"
+        ],
+        "aggregate:client-system:vap-system": [
+          "administration"
+        ]
+      }
+    },
+    "sv2": {
+      "type": "sv2",
+      "revision": 0,
+      "placements": {
+        "infrastructure": {
+          "x": 40.0,
+          "y": 60.0,
+          "width": 530.0,
+          "height": 350.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "client": {
+          "x": 620.0,
+          "y": 60.0,
+          "width": 530.0,
+          "height": 350.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "z1": {
+          "x": 40.0,
+          "y": 460.0,
+          "width": 530.0,
+          "height": 350.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "z2": {
+          "x": 620.0,
+          "y": 460.0,
+          "width": 530.0,
+          "height": 350.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "vms": {
+          "x": 30.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "operator": {
+          "x": 30.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "configuration": {
+          "x": 265.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "management": {
+          "x": 30.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "analytics": {
+          "x": 30.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "c2": {
+          "x": 1200.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "audit": {
+          "x": 265.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "enforcement": {
+          "x": 30.0,
+          "y": 195.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        }
+      },
+      "routes": {},
+      "mappings": {
+        "infrastructure": [
+          "infrastructure"
+        ],
+        "client": [
+          "client"
+        ],
+        "z1": [
+          "z1"
+        ],
+        "z2": [
+          "z2"
+        ],
+        "vms": [
+          "vms"
+        ],
+        "operator": [
+          "operator"
+        ],
+        "configuration": [
+          "configuration"
+        ],
+        "management": [
+          "management"
+        ],
+        "analytics": [
+          "analytics"
+        ],
+        "c2": [
+          "c2"
+        ],
+        "audit": [
+          "audit"
+        ],
+        "enforcement": [
+          "enforcement"
+        ],
+        "video": [
+          "video"
+        ],
+        "events": [
+          "events"
+        ],
+        "administration": [
+          "administration"
+        ],
+        "integration": [
+          "integration"
+        ]
+      }
+    }
+  },
+  "notes": ""
+}

@@ -1,0 +1,73 @@
+{
+  "provider": "ollama",
+  "model": "qwen3:14b",
+  "run_id": "mac-resume-20260921",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "settings": {
+    "provider": "mock",
+    "allow_cloud": true,
+    "openai_model": "gpt-5.6-terra",
+    "ollama_model": "qwen3:14b",
+    "ollama_base_url": "http://127.0.0.1:11434",
+    "ollama_num_ctx": 8192,
+    "max_input": 32000,
+    "max_output": 6000,
+    "max_calls": 6,
+    "action_usd": 0.5,
+    "document_usd": 1.0,
+    "day_usd": 5.0,
+    "project_usd": 12.0,
+    "live_tests": true
+  },
+  "test_ceiling": {
+    "id": "mac-resume-20260921",
+    "max_calls": 8,
+    "budget_usd": 0.5
+  },
+  "flows": {
+    "A": {
+      "passed": false,
+      "error_code": "unavailable_provider",
+      "message": "Provider failed or returned invalid output; accepted architecture was preserved."
+    }
+  },
+  "scope": "Actual application orchestration services; browser editing verified separately. Synthetic automatic acceptance/answers in this test only.",
+  "usage": {
+    "7434133b-d36a-41e6-a484-d367eba84cb1": {
+      "total": 0.0,
+      "calls": 2,
+      "records": [
+        {
+          "id": "09a54797-3fed-4539-a1ad-686b405b8231",
+          "project_id": "7434133b-d36a-41e6-a484-d367eba84cb1",
+          "action_id": "mac-resume-20260921-b711b0a7-feee-4cd1-9fe3-5ec12e10d664",
+          "day": "2026-09-21",
+          "provider": "ollama",
+          "model": "qwen3:14b",
+          "status": "unresolved",
+          "reserved": 0.0,
+          "cost": null,
+          "details": {}
+        },
+        {
+          "id": "98a5dcd3-7f89-4914-878b-eb6bca1e07fa",
+          "project_id": "7434133b-d36a-41e6-a484-d367eba84cb1",
+          "action_id": "mac-resume-20260921-b711b0a7-feee-4cd1-9fe3-5ec12e10d664",
+          "day": "2026-09-21",
+          "provider": "ollama",
+          "model": "qwen3:14b",
+          "status": "unresolved",
+          "reserved": 0.0,
+          "cost": null,
+          "details": {}
+        }
+      ]
+    }
+  },
+  "total_calls": 2,
+  "total_usd": 0.0,
+  "all_passed": false,
+  "ollama_ps": "NAME         ID              SIZE     PROCESSOR    CONTEXT    UNTIL              \nqwen3:14b    bdbd181c33f2    10 GB    100% GPU     8192       4 minutes from now    \n",
+  "ollama_show": "  Model\n    architecture        qwen3     \n    parameters          14.8B     \n    context length      40960     \n    embedding length    5120      \n    quantization        Q4_K_M    \n\n  Capabilities\n    completion    \n    tools         \n    thinking      \n\n  Parameters\n    temperature       0.6               \n    top_k             20                \n    top_p             0.95              \n    repeat_penalty    1                 \n    stop              \"<|im_start|>\"    \n    stop              \"<|im_end|>\"      \n\n  License\n    Apache License               \n    Version 2.0, January 2004    \n    ...                          \n\n",
+  "memory_note": "Ollama loaded-model observation after generation; not peak unified-memory sampling."
+}

@@ -1,0 +1,291 @@
+{
+  "provider": "ollama",
+  "model": "qwen3:14b",
+  "context": 8192,
+  "max_output": 1024,
+  "scope": "One deliberately small extraction and validated component proposal; no broader capability claim.",
+  "project_id": "e025730b-8ead-4625-87e9-d03e214720dd",
+  "passed": true,
+  "usage": {
+    "input_tokens": 250,
+    "cache_read_tokens": 0,
+    "cache_write_tokens": 0,
+    "output_tokens": 464,
+    "reasoning_tokens": 0,
+    "latency_ms": 43894.605334004154
+  },
+  "candidate": {
+    "operations": [
+      {
+        "op": "add",
+        "entity": "components",
+        "id": "tmp:component-1",
+        "value_json": "{\"name\":\"Review station\",\"role\":\"workstation\",\"asset_id\":\"workstation\",\"system_id\":null,\"status\":\"existing\",\"scope\":\"unknown\"}"
+      }
+    ],
+    "claims": [
+      {
+        "source_id": "S1",
+        "locator": "prompt/1",
+        "excerpt": "Add one workstation named Review station with role workstation. Its zone is unspecified.",
+        "target_id": "tmp:component-1",
+        "field": "name",
+        "value_json": "\"Review station\""
+      },
+      {
+        "source_id": "S1",
+        "locator": "prompt/1",
+        "excerpt": "Add one workstation named Review station with role workstation. Its zone is unspecified.",
+        "target_id": "tmp:component-1",
+        "field": "role",
+        "value_json": "\"workstation\""
+      },
+      {
+        "source_id": "S1",
+        "locator": "prompt/1",
+        "excerpt": "Add one workstation named Review station with role workstation. Its zone is unspecified.",
+        "target_id": "tmp:component-1",
+        "field": "asset_id",
+        "value_json": "\"workstation\""
+      },
+      {
+        "source_id": "S1",
+        "locator": "prompt/1",
+        "excerpt": "Add one workstation named Review station with role workstation. Its zone is unspecified.",
+        "target_id": "tmp:component-1",
+        "field": "status",
+        "value_json": "\"existing\""
+      },
+      {
+        "source_id": "S1",
+        "locator": "prompt/1",
+        "excerpt": "Add one workstation named Review station with role workstation. Its zone is unspecified.",
+        "target_id": "tmp:component-1",
+        "field": "scope",
+        "value_json": "\"unknown\""
+      }
+    ],
+    "tool": null,
+    "message": "Component 'Review station' added with role 'workstation' and unspecified zone."
+  },
+  "accepted_project": {
+    "id": "e025730b-8ead-4625-87e9-d03e214720dd",
+    "name": "ARCHIE qwen14b small extraction smoke",
+    "schema_version": "1.0",
+    "revision": 1,
+    "created_at": "2026-09-21T12:32:23.204765+00:00",
+    "updated_at": "2026-09-21T12:33:07.136724+00:00",
+    "synthetic": true,
+    "policy_version": "1.0",
+    "template_version": "1.0",
+    "systems": [],
+    "zones": [],
+    "components": [
+      {
+        "id": "c960956b-f28d-577a-b3d3-08d7b17ac8d9",
+        "name": "Review station",
+        "role": "workstation",
+        "system_id": null,
+        "status": "existing",
+        "asset_id": "workstation",
+        "scope": "unknown",
+        "audit_destination": null,
+        "storage_destination": null,
+        "local_only": null,
+        "internet_hosted": null,
+        "evidence": [
+          "9ba8da4f-c6cc-4b91-8ed6-311559fe1d37",
+          "81e894a8-532f-472d-a87b-09d0e3ca614b",
+          "60660479-682b-4b85-9bd4-44fa67967c2a",
+          "917cbffe-c7b3-4ec1-a1fd-c832bee1d109",
+          "5fb10220-3407-440e-965a-464bf4fef616"
+        ]
+      }
+    ],
+    "deployments": [],
+    "interfaces": [],
+    "sources": [
+      {
+        "id": "43ad70e0-e2ad-4148-85d4-f82ce4c7851d",
+        "name": "Prompt",
+        "version": "1.0",
+        "kind": "prompt",
+        "sha256": "320da8605e6a0385e6f8136ae31f353090e27c4be09045cd824db8c22c064c8e",
+        "canonical_id": "320da8605e6a0385e6f8136ae31f353090e27c4be09045cd824db8c22c064c8e",
+        "variants": [
+          "320da8605e6a0385e6f8136ae31f353090e27c4be09045cd824db8c22c064c8e"
+        ],
+        "passages": [
+          {
+            "locator": "prompt/1",
+            "heading": "",
+            "text": "Add one workstation named Review station with role workstation. Its zone is unspecified.",
+            "page": null
+          }
+        ],
+        "processed": [],
+        "unprocessed": [
+          "prompt/1"
+        ],
+        "unsupported_pages": []
+      }
+    ],
+    "claims": [
+      {
+        "id": "9ba8da4f-c6cc-4b91-8ed6-311559fe1d37",
+        "source_id": "43ad70e0-e2ad-4148-85d4-f82ce4c7851d",
+        "source_version": "1.0",
+        "locator": "prompt/1",
+        "excerpt": "Add one workstation named Review station with role workstation. Its zone is unspecified.",
+        "target_id": "c960956b-f28d-577a-b3d3-08d7b17ac8d9",
+        "field": "name",
+        "value": "Review station",
+        "source_kind": "prompt",
+        "review": "confirmed"
+      },
+      {
+        "id": "81e894a8-532f-472d-a87b-09d0e3ca614b",
+        "source_id": "43ad70e0-e2ad-4148-85d4-f82ce4c7851d",
+        "source_version": "1.0",
+        "locator": "prompt/1",
+        "excerpt": "Add one workstation named Review station with role workstation. Its zone is unspecified.",
+        "target_id": "c960956b-f28d-577a-b3d3-08d7b17ac8d9",
+        "field": "role",
+        "value": "workstation",
+        "source_kind": "prompt",
+        "review": "confirmed"
+      },
+      {
+        "id": "60660479-682b-4b85-9bd4-44fa67967c2a",
+        "source_id": "43ad70e0-e2ad-4148-85d4-f82ce4c7851d",
+        "source_version": "1.0",
+        "locator": "prompt/1",
+        "excerpt": "Add one workstation named Review station with role workstation. Its zone is unspecified.",
+        "target_id": "c960956b-f28d-577a-b3d3-08d7b17ac8d9",
+        "field": "asset_id",
+        "value": "workstation",
+        "source_kind": "prompt",
+        "review": "confirmed"
+      },
+      {
+        "id": "917cbffe-c7b3-4ec1-a1fd-c832bee1d109",
+        "source_id": "43ad70e0-e2ad-4148-85d4-f82ce4c7851d",
+        "source_version": "1.0",
+        "locator": "prompt/1",
+        "excerpt": "Add one workstation named Review station with role workstation. Its zone is unspecified.",
+        "target_id": "c960956b-f28d-577a-b3d3-08d7b17ac8d9",
+        "field": "status",
+        "value": "existing",
+        "source_kind": "prompt",
+        "review": "confirmed"
+      },
+      {
+        "id": "5fb10220-3407-440e-965a-464bf4fef616",
+        "source_id": "43ad70e0-e2ad-4148-85d4-f82ce4c7851d",
+        "source_version": "1.0",
+        "locator": "prompt/1",
+        "excerpt": "Add one workstation named Review station with role workstation. Its zone is unspecified.",
+        "target_id": "c960956b-f28d-577a-b3d3-08d7b17ac8d9",
+        "field": "scope",
+        "value": "unknown",
+        "source_kind": "prompt",
+        "review": "confirmed"
+      }
+    ],
+    "constraints": [],
+    "decisions": [],
+    "views": {
+      "logical": {
+        "type": "logical",
+        "revision": 0,
+        "placements": {
+          "c960956b-f28d-577a-b3d3-08d7b17ac8d9": {
+            "x": 1200.0,
+            "y": 65.0,
+            "width": 185.0,
+            "height": 90.0,
+            "visible": true,
+            "locked": false,
+            "label": null
+          }
+        },
+        "routes": {},
+        "mappings": {
+          "c960956b-f28d-577a-b3d3-08d7b17ac8d9": [
+            "c960956b-f28d-577a-b3d3-08d7b17ac8d9"
+          ]
+        }
+      },
+      "sv1": {
+        "type": "sv1",
+        "revision": 0,
+        "placements": {
+          "c960956b-f28d-577a-b3d3-08d7b17ac8d9": {
+            "x": 70.0,
+            "y": 90.0,
+            "width": 240.0,
+            "height": 125.0,
+            "visible": true,
+            "locked": false,
+            "label": null
+          }
+        },
+        "routes": {},
+        "mappings": {
+          "c960956b-f28d-577a-b3d3-08d7b17ac8d9": [
+            "c960956b-f28d-577a-b3d3-08d7b17ac8d9"
+          ]
+        }
+      },
+      "sv2": {
+        "type": "sv2",
+        "revision": 0,
+        "placements": {
+          "c960956b-f28d-577a-b3d3-08d7b17ac8d9": {
+            "x": 1200.0,
+            "y": 65.0,
+            "width": 185.0,
+            "height": 90.0,
+            "visible": true,
+            "locked": false,
+            "label": null
+          }
+        },
+        "routes": {},
+        "mappings": {
+          "c960956b-f28d-577a-b3d3-08d7b17ac8d9": [
+            "c960956b-f28d-577a-b3d3-08d7b17ac8d9"
+          ]
+        }
+      }
+    },
+    "notes": ""
+  },
+  "seconds": 43.931,
+  "ledger": {
+    "total": 0.0,
+    "calls": 1,
+    "records": [
+      {
+        "id": "4e227497-376a-4980-9dda-08e5866910bd",
+        "project_id": "e025730b-8ead-4625-87e9-d03e214720dd",
+        "action_id": "mac-resume-20260921-small-51585951-dbf5-4691-9bf8-51b8d3e588bf",
+        "day": "2026-09-21",
+        "provider": "ollama",
+        "model": "qwen3:14b",
+        "status": "completed",
+        "reserved": 0.0,
+        "cost": 0.0,
+        "details": {
+          "input_tokens": 250,
+          "cache_read_tokens": 0,
+          "cache_write_tokens": 0,
+          "output_tokens": 464,
+          "reasoning_tokens": 0,
+          "latency_ms": 43894.605334004154
+        }
+      }
+    ]
+  },
+  "ollama_ps": "NAME         ID              SIZE     PROCESSOR    CONTEXT    UNTIL              \nqwen3:14b    bdbd181c33f2    10 GB    100% GPU     8192       4 minutes from now    \n"
+}

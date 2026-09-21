@@ -1,5 +1,5 @@
 """Deterministic projections over canonical semantic IDs."""
-from .models import Project, Placement
+from .models import Project, Placement, Route
 
 def view_graph(p:Project,kind:str):
     view=p.views[kind]; nodes=[]; edges=[]; mappings={}; member={}
@@ -27,11 +27,25 @@ def view_graph(p:Project,kind:str):
         for c in p.components:
             d=next((d for d in p.deployments if d.component_id==c.id),None); parent=d.zone_id if d else None
             i=counts.get(parent,0); counts[parent]=i+1
-            node(c.id,c.name,c.asset_id,[c.id],parent,c.role,Placement(x=30+(i%2)*235 if parent else 1200,y=65+(i//2)*130,width=185,height=90))
+            node(c.id,c.name,c.asset_id,[c.id],parent,c.role,Placement(x=30+(i%2)*235 if parent else 1200,y=65+(i//2 if parent else i)*130,width=185,height=90))
         for e in p.interfaces:
             label=e.purpose or 'purpose ?'
             if kind=='sv2': label+=f' | {e.protocol or "protocol ?"}:{e.port if e.port is not None else "?"} | initiator: {e.initiator or "?"}'
             mappings[e.id]=[e.id]; edges.append(dict(id=e.id,source=e.source,target=e.target,label=label,object_ids=[e.id],route=view.routes.get(e.id),data_direction=e.data_direction))
+    # Unrouted connections face the other component using absolute, zone-aware positions.
+    # This is derived presentation only; a user's persisted handle choice takes precedence.
+    by_id={n['id']:n for n in nodes}
+    def center(n):
+        x,y=n['x']+n['width']/2,n['y']+n['height']/2
+        parent=by_id.get(n.get('parentId'))
+        if parent: x+=parent['x']; y+=parent['y']
+        return x,y
+    for edge in edges:
+        if edge['route'] is not None or edge['source'] not in by_id or edge['target'] not in by_id: continue
+        ax,ay=center(by_id[edge['source']]); bx,by=center(by_id[edge['target']])
+        dx,dy=bx-ax,by-ay
+        source,target=(('right','left') if dx>=0 else ('left','right')) if abs(dx)>=abs(dy) else (('bottom','top') if dy>=0 else ('top','bottom'))
+        edge['route']=Route(source_handle=source,target_handle=target)
     return {'type':kind,'semantic_revision':p.revision,'presentation_revision':view.revision,'nodes':nodes,'edges':edges,'mappings':mappings}
 
 def initialise_views(p:Project):

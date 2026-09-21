@@ -1,0 +1,251 @@
+{
+  "provider": "openai",
+  "model": "gpt-5.6-terra",
+  "run_id": "mac-resume-20260921",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "settings": {
+    "provider": "mock",
+    "allow_cloud": true,
+    "openai_model": "gpt-5.6-terra",
+    "ollama_model": "qwen3:4b",
+    "ollama_base_url": "http://127.0.0.1:11434",
+    "ollama_num_ctx": 4096,
+    "max_input": 32000,
+    "max_output": 6000,
+    "max_calls": 6,
+    "action_usd": 0.5,
+    "document_usd": 1.0,
+    "day_usd": 5.0,
+    "project_usd": 12.0,
+    "live_tests": true
+  },
+  "test_ceiling": {
+    "id": "mac-resume-20260921",
+    "max_calls": 6,
+    "budget_usd": 0.5
+  },
+  "flows": {
+    "A": {
+      "passed": true,
+      "project_id": "b2f1d4f9-03e4-4713-867c-1a9a00299d94",
+      "clarification": {
+        "question": "How are events delivered?",
+        "options": [
+          "push",
+          "pull"
+        ],
+        "answer": "push",
+        "model_calls": 0
+      },
+      "manual_position_and_route_preserved": true,
+      "preview_before_accept": true,
+      "seconds": 19.415,
+      "revision": 3,
+      "components": 2,
+      "interfaces": 1,
+      "source_claims": 13,
+      "three_views": true,
+      "narrative_and_interfaces": true,
+      "bounded_schema_repairs": 1
+    },
+    "B": {
+      "passed": true,
+      "project_id": "0bbe6e98-5971-43dd-87dd-941ed6c7511b",
+      "fixture": "fixtures/projects/B/sow.docx",
+      "coverage": {
+        "processed": [
+          "paragraph/1",
+          "paragraph/2",
+          "paragraph/3",
+          "paragraph/4",
+          "paragraph/5",
+          "paragraph/6",
+          "paragraph/7",
+          "paragraph/9",
+          "paragraph/10",
+          "table/1/row/1/cell/1",
+          "table/1/row/1/cell/2",
+          "table/1/row/2/cell/1",
+          "table/1/row/2/cell/2",
+          "table/1/row/3/cell/1",
+          "table/1/row/3/cell/2",
+          "table/1/row/4/cell/1",
+          "table/1/row/4/cell/2",
+          "table/1/row/5/cell/1",
+          "table/1/row/5/cell/2",
+          "table/1/row/6/cell/1",
+          "table/1/row/6/cell/2",
+          "table/1/row/7/cell/1",
+          "table/1/row/7/cell/2",
+          "table/1/row/8/cell/1",
+          "table/1/row/8/cell/2",
+          "table/1/row/9/cell/1",
+          "table/1/row/9/cell/2",
+          "table/1/row/10/cell/1",
+          "table/1/row/10/cell/2",
+          "table/1/row/11/cell/1",
+          "table/1/row/11/cell/2",
+          "table/1/row/12/cell/1",
+          "table/1/row/12/cell/2",
+          "table/1/row/13/cell/1",
+          "table/1/row/13/cell/2",
+          "table/1/row/14/cell/1",
+          "table/1/row/14/cell/2",
+          "table/1/row/15/cell/1",
+          "table/1/row/15/cell/2",
+          "table/1/row/16/cell/1",
+          "table/1/row/16/cell/2",
+          "table/1/row/17/cell/1",
+          "table/1/row/17/cell/2",
+          "table/2/row/1/cell/1",
+          "table/2/row/1/cell/2",
+          "table/2/row/2/cell/1",
+          "table/2/row/2/cell/2",
+          "table/2/row/3/cell/1",
+          "table/2/row/3/cell/2",
+          "table/2/row/4/cell/1",
+          "table/2/row/4/cell/2",
+          "table/2/row/5/cell/1",
+          "table/2/row/5/cell/2",
+          "table/2/row/6/cell/1",
+          "table/2/row/6/cell/2",
+          "table/2/row/7/cell/1",
+          "table/2/row/7/cell/2",
+          "table/2/row/8/cell/1",
+          "table/2/row/8/cell/2",
+          "table/2/row/9/cell/1",
+          "table/2/row/9/cell/2",
+          "table/2/row/10/cell/1",
+          "table/2/row/10/cell/2"
+        ],
+        "unprocessed": []
+      },
+      "clarification": {
+        "question": "What is the administration route purpose for administration?",
+        "options": [
+          "management",
+          "integration",
+          "video"
+        ],
+        "answer": "management",
+        "model_calls": 0
+      },
+      "retrieved_policy_ids": [
+        "DEMO-FW-01",
+        "DEMO-AUD-01",
+        "DEMO-IF-01"
+      ],
+      "implemented_checks": 8,
+      "manual_clauses": 12,
+      "preview_before_accept": true,
+      "seconds": 27.046,
+      "revision": 2,
+      "components": 8,
+      "interfaces": 4,
+      "source_claims": 32,
+      "three_views": true,
+      "narrative_and_interfaces": true,
+      "unknown_protocol_port_initiator_delivery_and_sizing_reviewed": true
+    }
+  },
+  "scope": "Actual application orchestration services; browser editing verified separately. Synthetic automatic acceptance/answers in this test only.",
+  "usage": {
+    "b2f1d4f9-03e4-4713-867c-1a9a00299d94": {
+      "total": 0.022354,
+      "calls": 3,
+      "records": [
+        {
+          "id": "84f259ee-3507-4435-9460-1a96d3154824",
+          "project_id": "b2f1d4f9-03e4-4713-867c-1a9a00299d94",
+          "action_id": "mac-resume-20260921-114bc793-5b38-433c-9c29-bc451d3b4f9d",
+          "day": "2026-09-21",
+          "provider": "openai",
+          "model": "gpt-5.6-terra",
+          "status": "completed",
+          "reserved": 0.0800475,
+          "cost": 0.007238,
+          "details": {
+            "input_tokens": 649,
+            "cache_read_tokens": 0,
+            "cache_write_tokens": 0,
+            "output_tokens": 495,
+            "reasoning_tokens": 0,
+            "latency_ms": 7408.085833005316
+          }
+        },
+        {
+          "id": "b3afd7fd-19e0-49c4-bd09-f5abe5d7ab88",
+          "project_id": "b2f1d4f9-03e4-4713-867c-1a9a00299d94",
+          "action_id": "mac-resume-20260921-114bc793-5b38-433c-9c29-bc451d3b4f9d",
+          "day": "2026-09-21",
+          "provider": "openai",
+          "model": "gpt-5.6-terra",
+          "status": "completed",
+          "reserved": 0.0803725,
+          "cost": 0.012074,
+          "details": {
+            "input_tokens": 673,
+            "cache_read_tokens": 0,
+            "cache_write_tokens": 0,
+            "output_tokens": 894,
+            "reasoning_tokens": 0,
+            "latency_ms": 8884.887624997646
+          }
+        },
+        {
+          "id": "cbd97c2d-0953-40e7-9f92-ed6e4e9519be",
+          "project_id": "b2f1d4f9-03e4-4713-867c-1a9a00299d94",
+          "action_id": "mac-resume-20260921-e4de7a2e-8075-4350-a15a-6cfec333ae4f",
+          "day": "2026-09-21",
+          "provider": "openai",
+          "model": "gpt-5.6-terra",
+          "status": "completed",
+          "reserved": 0.0799125,
+          "cost": 0.003042,
+          "details": {
+            "input_tokens": 693,
+            "cache_read_tokens": 0,
+            "cache_write_tokens": 0,
+            "output_tokens": 138,
+            "reasoning_tokens": 0,
+            "latency_ms": 3055.088875000365
+          }
+        }
+      ]
+    },
+    "0bbe6e98-5971-43dd-87dd-941ed6c7511b": {
+      "total": 0.0520435,
+      "calls": 1,
+      "records": [
+        {
+          "id": "ef53454c-3f5c-40a5-bcfc-8cf16d32e1de",
+          "project_id": "0bbe6e98-5971-43dd-87dd-941ed6c7511b",
+          "action_id": "mac-resume-20260921-e5752a52-20f4-46ed-aaf3-1c431caf461d",
+          "day": "2026-09-21",
+          "provider": "openai",
+          "model": "gpt-5.6-terra",
+          "status": "completed",
+          "reserved": 0.09554,
+          "cost": 0.0520435,
+          "details": {
+            "input_tokens": 3,
+            "cache_read_tokens": 0,
+            "cache_write_tokens": 2431,
+            "output_tokens": 3830,
+            "reasoning_tokens": 0,
+            "latency_ms": 26993.339208995167
+          }
+        }
+      ]
+    }
+  },
+  "total_calls": 4,
+  "total_usd": 0.0743975,
+  "all_passed": true,
+  "post_run_review": {
+    "issue": "Initial provider emitted Event manager scope internal without a corresponding scope claim.",
+    "fix": "Assistant additions now keep omitted/unsubstantiated scopes unknown and attach a review finding. Existing updates preserve scope.",
+    "verification": "scope-normalization-replay.json; offline regression test; no additional paid request",
+    "historical_snapshots": "Original live snapshots retained unchanged."
+  }
+}

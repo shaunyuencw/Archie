@@ -1,31 +1,31 @@
 {
   "offline": true,
-  "platform": "win32",
+  "platform": "darwin",
   "checks": [
     {
       "check": "backend",
       "exit_code": 0,
-      "seconds": 5.985
+      "seconds": 2.108
     },
     {
       "check": "typescript",
       "exit_code": 0,
-      "seconds": 1.515
+      "seconds": 1.437
     },
     {
       "check": "frontend-unit",
       "exit_code": 0,
-      "seconds": 1.031
+      "seconds": 0.494
     },
     {
       "check": "browser",
       "exit_code": 0,
-      "seconds": 14.047
+      "seconds": 9.723
     },
     {
       "check": "production-build",
       "exit_code": 0,
-      "seconds": 14.328
+      "seconds": 7.581
     }
   ]
 }

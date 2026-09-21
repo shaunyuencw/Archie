@@ -26,7 +26,7 @@ def document_preflight(source,provider,settings):
     selected=groups[:min(6,settings.max_calls)]
     return passages,selected,groups[len(selected):]
 
-def ingest_live(store,pid,data,name,provider,settings=None,adapter=None,source_id=None):
+def ingest_live(store,pid,data,name,provider,settings=None,adapter=None,source_id=None,live_run=None,deadline=None):
     s=settings or Settings.environment()
     if provider not in ['openai','ollama']:raise DomainError('unavailable_provider','Unknown provider')
     if provider=='openai' and not s.allow_cloud:raise DomainError('budget_exceeded','Cloud is disabled')
@@ -42,11 +42,11 @@ def ingest_live(store,pid,data,name,provider,settings=None,adapter=None,source_i
     passages,groups,remainder=document_preflight(source,provider,s)
     source.passages=previous_passages+passages;source.unprocessed=[x.locator for x in passages]
     if not groups:raise DomainError('unsupported_document','No text extracted. Scanned pages need OCR, which is out of scope.')
-    a=adapter or (OpenAIAdapter(s) if provider=='openai' else OllamaAdapter(s));budget=BudgetedProvider(store,s,a);action=uid()
+    a=adapter or (OpenAIAdapter(s) if provider=='openai' else OllamaAdapter(s));budget=BudgetedProvider(store,s,a);action=(live_run['id']+'-' if live_run else '')+uid()
     combined=Envelope(operations=[],claims=[],tool=None,message='Document extraction proposal');known=set();used=[]
     for group in groups:
         prompt=json.dumps({'task':'Extract source facts into proposed architecture records. Reuse IDs already listed; do not repeat an existing add operation.','source':{'id':'S1','passages':[{'locator':x.locator,'text':x.text} for x in group]},'context':context(p,''),'previous_proposed_ids':sorted(known)},separators=(',',':'))
-        output=budget.call(prompt,pid,action,task='document')
+        output=budget.call(prompt,pid,action,task='document',live_run=live_run,deadline=deadline)
         if output.content.tool:raise DomainError('insufficient_context','Document extraction requested more context; narrow the document selection.')
         for op in output.content.operations:
             if op.op=='add' and op.id in known:raise DomainError('provider_output','Repeated proposed ID; no document changes were committed.')

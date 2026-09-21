@@ -16,7 +16,7 @@
       "provider": "mock",
       "api_calls": 0,
       "api_cost_usd": 0,
-      "latency_ms": 56.44,
+      "latency_ms": 26.96,
       "unprocessed_sections": 3
     },
     {
@@ -34,7 +34,7 @@
       "provider": "mock",
       "api_calls": 0,
       "api_cost_usd": 0,
-      "latency_ms": 40.76,
+      "latency_ms": 19.12,
       "unprocessed_sections": 0
     },
     {
@@ -52,7 +52,7 @@
       "provider": "mock",
       "api_calls": 0,
       "api_cost_usd": 0,
-      "latency_ms": 63.92,
+      "latency_ms": 30.68,
       "unprocessed_sections": 3
     },
     {
@@ -70,7 +70,7 @@
       "provider": "mock",
       "api_calls": 0,
       "api_cost_usd": 0,
-      "latency_ms": 42.85,
+      "latency_ms": 22.3,
       "unprocessed_sections": 0
     },
     {
@@ -88,7 +88,7 @@
       "provider": "mock",
       "api_calls": 0,
       "api_cost_usd": 0,
-      "latency_ms": 51.07,
+      "latency_ms": 23.87,
       "unprocessed_sections": 3
     },
     {
@@ -106,7 +106,7 @@
       "provider": "mock",
       "api_calls": 0,
       "api_cost_usd": 0,
-      "latency_ms": 43.18,
+      "latency_ms": 19.08,
       "unprocessed_sections": 0
     }
   ]

@@ -9,9 +9,9 @@ if (!(Test-Path -LiteralPath '.venv/Scripts/python.exe')) {
 if ($LASTEXITCODE -ne 0) { throw 'Python dependency installation failed.' }
 Push-Location apps/web
 try {
-    if (Get-Command npm.cmd -ErrorAction SilentlyContinue) { npm.cmd ci }
-    elseif (Get-Command pnpm -ErrorAction SilentlyContinue) { pnpm install --frozen-lockfile }
-    else { throw 'Install Node.js with npm, or provide pnpm.' }
+    if (Get-Command pnpm -ErrorAction SilentlyContinue) { pnpm install --frozen-lockfile }
+    elseif (Get-Command corepack.cmd -ErrorAction SilentlyContinue) { corepack.cmd pnpm install --frozen-lockfile }
+    else { throw 'Install pnpm 11 (the repository uses pnpm-lock.yaml).' }
     if ($LASTEXITCODE -ne 0) { throw 'Web dependency installation failed.' }
 } finally { Pop-Location }
 if (!(Test-Path -LiteralPath '.env')) { Copy-Item -LiteralPath '.env.example' -Destination '.env' }

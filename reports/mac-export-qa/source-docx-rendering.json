@@ -1,0 +1,32 @@
+[
+  {
+    "file": "fixtures/projects/A/sow.docx",
+    "render_exit": 0,
+    "pages": 2
+  },
+  {
+    "file": "fixtures/projects/A/spec.docx",
+    "render_exit": 0,
+    "pages": 2
+  },
+  {
+    "file": "fixtures/projects/B/sow.docx",
+    "render_exit": 0,
+    "pages": 2
+  },
+  {
+    "file": "fixtures/projects/B/spec.docx",
+    "render_exit": 0,
+    "pages": 2
+  },
+  {
+    "file": "fixtures/projects/C/sow.docx",
+    "render_exit": 0,
+    "pages": 2
+  },
+  {
+    "file": "fixtures/projects/C/spec.docx",
+    "render_exit": 0,
+    "pages": 2
+  }
+]

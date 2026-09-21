@@ -1,0 +1,33 @@
+{
+  "passed": true,
+  "network_calls": 0,
+  "source": "Saved initial accepted Terra proposal in local SQLite",
+  "fix": "Unsubstantiated assistant-add scope becomes unknown; explicit matching scope claims preserve external.",
+  "findings": [
+    "tmp:event-manager-system: scope kept unknown because no matching scope claim was supplied.",
+    "tmp:external-console-system: scope kept unknown because no matching scope claim was supplied.",
+    "tmp:event-manager: scope kept unknown because no matching scope claim was supplied."
+  ],
+  "scopes": [
+    {
+      "entity": "systems",
+      "name": "Event manager",
+      "scope": "unknown"
+    },
+    {
+      "entity": "systems",
+      "name": "External console",
+      "scope": "unknown"
+    },
+    {
+      "entity": "components",
+      "name": "Event manager",
+      "scope": "unknown"
+    },
+    {
+      "entity": "components",
+      "name": "External console",
+      "scope": "external"
+    }
+  ]
+}

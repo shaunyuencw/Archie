@@ -1,0 +1,460 @@
+{
+  "id": "b2f1d4f9-03e4-4713-867c-1a9a00299d94",
+  "name": "ARCHIE openai live prompt journey",
+  "schema_version": "1.0",
+  "revision": 3,
+  "created_at": "2026-09-21T12:26:35.917822+00:00",
+  "updated_at": "2026-09-21T12:26:55.331535+00:00",
+  "synthetic": true,
+  "policy_version": "1.0",
+  "template_version": "1.0",
+  "systems": [
+    {
+      "id": "f0a1d569-379e-5d4f-8e6a-292129c41308",
+      "name": "Event manager",
+      "scope": "internal"
+    },
+    {
+      "id": "f17ae28d-d543-506d-b5d0-7780470d927d",
+      "name": "External console",
+      "scope": "external"
+    }
+  ],
+  "zones": [],
+  "components": [
+    {
+      "id": "496b338f-3fd5-5c2c-909e-4b5cdb1a5a43",
+      "name": "Event manager",
+      "role": "event management",
+      "system_id": "f0a1d569-379e-5d4f-8e6a-292129c41308",
+      "status": "proposed",
+      "asset_id": "server",
+      "scope": "internal",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "53785cde-98ac-4dec-b770-810fd45531cc"
+      ]
+    },
+    {
+      "id": "0ce331a9-c246-508e-80a6-8dccca712582",
+      "name": "Review console",
+      "role": "external command system",
+      "system_id": "f17ae28d-d543-506d-b5d0-7780470d927d",
+      "status": "proposed",
+      "asset_id": "server",
+      "scope": "external",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "3c555ea8-4e29-4474-9782-b4db3a498592",
+        "ad38cf60-5a2a-4a5e-bc39-5c63badb9c74"
+      ]
+    }
+  ],
+  "deployments": [],
+  "interfaces": [
+    {
+      "id": "3a6355e4-8a93-593a-9576-cda1a6c8aeee",
+      "source": "496b338f-3fd5-5c2c-909e-4b5cdb1a5a43",
+      "target": "0ce331a9-c246-508e-80a6-8dccca712582",
+      "purpose": "events",
+      "data_direction": "source_to_target",
+      "initiator": null,
+      "protocol": null,
+      "port": null,
+      "enforcement": [],
+      "delivery": "push",
+      "evidence": [
+        "43622883-35b4-4f89-946f-7cd81e9e2255",
+        "fc250042-1a9e-44f0-aaf6-3cde11e73d3e",
+        "23f89e00-4f55-4f58-bf60-0e0649e9553d",
+        "75ca64f1-a719-40ec-8283-875d2a9d1707",
+        "921ace2a-868e-4ee5-8428-a161f6ca4a98",
+        "155085f9-b221-4c69-b166-d6a48177b401",
+        "2389e803-84c5-4486-b213-051b9799206a"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ae0ca15c-6ec3-48ba-8551-eac5750ccfa4",
+      "name": "Prompt",
+      "version": "1.0",
+      "kind": "prompt",
+      "sha256": "2d8027d8bae2798b67c7752f60d8fee819170c59c93932068c066bddc5183f7b",
+      "canonical_id": "2d8027d8bae2798b67c7752f60d8fee819170c59c93932068c066bddc5183f7b",
+      "variants": [
+        "2d8027d8bae2798b67c7752f60d8fee819170c59c93932068c066bddc5183f7b"
+      ],
+      "passages": [
+        {
+          "locator": "prompt/1",
+          "heading": "",
+          "text": "SYNTHETIC demonstration. Create a draft with two applications: Event manager (role event management) and External console (role external command system, external scope). Event manager sends events to External console. Event delivery method, session initiator, protocol, port, deployment zones and equipment quantities are not decided. Preserve these unknowns.",
+          "page": null
+        }
+      ],
+      "processed": [
+        "prompt/1"
+      ],
+      "unprocessed": [],
+      "unsupported_pages": []
+    },
+    {
+      "id": "dce526fd-fab9-4bae-bd5c-9d642f320e10",
+      "name": "Prompt",
+      "version": "1.0",
+      "kind": "prompt",
+      "sha256": "abedc1be55de97639650f9ab14d7179cc4a7fc144afb75b2c0f97a474d890716",
+      "canonical_id": "abedc1be55de97639650f9ab14d7179cc4a7fc144afb75b2c0f97a474d890716",
+      "variants": [
+        "abedc1be55de97639650f9ab14d7179cc4a7fc144afb75b2c0f97a474d890716"
+      ],
+      "passages": [
+        {
+          "locator": "prompt/1",
+          "heading": "",
+          "text": "Rename External console to Review console. Keep every other fact unchanged.",
+          "page": null
+        }
+      ],
+      "processed": [
+        "prompt/1"
+      ],
+      "unprocessed": [],
+      "unsupported_pages": []
+    }
+  ],
+  "claims": [
+    {
+      "id": "11ca9a42-451c-4f7a-9b08-0b27a63b9d2b",
+      "source_id": "ae0ca15c-6ec3-48ba-8551-eac5750ccfa4",
+      "source_version": "1.0",
+      "locator": "prompt/1",
+      "excerpt": "Create a draft with two applications: Event manager (role event management) and External console (role external command system, external scope).",
+      "target_id": "f0a1d569-379e-5d4f-8e6a-292129c41308",
+      "field": "name",
+      "value": "Event manager",
+      "source_kind": "prompt",
+      "review": "confirmed"
+    },
+    {
+      "id": "a91f7f85-1483-4bfd-91d7-45ad134f4a85",
+      "source_id": "ae0ca15c-6ec3-48ba-8551-eac5750ccfa4",
+      "source_version": "1.0",
+      "locator": "prompt/1",
+      "excerpt": "Create a draft with two applications: Event manager (role event management) and External console (role external command system, external scope).",
+      "target_id": "f17ae28d-d543-506d-b5d0-7780470d927d",
+      "field": "name",
+      "value": "External console",
+      "source_kind": "prompt",
+      "review": "confirmed"
+    },
+    {
+      "id": "53785cde-98ac-4dec-b770-810fd45531cc",
+      "source_id": "ae0ca15c-6ec3-48ba-8551-eac5750ccfa4",
+      "source_version": "1.0",
+      "locator": "prompt/1",
+      "excerpt": "Event manager (role event management)",
+      "target_id": "496b338f-3fd5-5c2c-909e-4b5cdb1a5a43",
+      "field": "role",
+      "value": "event management",
+      "source_kind": "prompt",
+      "review": "confirmed"
+    },
+    {
+      "id": "3c555ea8-4e29-4474-9782-b4db3a498592",
+      "source_id": "ae0ca15c-6ec3-48ba-8551-eac5750ccfa4",
+      "source_version": "1.0",
+      "locator": "prompt/1",
+      "excerpt": "External console (role external command system, external scope).",
+      "target_id": "0ce331a9-c246-508e-80a6-8dccca712582",
+      "field": "role",
+      "value": "external command system",
+      "source_kind": "prompt",
+      "review": "confirmed"
+    },
+    {
+      "id": "ad38cf60-5a2a-4a5e-bc39-5c63badb9c74",
+      "source_id": "ae0ca15c-6ec3-48ba-8551-eac5750ccfa4",
+      "source_version": "1.0",
+      "locator": "prompt/1",
+      "excerpt": "External console (role external command system, external scope).",
+      "target_id": "0ce331a9-c246-508e-80a6-8dccca712582",
+      "field": "scope",
+      "value": "external",
+      "source_kind": "prompt",
+      "review": "confirmed"
+    },
+    {
+      "id": "43622883-35b4-4f89-946f-7cd81e9e2255",
+      "source_id": "ae0ca15c-6ec3-48ba-8551-eac5750ccfa4",
+      "source_version": "1.0",
+      "locator": "prompt/1",
+      "excerpt": "Event manager sends events to External console.",
+      "target_id": "3a6355e4-8a93-593a-9576-cda1a6c8aeee",
+      "field": "source",
+      "value": "496b338f-3fd5-5c2c-909e-4b5cdb1a5a43",
+      "source_kind": "prompt",
+      "review": "confirmed"
+    },
+    {
+      "id": "fc250042-1a9e-44f0-aaf6-3cde11e73d3e",
+      "source_id": "ae0ca15c-6ec3-48ba-8551-eac5750ccfa4",
+      "source_version": "1.0",
+      "locator": "prompt/1",
+      "excerpt": "Event manager sends events to External console.",
+      "target_id": "3a6355e4-8a93-593a-9576-cda1a6c8aeee",
+      "field": "target",
+      "value": "0ce331a9-c246-508e-80a6-8dccca712582",
+      "source_kind": "prompt",
+      "review": "confirmed"
+    },
+    {
+      "id": "23f89e00-4f55-4f58-bf60-0e0649e9553d",
+      "source_id": "ae0ca15c-6ec3-48ba-8551-eac5750ccfa4",
+      "source_version": "1.0",
+      "locator": "prompt/1",
+      "excerpt": "Event manager sends events to External console.",
+      "target_id": "3a6355e4-8a93-593a-9576-cda1a6c8aeee",
+      "field": "purpose",
+      "value": "events",
+      "source_kind": "prompt",
+      "review": "confirmed"
+    },
+    {
+      "id": "75ca64f1-a719-40ec-8283-875d2a9d1707",
+      "source_id": "ae0ca15c-6ec3-48ba-8551-eac5750ccfa4",
+      "source_version": "1.0",
+      "locator": "prompt/1",
+      "excerpt": "Event manager sends events to External console.",
+      "target_id": "3a6355e4-8a93-593a-9576-cda1a6c8aeee",
+      "field": "data_direction",
+      "value": "source_to_target",
+      "source_kind": "prompt",
+      "review": "confirmed"
+    },
+    {
+      "id": "921ace2a-868e-4ee5-8428-a161f6ca4a98",
+      "source_id": "ae0ca15c-6ec3-48ba-8551-eac5750ccfa4",
+      "source_version": "1.0",
+      "locator": "prompt/1",
+      "excerpt": "Event delivery method, session initiator, protocol, port, deployment zones and equipment quantities are not decided. Preserve these unknowns.",
+      "target_id": "3a6355e4-8a93-593a-9576-cda1a6c8aeee",
+      "field": "initiator",
+      "value": null,
+      "source_kind": "prompt",
+      "review": "confirmed"
+    },
+    {
+      "id": "155085f9-b221-4c69-b166-d6a48177b401",
+      "source_id": "ae0ca15c-6ec3-48ba-8551-eac5750ccfa4",
+      "source_version": "1.0",
+      "locator": "prompt/1",
+      "excerpt": "Event delivery method, session initiator, protocol, port, deployment zones and equipment quantities are not decided. Preserve these unknowns.",
+      "target_id": "3a6355e4-8a93-593a-9576-cda1a6c8aeee",
+      "field": "protocol",
+      "value": null,
+      "source_kind": "prompt",
+      "review": "confirmed"
+    },
+    {
+      "id": "2389e803-84c5-4486-b213-051b9799206a",
+      "source_id": "ae0ca15c-6ec3-48ba-8551-eac5750ccfa4",
+      "source_version": "1.0",
+      "locator": "prompt/1",
+      "excerpt": "Event delivery method, session initiator, protocol, port, deployment zones and equipment quantities are not decided. Preserve these unknowns.",
+      "target_id": "3a6355e4-8a93-593a-9576-cda1a6c8aeee",
+      "field": "port",
+      "value": null,
+      "source_kind": "prompt",
+      "review": "confirmed"
+    },
+    {
+      "id": "97599562-1ae9-4f7d-adb9-607f14ff1e27",
+      "source_id": "dce526fd-fab9-4bae-bd5c-9d642f320e10",
+      "source_version": "1.0",
+      "locator": "prompt/1",
+      "excerpt": "Rename External console to Review console.",
+      "target_id": "0ce331a9-c246-508e-80a6-8dccca712582",
+      "field": "name",
+      "value": "Review console",
+      "source_kind": "prompt",
+      "review": "confirmed"
+    }
+  ],
+  "constraints": [],
+  "decisions": [
+    {
+      "id": "question-delivery-3a6355e4-8a93-593a-9576-cda1a6c8aeee",
+      "question": "How are events delivered?",
+      "target_id": "3a6355e4-8a93-593a-9576-cda1a6c8aeee",
+      "field": "delivery",
+      "options": [
+        "push",
+        "pull"
+      ],
+      "answer": "push",
+      "state": "answered",
+      "evidence": [
+        "43622883-35b4-4f89-946f-7cd81e9e2255",
+        "fc250042-1a9e-44f0-aaf6-3cde11e73d3e",
+        "23f89e00-4f55-4f58-bf60-0e0649e9553d",
+        "75ca64f1-a719-40ec-8283-875d2a9d1707",
+        "921ace2a-868e-4ee5-8428-a161f6ca4a98",
+        "155085f9-b221-4c69-b166-d6a48177b401",
+        "2389e803-84c5-4486-b213-051b9799206a"
+      ]
+    },
+    {
+      "id": "question-initiator-3a6355e4-8a93-593a-9576-cda1a6c8aeee",
+      "question": "Who initiates 3a6355e4-8a93-593a-9576-cda1a6c8aeee?",
+      "target_id": "3a6355e4-8a93-593a-9576-cda1a6c8aeee",
+      "field": "initiator",
+      "options": [
+        "496b338f-3fd5-5c2c-909e-4b5cdb1a5a43",
+        "0ce331a9-c246-508e-80a6-8dccca712582"
+      ],
+      "answer": null,
+      "state": "unknown",
+      "evidence": [
+        "43622883-35b4-4f89-946f-7cd81e9e2255",
+        "fc250042-1a9e-44f0-aaf6-3cde11e73d3e",
+        "23f89e00-4f55-4f58-bf60-0e0649e9553d",
+        "75ca64f1-a719-40ec-8283-875d2a9d1707",
+        "921ace2a-868e-4ee5-8428-a161f6ca4a98",
+        "155085f9-b221-4c69-b166-d6a48177b401",
+        "2389e803-84c5-4486-b213-051b9799206a"
+      ]
+    }
+  ],
+  "views": {
+    "logical": {
+      "type": "logical",
+      "revision": 1,
+      "placements": {
+        "496b338f-3fd5-5c2c-909e-4b5cdb1a5a43": {
+          "x": 123.0,
+          "y": 287.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "0ce331a9-c246-508e-80a6-8dccca712582": {
+          "x": 1200.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        }
+      },
+      "routes": {
+        "3a6355e4-8a93-593a-9576-cda1a6c8aeee": {
+          "style": "orthogonal",
+          "points": [
+            {
+              "x": 350.0,
+              "y": 322.0
+            }
+          ],
+          "source_handle": "right",
+          "target_handle": "left",
+          "locked": true
+        }
+      },
+      "mappings": {
+        "496b338f-3fd5-5c2c-909e-4b5cdb1a5a43": [
+          "496b338f-3fd5-5c2c-909e-4b5cdb1a5a43"
+        ],
+        "0ce331a9-c246-508e-80a6-8dccca712582": [
+          "0ce331a9-c246-508e-80a6-8dccca712582"
+        ],
+        "3a6355e4-8a93-593a-9576-cda1a6c8aeee": [
+          "3a6355e4-8a93-593a-9576-cda1a6c8aeee"
+        ]
+      }
+    },
+    "sv1": {
+      "type": "sv1",
+      "revision": 0,
+      "placements": {
+        "f0a1d569-379e-5d4f-8e6a-292129c41308": {
+          "x": 70.0,
+          "y": 90.0,
+          "width": 240.0,
+          "height": 125.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "f17ae28d-d543-506d-b5d0-7780470d927d": {
+          "x": 370.0,
+          "y": 90.0,
+          "width": 240.0,
+          "height": 125.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        }
+      },
+      "routes": {},
+      "mappings": {
+        "f0a1d569-379e-5d4f-8e6a-292129c41308": [
+          "496b338f-3fd5-5c2c-909e-4b5cdb1a5a43"
+        ],
+        "f17ae28d-d543-506d-b5d0-7780470d927d": [
+          "0ce331a9-c246-508e-80a6-8dccca712582"
+        ],
+        "aggregate:f0a1d569-379e-5d4f-8e6a-292129c41308:f17ae28d-d543-506d-b5d0-7780470d927d": [
+          "3a6355e4-8a93-593a-9576-cda1a6c8aeee"
+        ]
+      }
+    },
+    "sv2": {
+      "type": "sv2",
+      "revision": 0,
+      "placements": {
+        "496b338f-3fd5-5c2c-909e-4b5cdb1a5a43": {
+          "x": 1200.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "0ce331a9-c246-508e-80a6-8dccca712582": {
+          "x": 1200.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 90.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        }
+      },
+      "routes": {},
+      "mappings": {
+        "496b338f-3fd5-5c2c-909e-4b5cdb1a5a43": [
+          "496b338f-3fd5-5c2c-909e-4b5cdb1a5a43"
+        ],
+        "0ce331a9-c246-508e-80a6-8dccca712582": [
+          "0ce331a9-c246-508e-80a6-8dccca712582"
+        ],
+        "3a6355e4-8a93-593a-9576-cda1a6c8aeee": [
+          "3a6355e4-8a93-593a-9576-cda1a6c8aeee"
+        ]
+      }
+    }
+  },
+  "notes": ""
+}

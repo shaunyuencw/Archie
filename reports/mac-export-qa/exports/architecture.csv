@@ -1,0 +1,5 @@
+﻿id,source,target,purpose,data_direction,initiator,protocol,port,enforcement,delivery,semantic_revision
+video,vms,analytics,video,source_to_target,analytics,RTSP,,,,0
+events,management,c2,events,source_to_target,management,HTTPS,,,push,0
+administration,configuration,management,management,bidirectional,configuration,HTTPS,,enforcement,,0
+integration,management,analytics,integration,bidirectional,management,HTTPS,,,,0

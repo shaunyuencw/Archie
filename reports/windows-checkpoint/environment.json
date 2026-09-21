@@ -1,0 +1,14 @@
+{
+  "os": "Windows-11-10.0.26200-SP0",
+  "architecture": "AMD64",
+  "python": "3.12.4",
+  "node": "v24.19.0",
+  "ram_bytes": "68334067712",
+  "gpu": "NVIDIA GeForce RTX 3080 Ti Laptop GPU, 16384 MiB",
+  "ollama_version": "ollama version is 0.34.2",
+  "ollama_models": "NAME                   ID              SIZE      MODIFIED          \nqwen3:4b               359d7dd4bcda    2.5 GB    About an hour ago    \nqwen3.8:latest         22130167c4c2    17 GB     About an hour ago    \nmistral:7b-instruct    6577803aa9a0    4.4 GB    12 months ago        \ngpt-oss:20b            aa4295ac10c3    13 GB     13 months ago        \nllama3.1:70b           d729c66f84de    39 GB     2 years ago          \nllama3.1:8b            62757c860e01    4.7 GB    2 years ago          \nllama3.1:latest        62757c860e01    4.7 GB    2 years ago",
+  "ollama_ps": "NAME    ID    SIZE    PROCESSOR    CONTEXT    UNTIL",
+  "visio_registered": false,
+  "live_capabilities": "unverified",
+  "cloud_default": false
+}

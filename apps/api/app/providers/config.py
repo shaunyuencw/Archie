@@ -13,8 +13,8 @@ class Settings(BaseModel):
     ollama_model:str='qwen3:4b'
     ollama_base_url:str='http://127.0.0.1:11434'
     ollama_num_ctx:int=Field(default=4096,ge=4096,le=8192)
-    max_input:int=Field(default=12000,gt=0,le=12000)
-    max_output:int=Field(default=3000,gt=0,le=3000)
+    max_input:int=Field(default=12000,gt=0,le=32000)
+    max_output:int=Field(default=3000,gt=0,le=6000)
     max_calls:int=Field(default=4,gt=0,le=8)
     action_usd:float=Field(default=.10,gt=0)
     document_usd:float=Field(default=.20,gt=0)

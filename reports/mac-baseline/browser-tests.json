@@ -1,0 +1,356 @@
+{
+  "config": {
+    "argv": [
+      "/Users/shauny/.nvm/versions/node/v22.23.1/bin/node",
+      "/Users/shauny/Developer/Archie/apps/web/node_modules/@playwright/test/cli.js",
+      "test"
+    ],
+    "configFile": "/Users/shauny/Developer/Archie/apps/web/playwright.config.ts",
+    "rootDir": "/Users/shauny/Developer/Archie/apps/web/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 5
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/shauny/Developer/Archie/apps/web/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 5
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/Users/shauny/Developer/Archie/apps/web/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 45000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../../reports/browser-tests.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 6,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "branding.spec.ts",
+      "file": "branding.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "ARCHIE branding and assistant mascot render with editable equipment canvas",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 816,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-21T12:22:04.687Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c7f19e806919ac620bf8-4a856a224aef5996f2f7",
+          "file": "branding.spec.ts",
+          "line": 2,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "ingest.spec.ts",
+      "file": "ingest.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "T02 T04 upload review, sources and saved answer",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 1047,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-21T12:22:04.690Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "22c38c33c5e61416b031-cec1307e34a83df63528",
+          "file": "ingest.spec.ts",
+          "line": 2,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "manual.spec.ts",
+      "file": "manual.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "T07 manual edit, route, undo, reopen and three views without provider calls",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 2,
+                  "status": "failed",
+                  "duration": 6151,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.react-flow__node[data-id=\"vms-system\"]')\nExpected substring: \u001b[32m\"Video management renamed\"\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('.react-flow__node[data-id=\"vms-system\"]') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.react-flow__node[data-id=\"vms-system\"]')\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.react-flow__node[data-id=\"vms-system\"]')\nExpected substring: \u001b[32m\"Video management renamed\"\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('.react-flow__node[data-id=\"vms-system\"]') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.react-flow__node[data-id=\"vms-system\"]')\u001b[22m\n\n    at /Users/shauny/Developer/Archie/apps/web/tests/manual.spec.ts:10:142",
+                    "location": {
+                      "file": "/Users/shauny/Developer/Archie/apps/web/tests/manual.spec.ts",
+                      "column": 142,
+                      "line": 10
+                    },
+                    "snippet": "   8 |  await page.getByLabel('Placement x',{exact:true}).fill('55');await page.getByLabel('Placement x',{exact:true}).press('Tab');\n   9 |  await expect(page.getByLabel('Placement x',{exact:true})).toHaveValue('55');\n> 10 |  await page.getByRole('button',{name:'SV-1-style',exact:true}).click();await expect(page.locator('.react-flow__node[data-id=\"vms-system\"]')).toContainText('Video management renamed');\n     |                                                                                                                                              ^\n  11 |  await page.getByRole('button',{name:'SV-2-style',exact:true}).click();await expect(page.locator('.edge-label').first()).toContainText('initiator');\n  12 |  await page.getByRole('button',{name:'Interfaces',exact:true}).click();await page.getByRole('cell',{name:'video',exact:true}).first().click();\n  13 |  await page.getByLabel('Line style',{exact:true}).selectOption('straight');await expect(page.getByLabel('Line style',{exact:true})).toHaveValue('straight');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/shauny/Developer/Archie/apps/web/tests/manual.spec.ts",
+                        "column": 142,
+                        "line": 10
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.react-flow__node[data-id=\"vms-system\"]')\nExpected substring: \u001b[32m\"Video management renamed\"\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('.react-flow__node[data-id=\"vms-system\"]') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.react-flow__node[data-id=\"vms-system\"]')\u001b[22m\n\n\n   8 |  await page.getByLabel('Placement x',{exact:true}).fill('55');await page.getByLabel('Placement x',{exact:true}).press('Tab');\n   9 |  await expect(page.getByLabel('Placement x',{exact:true})).toHaveValue('55');\n> 10 |  await page.getByRole('button',{name:'SV-1-style',exact:true}).click();await expect(page.locator('.react-flow__node[data-id=\"vms-system\"]')).toContainText('Video management renamed');\n     |                                                                                                                                              ^\n  11 |  await page.getByRole('button',{name:'SV-2-style',exact:true}).click();await expect(page.locator('.edge-label').first()).toContainText('initiator');\n  12 |  await page.getByRole('button',{name:'Interfaces',exact:true}).click();await page.getByRole('cell',{name:'video',exact:true}).first().click();\n  13 |  await page.getByLabel('Line style',{exact:true}).selectOption('straight');await expect(page.getByLabel('Line style',{exact:true})).toHaveValue('straight');\n    at /Users/shauny/Developer/Archie/apps/web/tests/manual.spec.ts:10:142"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-21T12:22:04.685Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/shauny/Developer/Archie/apps/web/test-results/manual-T07-manual-edit-rou-531ad-iews-without-provider-calls/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/shauny/Developer/Archie/apps/web/test-results/manual-T07-manual-edit-rou-531ad-iews-without-provider-calls/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/shauny/Developer/Archie/apps/web/tests/manual.spec.ts",
+                    "column": 142,
+                    "line": 10
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "7ca4e91fa5ebacc1ccca-9bc85fc068ebaa9dc0d5",
+          "file": "manual.spec.ts",
+          "line": 2,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "pointer.spec.ts",
+      "file": "pointer.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "T07 pointer move, resize, connect, reconnect, delete and reopen make zero model calls",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 3,
+                  "status": "passed",
+                  "duration": 2469,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-21T12:22:04.680Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4f0f45e953432f1f2cae-7de058dd697e99e24f24",
+          "file": "pointer.spec.ts",
+          "line": 2,
+          "column": 1
+        },
+        {
+          "title": "project and reusable pattern JSON can be imported from the workbench",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 3,
+                  "status": "passed",
+                  "duration": 741,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-21T12:22:09.216Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4f0f45e953432f1f2cae-b36ecb82817765011f1a",
+          "file": "pointer.spec.ts",
+          "line": 31,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "prompt.spec.ts",
+      "file": "prompt.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "T08 preview reject accept and undo preserve manual placement",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 4,
+                  "status": "passed",
+                  "duration": 1392,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-21T12:22:04.685Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "41d578d4611ba14b35a4-23c9d550dff3d440d568",
+          "file": "prompt.spec.ts",
+          "line": 2,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-21T12:22:01.984Z",
+    "duration": 11038.064,
+    "expected": 5,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}
