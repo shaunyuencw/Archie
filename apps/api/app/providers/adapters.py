@@ -57,7 +57,14 @@ class OllamaAdapter:
         except (TypeError,ValueError) as e:
             raise DomainError('provider_output','Ollama returned a response that was not valid JSON. Your accepted architecture was preserved.') from e
         if not isinstance(body,dict): raise DomainError('provider_output','Ollama returned a response that did not match the required architecture format. Your accepted architecture was preserved.')
-        if body.get('done_reason')=='length': raise DomainError('provider_output','Ollama reached its local response limit before completing a valid proposal. Your accepted architecture was preserved. Retry with a smaller section or a model that can return a shorter response.')
+        if body.get('done_reason')=='length':
+            error=DomainError('provider_output','Ollama reached its local response limit before completing a valid proposal. Your accepted architecture was preserved. Retry with a smaller section or a model that can return a shorter response.')
+            # The partial JSON is never persisted, but Ollama's counters make
+            # this known truncation observable instead of an unresolved call.
+            error.usage=Usage(input_tokens=body.get('prompt_eval_count',0) or 0,output_tokens=body.get('eval_count',0) or 0,latency_ms=(time.monotonic()-started)*1000)
+            error.model=body.get('model',self.model)
+            error.terminal=True
+            raise error
         if not body.get('done'): raise DomainError('provider_output','Ollama returned an incomplete response. Your accepted architecture was preserved.')
         try:
             if tools:

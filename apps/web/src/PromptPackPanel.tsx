@@ -1,0 +1,4 @@
+import type {PromptPack} from './jsonImport';
+export default function PromptPackPanel({pack,onUse,onClose}:{pack:PromptPack;onUse:(text:string)=>void;onClose:()=>void}){
+ return <section className="prompt-pack" aria-label="Follow-up prompt pack"><div className="prompt-pack-heading"><h3>{pack.scenario}</h3><button onClick={onClose} aria-label="Close prompt pack">×</button></div><p>Choose a follow-up, then review the prompt and provider before running it.</p>{pack.prompts.map((entry,index)=><article key={index}><p>{entry.prompt}</p>{entry.expected&&<small>Expected: {entry.expected}</small>}{entry.provider&&<small>Provider guidance: {entry.provider}</small>}<button onClick={()=>onUse(entry.prompt)}>Use prompt {index+1}</button></article>)}{pack.provider_notes&&<details><summary>About these prompts</summary><p>{pack.provider_notes}</p></details>}</section>;
+}

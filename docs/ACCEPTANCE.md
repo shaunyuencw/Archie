@@ -1,6 +1,6 @@
 # Acceptance checkpoint — 21 September 2026
 
-This matrix records the Mac continuation. The full offline gate passes (109 backend, 19 frontend unit, 21 browser journeys, TypeScript and production build). New product scenarios and library are covered by `apps/web/tests/product.spec.ts`. Mac handover is ready; full native Visio acceptance remains conditional. Fixture version is 1.0; historical Windows results are retained separately.
+This matrix records the Mac continuation. The full offline gate passes (131 backend, 25 frontend unit, 29 browser journeys, TypeScript and production build). New product scenarios and library are covered by `apps/web/tests/product.spec.ts`. Mac handover is ready; full native Visio acceptance remains conditional. Fixture version is 1.0; historical Windows results are retained separately.
 
 ## Product requirements
 
@@ -8,12 +8,12 @@ This matrix records the Mac continuation. The full offline gate passes (109 back
 | --- | --- | --- |
 | F01 | Passed for offline fixtures and real Terra journeys | Prompt and B SoW DOCX service flows passed with exact source locators; transport-qualified single ports normalize to the canonical integer while ambiguous values remain unknown. `reports/mac-resume-20260921-openai/report.json`, `tests/test_ingest.py`, `tests/test_live_documents.py`, `tests/test_live_orchestrator.py`. |
 | F02 | Passed | Unknown fields, visible radio-card options and saved answers: ingestion and browser tests. |
-| F03 | Passed | `tests/test_policies.py` preserves the original eight checks/12 manual clauses; `tests/test_policy_library.py` verifies 42 global clauses, 11 available checks, project applicability, local drafts and three-tier/hybrid separation. Optional advisory review is tested independently in `tests/test_policy_review.py`; one real three-policy Terra review passed. |
+| F03 | Passed | `tests/test_policies.py` preserves the original eight checks/12 manual clauses; `tests/test_policy_library.py` verifies 42 global clauses, 11 available checks, project applicability, local drafts, library categories and three-tier/hybrid separation. `tests/test_policy_recommendations.py` covers optional rule-derived suggestions and atomic acceptance/undo. Optional advisory review is tested independently in `tests/test_policy_review.py`; one real three-policy Terra review passed. |
 | F04 | Passed | `tests/test_consistency.py`, manual browser journey: one model, three projections. |
-| F05 | Passed | Pointer move/resize/connect/reconnect/segment dragging and straight-line menu, groups, snapping, keyboard copy/paste/duplicate/delete/undo/redo, panels and reopening pass with zero manual provider requests. `reports/browser-tests.json`. |
+| F05 | Passed | Pointer move/resize/connect/reconnect/segment dragging and straight-line menu, draggable labels, ten-color presentation palettes, zone/component resize, four layer commands, groups, snapping, keyboard copy/paste/duplicate/delete/undo/redo, panels and reopening pass with zero manual provider requests. `reports/browser-tests.json`. |
 | F06 | Passed | Prompt browser journey; stale semantic/view revisions rejected; layout and authored notes preserved. |
 | F07 | Passed | Readable Overview and editable Connections share semantic revision; authored notes retained. `tests/test_consistency.py`. |
-| F08 | Passed | Persistence tests, pattern sanitisation, project Trash/restore/confirmed purge, budget-ledger preservation and browser import journey. |
+| F08 | Passed | Persistence tests, pattern sanitisation, project Trash/restore/confirmed purge, budget-ledger preservation prompt-pack import, durable background jobs and accepted/rejected proposal history (`tests/test_background_jobs.py`, `tests/test_proposal_history.py`). |
 | F09 | Partial / native unverified | Cross-platform exports tested in `tests/test_exports.py`; native helper supplied and syntax checked. Three SVG views, narrative DOCX and all source DOCX/PDF pages visually checked on Mac (`reports/mac-export-qa/review.json`). Native Visio remains unverified. |
 | F10 | Passed offline / mixed live results | Atomic budget and adapter tests pass. Terra A/B journeys pass; Qwen14B small extraction passes but richer journey fails safely. Historical Qwen4B results retained. |
 
@@ -40,12 +40,12 @@ This matrix records the Mac continuation. The full offline gate passes (109 back
 | T04 | Passed | Null unknowns, bounded questions and persistent answers. |
 | T05 | Passed | Contradictory sources preserved. |
 | T06 | Passed | All implemented predicates run, independent of retrieval. |
-| T07 | Passed | `apps/web/tests/manual.spec.ts`, `pointer.spec.ts`; actual move/resize/connect/reconnect/delete and zero provider requests asserted. |
-| T08 | Passed | Targeted prompt after manual positioning, accept/reject/undo. |
+| T07 | Passed | `apps/web/tests/manual.spec.ts`, `pointer.spec.ts`, `presentation.spec.ts`; actual move/resize/connect/reconnect/delete and zero provider requests asserted. |
+| T08 | Passed | Targeted prompt after manual positioning, accept/reject/undo; `history.spec.ts` verifies persistent review history and conditional prompt clearing, `background.spec.ts` verifies cross-project jobs and notifications. |
 | T09 | Passed | Stale semantic and presentation proposals rejected. |
 | T10 | Passed | Three views, narrative and interface table consistency. |
-| T11 | Passed offline fault tests | Malformed/truncated/refused output and false source references leave accepted state unchanged. Reported unknown enforcement fields normalize with review notes; invalid references still reject (`tests/test_provider_normalization.py`). |
-| T12 | Passed | Budget reservations, parallel calls, restart and provider isolation tests. Local default deadlines scale to response size; explicit deadlines are retained and timeouts do not replay. |
+| T11 | Passed offline fault tests | Malformed/truncated/refused output and false source references leave accepted state unchanged; local length limits and stale previews terminate without a repair call, with available truncated usage recorded. Reported unknown enforcement fields normalize with review notes; invalid references still reject (`tests/test_provider_normalization.py`). |
+| T12 | Passed | Budget reservations, parallel calls, restart and provider isolation tests; cancellation before transmission, while running and at result persistence retains accounting and rejects late writes. The 8K local output allowance now uses remaining estimated context (maximum 3,720 tokens). Local default deadlines scale to response size; explicit deadlines are retained and timeouts do not replay. |
 | T13 | Passed | Injection fixture cannot change tools/configuration or execute document instructions. |
 | T14 | Passed backend and Mac browser | `reports/capacity.json`, `reports/browser-capacity-darwin.json`: 50 components / 100 interfaces, render/edit/drag/reopen, intact references and no model calls. Single-run browser timings include automation overhead. |
 | T15 | Passed | Explicit partial coverage and unsupported text handling; live batching tested with mocked transport. |
@@ -62,8 +62,10 @@ This matrix records the Mac continuation. The full offline gate passes (109 back
 - **Extraction:** `reports/extraction-metrics.json` records authored component/interface coverage across six specification format variants. It is not field-level or real-world accuracy; remaining sections stay explicit.
 - **Visual QA:** `reports/mac-export-qa/review.json`: three SVG views, three narrative DOCX pages, six source DOCX and six source PDF files (12 pages each category). SVG retains some automatic route crossings and is not pixel-identical to React Flow.
 - **Native Visio:** unverified. No generated VSDX or shape/glue/edit/save/reopen claim; a licensed Windows host is required.
-- **Limitations:** no automatic obstacle-free routing or alignment-guide overlay; full local-model workflow unreliable. Mac keyboard paths were executed; fresh Windows shortcut/platform verification remains pending. On-demand ELK chunk remains large; Starlette test client emits a deprecation warning. No human time-savings study.
+- **Limitations:** bounded component-clearance routing cannot guarantee routes through dense overlaps or prevent connector crossings; no alignment-guide overlay; full local-model workflow unreliable. Mac keyboard paths were executed; fresh Windows shortcut/platform verification remains pending. On-demand ELK chunk remains large; FastAPI startup hooks and the Starlette test client emit deprecation warnings. No human time-savings study.
 
 New demo visual QA: `reports/demo-pack-qa/review.json` records 22 inspected document pages and six SVGs. `tests/test_demo_scenarios.py` verifies authored mock roundtrips, deterministic regeneration and exact source locators. The new plain-language specifications and broad prompts have not been tested with real provider calls.
 
 Product review screenshots: `reports/archie-specification-review.png`, `reports/archie-policy-review.png`, `reports/archie-clarification-questions.png`, `reports/archie-narrow-browser.png`. Compact demo before/after geometry and screenshots: `reports/demo-pack-qa/compact-layout/review.json`.
+
+Editor/background visual evidence: `reports/presentation-qa/review.json`, `reports/archie-presentation-palette.png`, `reports/archie-change-history.png`, `reports/archie-background-projects.png` and `reports/archie-cancel-action.png`. No new live request was made for these changes. The latest Ollama response-limit correction is verified with mocked transport only; a fresh complete live result remains unverified.

@@ -1,0 +1,31 @@
+import {test,expect} from '@playwright/test';
+
+test('follow-up decisions persist in History and only the resolved prompt is cleared',async({page})=>{
+ await page.goto('/');await page.getByRole('button',{name:/^Production portal/}).click();
+ await expect(page.locator('.react-flow__node[data-id="portal-web"]')).toBeVisible();
+ const id=await page.getByLabel('Open project').inputValue();
+ const prompt=page.getByLabel('Architecture prompt');
+ const first='Rename Portal web service to Staff portal';await prompt.fill(first);
+ await page.getByRole('button',{name:'Preview proposed changes',exact:true}).click();
+ const review=page.getByRole('dialog',{name:'Here’s what will change'});
+ await expect(review).toBeVisible();await review.getByRole('button',{name:'Accept changes',exact:true}).click();
+ await expect(review).toHaveCount(0);await expect(prompt).toHaveValue('');
+ await page.getByRole('button',{name:'History',exact:true}).click();
+ const history=page.getByRole('region',{name:'Change history'});
+ await expect(history).toContainText(first);await expect(history).toContainText('Accepted');
+ const second='Rename Staff portal to Rejected name';await prompt.fill(second);
+ await page.getByRole('button',{name:'Preview proposed changes',exact:true}).click();
+ await expect(review).toBeVisible();await review.getByRole('button',{name:'Review later',exact:true}).click();
+ await prompt.fill('Keep this next prompt while I review');
+ await page.getByRole('button',{name:'Review proposed changes',exact:true}).click();
+ await review.getByRole('button',{name:'Reject',exact:true}).click();
+ await expect(review).toHaveCount(0);await expect(prompt).toHaveValue('Keep this next prompt while I review');
+ await expect(history).toContainText(second);await expect(history).toContainText('Rejected');
+ expect((await (await page.request.get('/api/projects/'+id)).json()).components.find((c:any)=>c.id==='portal-web').name).toBe('Staff portal');
+ await prompt.fill('Rename Staff portal to Another rejected title');await page.getByRole('button',{name:'Preview proposed changes',exact:true}).click();
+ await expect(review).toBeVisible();await review.getByRole('button',{name:'Reject',exact:true}).click();await expect(prompt).toHaveValue('');
+ await page.reload();await page.getByLabel('Open project').selectOption(id);await page.getByRole('button',{name:'History',exact:true}).click();
+ await expect(history.locator('article')).toHaveCount(3);await history.locator('details').nth(1).getByText('1 proposed change',{exact:true}).click();
+ await expect(history).toContainText('Set name to “Rejected name”');
+ await page.screenshot({path:'../../reports/archie-change-history.png',fullPage:true});
+});

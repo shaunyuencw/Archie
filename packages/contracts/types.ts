@@ -108,6 +108,11 @@ export type Height = number;
 export type Visible = boolean;
 export type Locked = boolean;
 export type Label = string | null;
+export type FillColor = string | null;
+export type TextColor = string | null;
+export type BorderColor = string | null;
+export type IconColor = string | null;
+export type ZIndex = number;
 export type Style = "straight" | "orthogonal";
 export type X1 = number;
 export type Y1 = number;
@@ -118,6 +123,9 @@ export type Points = Point[];
 export type SourceHandle = "left" | "right" | "top" | "bottom";
 export type TargetHandle = "left" | "right" | "top" | "bottom";
 export type Locked1 = boolean;
+export type Automatic = boolean;
+export type LineColor = string | null;
+export type TextColor1 = string | null;
 export type Notes = string;
 export type Id10 = string;
 export type ProjectId = string;
@@ -302,6 +310,11 @@ export interface Placement {
   visible: Visible;
   locked: Locked;
   label: Label;
+  fill_color: FillColor;
+  text_color: TextColor;
+  border_color: BorderColor;
+  icon_color: IconColor;
+  z_index: ZIndex;
 }
 export interface Routes {
   [k: string]: Route;
@@ -312,6 +325,10 @@ export interface Route {
   source_handle: SourceHandle;
   target_handle: TargetHandle;
   locked: Locked1;
+  automatic: Automatic;
+  label_offset: Point | null;
+  line_color: LineColor;
+  text_color: TextColor1;
 }
 export interface Point {
   x: X1;

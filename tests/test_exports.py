@@ -86,9 +86,40 @@ def test_reference_svg_interface_labels_do_not_cover_each_other():
     ns='{http://www.w3.org/2000/svg}'
     for view in p.views:
         root=ET.fromstring(export(p,'svg',view)[0]);boxes=[]
-        for group in root.iter(ns+'g'):
-            if 'data-interface-ids' not in group.attrib:continue
+        for group in root.findall(f".//{ns}g[@data-interface-label-for]"):
             rect=group.find(ns+'rect');x,y,w,h=[float(rect.attrib[key]) for key in ['x','y','width','height']]
             boxes.append((x,y,x+w,y+h))
         assert all(not (a[0]<b[2] and a[2]>b[0] and a[1]<b[3] and a[3]>b[1])
                    for i,a in enumerate(boxes) for b in boxes[i+1:])
+
+
+def test_svg_preserves_presentation_colors_icon_alpha_and_canvas_label_offset():
+    from apps.api.app.domain.models import Placement,Route
+    p=Project(components=[{'id':'a','name':'Application','role':'application','asset_id':'server'},
+                          {'id':'b','name':'Database','role':'database','asset_id':'database'}],
+              zones=[{'id':'z','name':'Protected zone'}],
+              interfaces=[{'id':'i','source':'a','target':'b','purpose':'application traffic'}])
+    p.views['logical'].placements={
+        'z':Placement(x=-20,y=-30,width=600,height=220,fill_color='#fef3c7',text_color='#713f12',border_color='#92400e'),
+        'a':Placement(x=0,y=0,width=100,height=90,fill_color='#ecfeff',text_color='#155e75',border_color='#0891b2',icon_color='#0f766e',z_index=3),
+        'b':Placement(x=400,y=0,width=100,height=90,z_index=-2),
+    }
+    p.views['logical'].routes['i']=Route(line_color='#7c3aed',text_color='#be123c',label_offset={'x':30,'y':-12})
+    raw,_=export(p,'svg');root=ET.fromstring(raw);ns={'s':'http://www.w3.org/2000/svg'}
+    application=root.find("s:g[@id='a']",ns)
+    assert application.find('s:rect',ns).attrib['fill']=='#ecfeff'
+    assert application.find('s:rect',ns).attrib['stroke']=='#0891b2'
+    mask=application.find('s:mask',ns);assert mask is not None and mask.attrib['mask-type']=='alpha'
+    tinted=application.find("s:rect[@mask]",ns);assert tinted is not None and tinted.attrib['fill']=='#0f766e'
+    assert '#155e75' in [text.attrib['fill'] for text in application.findall('s:text',ns)]
+    zone=root.find("s:g[@id='z']/s:rect",ns);assert zone.attrib['fill']=='#fef3c7' and zone.attrib['stroke']=='#92400e'
+    edge=root.find("s:g[@id='i']",ns);path=edge.find('s:path',ns)
+    assert path.attrib['stroke']=='#7c3aed'
+    label_group=root.find("s:g[@data-interface-label-for='i']",ns)
+    assert all(text.attrib['fill']=='#be123c' for text in label_group.findall('s:text',ns))
+    label_box=label_group.find('s:rect',ns)
+    # The Canvas smooth-step base has a longest 124..250 segment at y=27; moved +30,-12.
+    assert float(label_box.attrib['x'])+float(label_box.attrib['width'])/2==217
+    assert float(label_box.attrib['y'])+float(label_box.attrib['height'])/2==15
+    assert raw.index(b'id="a"')<raw.index(b'data-interface-label-for="i"')
+    assert raw.index(b'id="b"')<raw.index(b'id="a"')

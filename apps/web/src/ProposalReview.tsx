@@ -1,9 +1,12 @@
-import {useEffect,useRef} from 'react';
-import type {Project,ChangeSet} from './api';
+import {useEffect,useRef,useState} from 'react';
+import {api,type Project,type ChangeSet} from './api';
+import PolicyRecommendations,{type PolicySuggestion} from './PolicyRecommendations';
 import {proposalSummary} from './proposalSummary';
 import './ProposalReview.css';
-export default function ProposalReview({project,proposal,open,busy,error,onAccept,onReject,onDismiss}:{project:Project;proposal:ChangeSet;open:boolean;busy:boolean;error?:string;onAccept:()=>void;onReject:()=>void;onDismiss:()=>void}){
+export default function ProposalReview({project,proposal,open,busy,error,onAccept,onReject,onDismiss}:{project:Project;proposal:ChangeSet;open:boolean;busy:boolean;error?:string;onAccept:(policyIds:string[])=>void;onReject:()=>void;onDismiss:()=>void}){
  const dialog=useRef<HTMLDialogElement>(null),items=proposalSummary(project,proposal),findings=proposal.findings||[];
+ const [suggestions,setSuggestions]=useState<PolicySuggestion[]>([]),[selectedPolicies,setSelectedPolicies]=useState<string[]>([]),[suggestionError,setSuggestionError]=useState('');
+ useEffect(()=>{let current=true;setSuggestions([]);setSelectedPolicies([]);setSuggestionError('');api<{items:PolicySuggestion[]}>(`/changes/${proposal.id}/policy-suggestions`).then(result=>{if(current)setSuggestions(result.items)}).catch(e=>{if(current)setSuggestionError('Policy suggestions are unavailable: '+e.message)});return()=>{current=false}},[proposal.id]);
  useEffect(()=>{if(open&&!dialog.current?.open)dialog.current?.showModal();else if(!open&&dialog.current?.open)dialog.current.close()},[open]);
  const counts={add:items.filter(i=>i.kind==='add').length,update:items.filter(i=>i.kind==='update').length,remove:items.filter(i=>i.kind==='remove').length};
  return <dialog className="proposal-review" ref={dialog} aria-labelledby="proposal-title" onCancel={e=>{e.preventDefault();onDismiss()}}>
@@ -11,8 +14,9 @@ export default function ProposalReview({project,proposal,open,busy,error,onAccep
  <div className="review-totals">{counts.add>0&&<span>{counts.add} additions</span>}{counts.update>0&&<span>{counts.update} updates</span>}{counts.remove>0&&<span className="review-removal">{counts.remove} removals</span>}<span>Based on revision {proposal.base_revision}</span></div>
  <div className="review-body">{error&&<p className="error" role="alert">{error}</p>}{findings.length>0&&<section className="review-notes"><h3>Things to check</h3>{findings.map((finding,i)=><p key={i}>{finding}</p>)}</section>}
  <ol className="review-items">{items.map((item,i)=><li key={i} className={'review-'+item.kind}><h3>{item.title}</h3>{item.details.map((detail,j)=><p key={j}>{detail}</p>)}</li>)}</ol>
+ <PolicyRecommendations items={suggestions} selection={selectedPolicies} onSelectionChange={setSelectedPolicies} hideApply busy={busy} contextLabel="Suggested policies for this draft"/>{suggestionError&&<p className="muted">{suggestionError}</p>}
  <p className="review-evidence">Source passages and review states remain available in Sources. Unspecified details stay undecided; accepting a draft does not verify that the system has been built.</p>
  <details className="review-technical"><summary>Technical details · {proposal.operations.length} saved operations</summary><pre>{JSON.stringify(proposal.operations,null,2)}</pre></details></div>
- <div className="review-actions"><button className="primary" disabled={busy} onClick={onAccept}>Accept changes</button><button disabled={busy} onClick={onReject}>Reject</button><span>Accepted edits can be undone.</span></div>
+ <div className="review-actions"><button className="primary" disabled={busy} onClick={()=>onAccept(selectedPolicies)}>Accept changes</button><button disabled={busy} onClick={onReject}>Reject</button><span>{selectedPolicies.length?`Includes ${selectedPolicies.length} selected policies. `:''}Accepted edits can be undone.</span></div>
  </dialog>
 }

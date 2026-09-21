@@ -132,10 +132,16 @@ def latest_review(store, project_id, provider='mock'):
         rows = db.execute('SELECT body FROM cache WHERE substr(hash,1,?)=? ORDER BY rowid DESC', (len(prefix),prefix)).fetchall()
     # Imported IDs can contain SQL wildcards or delimiters. Check stored ownership too.
     result=next((value for row in rows if (value:=json.loads(row['body'])).get('project_id')==project.id and value.get('provider')==provider),None)
-    return {'review': mark_stale(result, project) if result else None}
+    return {'review': {**mark_stale(result, project), 'cached': True} if result else None}
 
 
-def review_project(store, project_id, request, settings=None, adapter=None):
+def _check_cancel(cancel):
+    if cancel and cancel.is_set():
+        raise DomainError('cancelled', 'This background review was cancelled before it could save a result.', 409)
+
+
+def review_project(store, project_id, request, settings=None, adapter=None, cancel=None, job_id=None):
+    _check_cancel(cancel)
     project = store.get(project_id)
     if request.base_revision != project.revision:
         raise DomainError('stale_revision', 'The project changed. Reopen Findings before starting a policy review.', 409)
@@ -152,6 +158,7 @@ def review_project(store, project_id, request, settings=None, adapter=None):
     with store.connect() as db:
         cached = db.execute('SELECT body FROM cache WHERE hash=?', (cache_key,)).fetchone()
     if cached:
+        _check_cancel(cancel)
         return {**mark_stale(json.loads(cached['body']), project), 'cached': True}
     if provider != 'mock' and not project.synthetic:
         raise DomainError('invalid_input', 'Live review is available only for synthetic projects in this demonstration.')
@@ -161,6 +168,8 @@ def review_project(store, project_id, request, settings=None, adapter=None):
     action_id = 'policy-review:' + request.request_id
     with store.connect() as db:
         db.execute('BEGIN IMMEDIATE')
+        if job_id:store.ensure_job_running(job_id,db)
+        _check_cancel(cancel)
         current=store.get(project.id,db)
         if current.revision!=project.revision:
             raise DomainError('stale_revision','The project changed before review began. Start a fresh review.',409)
@@ -187,7 +196,7 @@ def review_project(store, project_id, request, settings=None, adapter=None):
                 raise DomainError('unavailable_provider', 'Review provider is unavailable; accepted architecture was preserved.', 503) from error
             if active_adapter.name != provider:
                 raise DomainError('invalid_input', 'The review provider must match the explicitly selected provider.')
-            output = BudgetedProvider(store, config, active_adapter).call(prompt, project.id, action_id, task='review', deadline=time.monotonic() + 90)
+            output = BudgetedProvider(store, config, active_adapter).call(prompt, project.id, action_id, task='review', deadline=time.monotonic() + 90, cancel=cancel)
             envelope = output.content
             if envelope.operations or envelope.claims or envelope.tool or getattr(envelope, 'project_name', None):
                 raise DomainError('provider_output', 'The review returned architecture changes or a tool request. Nothing was applied.')
@@ -196,6 +205,7 @@ def review_project(store, project_id, request, settings=None, adapter=None):
             except ValueError as error:
                 raise DomainError('provider_output', 'The provider did not return a valid advisory review. Nothing was applied.') from error
             model = output.model
+        _check_cancel(cancel)
         checked = verified_body(body, ids, evidence, object_ids)
         titles={clause['id']:clause['title'] for clause in policies}
         for assessment in checked['assessments']:assessment['title']=titles[assessment['policy_id']]
@@ -203,6 +213,8 @@ def review_project(store, project_id, request, settings=None, adapter=None):
         result = {**checked, 'id': action_id, 'project_id': project.id, 'revision': project.revision, 'policy_ids': ids, 'policy_fingerprint': fingerprint, 'provider': provider, 'model': model, 'created_at': now(), 'mode': 'deterministic_demo' if provider == 'mock' else 'ai_advisory', 'coverage': coverage, 'cost_usd': sum(row['cost'] if row['cost'] is not None else row['reserved'] for row in records), 'cached': False}
         with store.connect() as db:
             db.execute('BEGIN IMMEDIATE')
+            if job_id:store.ensure_job_running(job_id,db)
+            _check_cancel(cancel)
             current=store.get(project.id,db)
             db.execute('INSERT OR REPLACE INTO cache VALUES(?,?)', (cache_key, json.dumps(result)))
             db.execute("UPDATE runs SET status='completed',result=? WHERE id=?", (json.dumps(result), action_id))

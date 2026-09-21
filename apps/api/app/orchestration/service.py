@@ -20,7 +20,13 @@ def question_ops(p):
     capacity=max(0,3-sum(d.state=='unknown' for d in p.decisions))
     return [Operation(op='add',entity='decisions',id=d.id,value=d.model_dump(exclude={'id'})) for d in candidates if d.id not in existing][:capacity]
 
-def ingest(store,pid,data,name,kind='document',source_id=None):
+def _check_cancel(cancel):
+    if cancel and cancel.is_set():
+        raise DomainError('cancelled','This background action was cancelled before it could save a result.',409)
+
+
+def ingest(store,pid,data,name,kind='document',source_id=None,cancel=None,job_id=None):
+    _check_cancel(cancel)
     p=store.get(pid)
     if source_id: source=next(s for s in p.sources if s.id==source_id)
     else:
@@ -30,11 +36,13 @@ def ingest(store,pid,data,name,kind='document',source_id=None):
             if source.sha256 not in duplicate.variants:
                 # Preserve page/table locators for alternate renderings without duplicating facts.
                 variants=duplicate.variants+[source.sha256]
-                p=store.commit(command(p,[Operation(op='update',entity='sources',id=duplicate.id,value={'variants':variants})],origin='ingest'))
+                _check_cancel(cancel)
+                p=store.commit(command(p,[Operation(op='update',entity='sources',id=duplicate.id,value={'variants':variants})],origin='ingest'),job_id=job_id)
             return {'proposal':None,'duplicate':True,'source_id':duplicate.id,'coverage':{'processed':duplicate.processed,'unprocessed':duplicate.unprocessed}}
     passages=batch(source)
     claims,ops=(edit(data.decode('utf-8'),p,source) if kind=='prompt' and p.components else ([],[]))
     if not ops: claims,ops=extract(source,passages,p)
+    _check_cancel(cancel)
     # Mock uses a small deterministic naming heuristic; live providers supply their own title.
     explicit=re.search(r'\b(?:rename|name|call)\s+(?:(?:this|the)\s+)?project\s+(?:to\s+)?["“]?(.+?)["”]?[.!]?$',data.decode('utf-8',errors='ignore'),re.I) if kind=='prompt' else None
     suggestion=explicit.group(1).strip('"“”') if explicit else None
@@ -47,14 +55,15 @@ def ingest(store,pid,data,name,kind='document',source_id=None):
     source.processed=processed;source.unprocessed=remaining
     source_op=Operation(op='update' if source_id else 'add',entity='sources',id=source.id,value=source.model_dump(exclude={'id'}))
     metadata=[source_op]+[Operation(op='add',entity='claims',id=c.id,value=c.model_dump(exclude={'id'})) for c in claims]
-    p=store.commit(command(p,metadata,origin='ingest'))
+    p=store.commit(command(p,metadata,origin='ingest'),job_id=job_id)
     if not ops: return {'proposal':None,'message':'No supported candidate facts found. Mock understands the authored fixture statements and a small set of prompts; use a live provider for broader interpretation.','coverage':{'processed':processed,'unprocessed':remaining}}
     review=[Operation(op='update',entity='claims',id=c.id,value={'review':'confirmed' if c.review!='conflicting' else 'conflicting'}) for c in claims]
     proposed=command(p,ops+review,origin='assistant')
     candidate=apply(p,proposed)
     questions=question_ops(candidate)
     proposed.operations.extend(questions)
-    proposal=store.preview(proposed)
+    _check_cancel(cancel)
+    proposal=store.preview(proposed,job_id=job_id)
     return {'proposal':proposal,'coverage':{'processed':processed,'unprocessed':remaining},'questions':len(questions),'mode':'deterministic_mock'}
 
 def answer(store,pid,request):

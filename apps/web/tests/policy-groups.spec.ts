@@ -1,0 +1,32 @@
+import {test,expect} from '@playwright/test';
+
+test('policy categories preserve hidden selections through search and explicit apply',async({page})=>{
+ const providerRequests:string[]=[];
+ page.on('request',request=>{if(request.method()==='POST'&&/\/(runs|jobs|sources|source-jobs|policy-review|policy-review-jobs)(?:\?|$)/.test(request.url()))providerRequests.push(request.url())});
+ const response=await page.request.post('/api/projects',{data:{name:'Grouped policy browsing',reference:'portal'}});
+ expect(response.ok()).toBe(true);const project=await response.json();
+ await page.goto('/');await page.getByLabel('Open project',{exact:true}).selectOption(project.id);
+ await page.getByRole('button',{name:'Policies',exact:true}).click();
+ const categories=page.getByRole('navigation',{name:'Policy categories'});
+ await expect(categories.getByRole('button',{name:/^All categories/})).toBeVisible();
+ await categories.getByRole('button',{name:/^Cloud & hybrid connections/}).click();
+ await expect(page.getByLabel('Apply ARCH-HYB-01',{exact:true})).toBeVisible();
+ await expect(page.getByLabel('Apply ARCH-BAK-01',{exact:true})).toHaveCount(0);
+ await page.getByLabel('Apply ARCH-HYB-01',{exact:true}).check();
+ const current=async()=>(await page.request.get('/api/projects/'+project.id)).json();
+ expect((await current()).policy_ids).not.toContain('ARCH-HYB-01');
+ await categories.getByRole('button',{name:/^Data, secrets & backups/}).click();
+ await expect(page.getByLabel('Apply ARCH-BAK-01',{exact:true})).toBeChecked();
+ await categories.getByRole('button',{name:/^All categories/}).click();
+ await expect(page.getByLabel('Apply ARCH-HYB-01',{exact:true})).toBeChecked();
+ await page.getByLabel('Search policy library',{exact:true}).fill('restore');
+ await expect(page.getByLabel('Apply ARCH-BAK-01',{exact:true})).toBeVisible();
+ await expect(page.getByLabel('Apply ARCH-HYB-01',{exact:true})).toHaveCount(0);
+ await page.getByRole('button',{name:'Apply to project',exact:true}).click();
+ await expect.poll(async()=>(await current()).policy_ids).toContain('ARCH-HYB-01');
+ expect((await current()).policy_ids).toContain('ARCH-BAK-01');
+ await page.getByLabel('Search policy library',{exact:true}).clear();
+ await categories.getByRole('button',{name:/^Cloud & hybrid connections/}).click();
+ await expect(page.getByLabel('Apply ARCH-HYB-01',{exact:true})).toBeChecked();
+ expect(providerRequests).toEqual([]);
+});

@@ -31,7 +31,45 @@ def test_explicit_handles_and_first_manual_edit_preserve_displayed_route():
     assert (route.source_handle,route.target_handle)==('bottom','top')
     assert route.locked and route.points[0].x==800
     p.views['logical'].routes['ab']=Route(source_handle='top',target_handle='left')
-    assert view_graph(p,'logical')['edges'][0]['route']==p.views['logical'].routes['ab']
+    derived=view_graph(p,'logical')['edges'][0]['route']
+    # Handle choices remain user-owned, while an unlocked empty route is recomputed
+    # when another component or the target moves.
+    assert (derived.source_handle,derived.target_handle)==('top','left')
+    assert derived.automatic and derived.points
+    assert not p.views['logical'].routes['ab'].automatic and not p.views['logical'].routes['ab'].points
+
+
+def _crosses(first,last,box):
+    x0,y0,x1,y1=box
+    if first[1]==last[1]:
+        lo,hi=sorted((first[0],last[0]))
+        return y0<first[1]<y1 and lo<x1 and hi>x0
+    lo,hi=sorted((first[1],last[1]))
+    return x0<first[0]<x1 and lo<y1 and hi>y0
+
+
+def test_automatic_routes_clear_unrelated_component_footprints_and_regenerate():
+    p=Project(components=[{'id':'a','name':'A','role':'server'},
+                          {'id':'blocker','name':'B','role':'server'},
+                          {'id':'c','name':'C','role':'server'}],
+              interfaces=[{'id':'ac','source':'a','target':'c'}])
+    p.views['logical'].placements={
+        'a':Placement(x=0,y=0,width=100,height=80),
+        'blocker':Placement(x=190,y=-50,width=120,height=150),
+        'c':Placement(x=400,y=0,width=100,height=80),
+    }
+    first=view_graph(p,'logical')['edges'][0]['route']
+    vertices=[(100,27),*((point.x,point.y) for point in first.points),(400,27)]
+    assert first.automatic and first.points
+    assert not any(_crosses(a,b,(190,-50,310,100)) for a,b in zip(vertices,vertices[1:]))
+    # A label-only edit must not freeze the generated clearance path.
+    p=apply(p,command(p,[{'op':'route','id':'ac','value':{'label_offset':{'x':30,'y':-10}}}]))
+    saved=p.views['logical'].routes['ac'];before=[point.model_dump() for point in saved.points]
+    assert saved.automatic and saved.label_offset.model_dump()=={'x':30.0,'y':-10.0}
+    p.views['logical'].placements['blocker'].y=160
+    regenerated=view_graph(p,'logical')['edges'][0]['route']
+    assert regenerated.automatic and regenerated.label_offset==saved.label_offset
+    assert [point.model_dump() for point in regenerated.points]!=before
 
 
 def test_new_external_components_do_not_share_default_position():

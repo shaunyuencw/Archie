@@ -26,7 +26,13 @@ def document_preflight(source,provider,settings):
     selected=groups[:min(6,settings.max_calls)]
     return passages,selected,groups[len(selected):]
 
-def ingest_live(store,pid,data,name,provider,settings=None,adapter=None,source_id=None,live_run=None,deadline=None):
+def _check_cancel(cancel):
+    if cancel and cancel.is_set():
+        raise DomainError('cancelled','This background action was cancelled before it could save a result.',409)
+
+
+def ingest_live(store,pid,data,name,provider,settings=None,adapter=None,source_id=None,live_run=None,deadline=None,cancel=None,job_id=None):
+    _check_cancel(cancel)
     s=settings or Settings.environment()
     if provider not in ['openai','ollama']:raise DomainError('unavailable_provider','Unknown provider')
     if provider=='openai' and not s.allow_cloud:raise DomainError('budget_exceeded','Cloud is disabled')
@@ -45,8 +51,9 @@ def ingest_live(store,pid,data,name,provider,settings=None,adapter=None,source_i
     a=adapter or (OpenAIAdapter(s) if provider=='openai' else OllamaAdapter(s));budget=BudgetedProvider(store,s,a);action=(live_run['id']+'-' if live_run else '')+uid()
     combined=Envelope(operations=[],claims=[],tool=None,message='Document extraction proposal');known=set();used=[]
     for group in groups:
+        _check_cancel(cancel)
         prompt=json.dumps({'task':'Extract source facts into proposed architecture records. Reuse IDs already listed; do not repeat an existing add operation.','source':{'id':'S1','passages':[{'locator':x.locator,'text':x.text} for x in group]},'context':context(p,''),'previous_proposed_ids':sorted(known)},separators=(',',':'))
-        output=budget.call(prompt,pid,action,task='document',live_run=live_run,deadline=deadline)
+        output=budget.call(prompt,pid,action,task='document',live_run=live_run,deadline=deadline,cancel=cancel)
         if output.content.tool:raise DomainError('insufficient_context','Document extraction requested more context; narrow the document selection.')
         if combined.project_name is None:combined.project_name=output.content.project_name
         for op in output.content.operations:
@@ -55,4 +62,5 @@ def ingest_live(store,pid,data,name,provider,settings=None,adapter=None,source_i
         combined.claims.extend(output.content.claims);used.extend(x.locator for x in group)
     source.processed=previous_processed+used;source.unprocessed=[x.locator for x in passages if x.locator not in used]
     c=proposal_from_envelope(p,source,combined,source_alias='S1')
-    return {'proposal':store.preview(c),'mode':'schema_action_envelope','preflight':{'requests':len(groups),'unprocessed_groups':len(remainder),'input_limit':s.max_input},'coverage':{'processed':used,'unprocessed':source.unprocessed}}
+    _check_cancel(cancel)
+    return {'proposal':store.preview(c,job_id=job_id),'mode':'schema_action_envelope','preflight':{'requests':len(groups),'unprocessed_groups':len(remainder),'input_limit':s.max_input},'coverage':{'processed':used,'unprocessed':source.unprocessed}}

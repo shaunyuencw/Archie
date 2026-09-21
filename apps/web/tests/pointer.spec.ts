@@ -1,6 +1,6 @@
 import {test,expect,type Locator} from '@playwright/test';
 test('T07 pointer move, resize, connect, reconnect, delete and reopen make zero model calls',async({page})=>{
- const calls:string[]=[];page.on('request',r=>{if(r.url().includes('/runs')||r.url().includes('/sources'))calls.push(r.url())});
+ const calls:string[]=[];page.on('request',r=>{if(r.method()==='POST'&&/\/(runs|sources|jobs|source-jobs|continue|continue-jobs|policy-review-jobs)(?:\?|$)/.test(r.url()))calls.push(r.url())});
  await page.goto('/');await page.getByText('Legacy examples',{exact:true}).click();await page.getByRole('button',{name:'Load demo A',exact:true}).click();
  const node=(id:string)=>page.locator(`.react-flow__node[data-id="${id}"]`);
  await expect(node('vms')).toBeVisible();await expect(page.getByLabel('Open project')).not.toHaveValue('');const pid=await page.getByLabel('Open project').inputValue();
@@ -33,7 +33,20 @@ test('T07 pointer move, resize, connect, reconnect, delete and reopen make zero 
  await expect.poll(async()=>(await snapshot()).interfaces.length).toBe(5);
  let saved=await snapshot();const edge=saved.interfaces.find((e:any)=>!initial.interfaces.some((i:any)=>i.id===e.id));
  const connector=page.locator(`.react-flow__edge[data-id="${edge.id}"]`);
- await connector.locator('.react-flow__edge-interaction').click({force:true});
+ // The route's bounding-box center may be inside an unrelated component.
+ // Select an exposed stroke point; labels themselves can now be dragged.
+ await expect(async()=>{
+  const point=await connector.locator('.react-flow__edge-interaction').evaluate((element,id)=>{
+   const path=element as SVGPathElement,matrix=path.getScreenCTM()!;
+   for(const fraction of [.35,.65,.2,.8,.1,.9,.5]){
+    const p=path.getPointAtLength(path.getTotalLength()*fraction).matrixTransform(matrix);
+    if(document.elementFromPoint(p.x,p.y)?.closest('.react-flow__edge')?.getAttribute('data-id')===id)return {x:p.x,y:p.y};
+   }
+   throw new Error('Connector has no exposed selectable stroke');
+  },edge.id);
+  await page.mouse.click(point.x,point.y);
+  await expect(connector).toHaveClass(/selected/);
+ }).toPass({timeout:5000});
  await drag(connector.locator('.react-flow__edgeupdater-target'),node('analytics').locator('[data-handleid="left"]'));
  await expect.poll(async()=>(await snapshot()).interfaces.find((e:any)=>e.id===edge.id).target).toBe('analytics');
  await page.getByRole('button',{name:'Save / reopen',exact:true}).click();

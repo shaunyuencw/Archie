@@ -9,6 +9,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from ..domain.commands import DomainError
+from .categories import CATEGORIES, category_for
 
 ROOT = Path(__file__).resolve().parents[4]
 router = APIRouter(prefix='/api/policies', tags=['Policy library'])
@@ -35,7 +36,7 @@ def custom_clauses():
 def clauses():
     original = [dict(c, title=c['text'].rstrip('.'), pack='Original demonstration') for c in legacy_clauses()]
     expanded = [dict(c, pack='Architecture essentials') for c in json.loads((ROOT / 'fixtures/policies/library.json').read_text(encoding='utf-8'))['clauses']]
-    return original + expanded + custom_clauses()
+    return [dict(clause,category=category_for(clause)) for clause in original + expanded + custom_clauses()]
 
 
 def selected_ids(project):
@@ -85,7 +86,7 @@ def list_library(q: str = ''):
     terms = q.lower().split()
     visible = [c for c in all_clauses if all(term in ' '.join([c['id'], c['title'], c['text'], *c['tags']]).lower() for term in terms)]
     essentials = [c['id'] for c in all_clauses if c['pack'] == 'Architecture essentials']
-    return {'synthetic': True, 'clauses': visible, 'legacy_ids': [c['id'] for c in legacy_clauses()],
+    return {'synthetic': True, 'clauses': visible, 'categories':CATEGORIES, 'legacy_ids': [c['id'] for c in legacy_clauses()],
             'presets': [{'id': 'essentials', 'name': 'Architecture essentials', 'policy_ids': essentials},
                         {'id': 'original', 'name': 'Original demo policies', 'policy_ids': [c['id'] for c in legacy_clauses()]}]}
 

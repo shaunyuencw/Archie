@@ -4,7 +4,7 @@ Updated: 21 September 2026, Mac continuation. **Presentable local prototype read
 
 ## Current checkpoint
 
-The Mac offline gate passes: **109 backend tests, 19 frontend unit tests, 21 browser journeys, TypeScript and production build**. Evidence: `reports/offline-gate.json`, `reports/m7-tests.xml`, `reports/browser-tests.json`. The application runs at <http://127.0.0.1:5173/>. No model calls occur in the offline gate.
+The Mac offline gate passes: **131 backend tests, 25 frontend unit tests, 29 browser journeys, TypeScript and production build**. Evidence: `reports/offline-gate.json`, `reports/m7-tests.xml`, `reports/browser-tests.json`. The application runs at <http://127.0.0.1:5173/>. No model calls occur in the offline gate.
 
 The restored checkpoint initially passed 25 backend tests, one frontend test and the build, but one browser journey failed due to a late view response. This was fixed alongside serialized local commands and captured file/project inputs, preventing rapid edits from using stale local state. External revision conflicts still reject. Baseline evidence is in `reports/mac-baseline`; earlier Windows reports and screenshots are preserved in `reports/windows-checkpoint` and historical live reports.
 
@@ -14,7 +14,7 @@ The restored checkpoint initially passed 25 backend tests, one frontend test and
 - Undo and redo; Cmd/Ctrl copy, paste, duplicate and select-all; Delete/Backspace, Escape and arrow nudging. Typing fields keep their own shortcuts. Selection supports groups and marquee; group pointer moves commit together.
 - 16-unit snapping with temporary Option/Alt bypass. Dragging never silently reassigns a deployment zone; Inspector reassignment remains a reviewed change.
 - Connections use footprint-edge handles and zone-aware automatic handle selection. Selected connectors expose draggable segment controls; straight/right-angle styles, precise route coordinates and reliable endpoint reconnection remain editable. Unrelated prompts preserve manual routes and positions.
-- New external components no longer receive identical default positions. ELK arrangement loads on demand and preserves locked placements. The initial JS bundle is about 443 kB; the separate ELK chunk remains large.
+- New external components no longer receive identical default positions. ELK arrangement loads on demand and preserves locked placements. The initial JS bundle is about 464 kB; the separate ELK chunk remains large.
 - SVG equipment/zone styling, handles, arrows, bounds and labels aligned with the canvas. Rendered narrative DOCX and all synthetic DOCX/PDF inputs reviewed on this Mac. SVG is a review image, not native Visio.
 - Provider omissions/unsubstantiated scope stay unknown, with visible review findings. Saved live demo projects were corrected through versioned commands; original live reports remain unchanged.
 
@@ -35,6 +35,18 @@ The default examples are now **Production service portal** (Client → Z1 applic
 - Follow-up user imports exposed another provider shape mismatch: connection enforcement arrived as `"unknown"` instead of a list. Unknown/null placeholders now produce an unspecified list with a review note; valid component references remain and unresolved references reject. Nullable unknown enums are normalized, and other field validation errors are readable. The local 90-second timeout was traced to a request still generating at about 12 tokens/second; the bounded default local response window now scales to output size. Regression tests use mocked transports; a fresh complete live import after these fixes is unverified. See `reports/provider-input-recovery-20260921.md`.
 
 One bounded real OpenAI call verified the new advisory policy review; it cost an estimated US$0.01538 and preserved the accepted architecture (`reports/mac-policy-review-20260921.json`). All layout and wording work used no provider calls. The earlier prompt/document evidence below remains separate. Visual QA: 22 document pages and six current SVGs (`reports/demo-pack-qa/review.json`). New screenshots: `reports/archie-robotics-testbed.png` and `reports/archie-narrow-browser.png`. Dense Connection details labels can still partly cover short arrowheads; Architecture and System overview are clearer for the guided demo.
+
+## Editor and background workflow checkpoint
+
+- Ten swatches plus Default replace the color picker. Per-view box fill/border, text, connection and individual asset-icon colors persist through reopen, undo and SVG export.
+- Drag connection labels independently, reset their positions from the context menu, resize boxes with visible handles and use right-click layer commands. Resizing a zone preserves its contents' absolute positions. Automatic routes try bounded clearance lanes around component footprints; saved manual routes remain authoritative.
+- Policies are grouped by category. Draft reviews offer relevant unselected policies with reasons and explicit opt-in; these suggestions use local rules, while AI policy advice remains a separate explicit action.
+- Importing a demo `followups.json` opens its prompt list. Choosing a prompt fills the editor without submitting it or changing provider.
+- Prompts, document extraction and policy advice run as persisted background jobs. Project spinners, completion notifications, switching projects, reload recovery and cancellation are covered. Running cancellation waits for the current provider request to end and discards its result; it does not terminate the shared Ollama daemon.
+- History keeps accepted/rejected proposals and their prompts after reload or notification dismissal. Resolving a proposal clears its submitted text, preserving any different next prompt already typed.
+- The latest Ollama failure hit the fixed 1,536-output-token cap. The 8K profile now allocates remaining estimated context, up to 3,720 output tokens within a bounded 480-second window, with shorter output instructions. Truncated responses preserve token accounting and do not trigger automatic replay. **A fresh live full generation after this adjustment remains unverified.**
+
+This checkpoint used no additional live model calls, downloads or paid checks. Details and visual evidence: `reports/editor-background-followup-20260921.md`, `reports/presentation-qa/review.json`.
 
 ## Real provider evidence
 
@@ -60,7 +72,7 @@ Previous Windows host: Windows 11, Python 3.12.4, Node 24.19.0, RTX 3080 Ti Lapt
 
 Laptop/workspace screenshots: `reports/archie-mac-1280.png`, `reports/archie-mac-laptop.png`, `reports/archie-mac-focus.png`, `reports/archie-workbench.png` (1280×800, 1440×900 and 1600×1000; no horizontal overflow at 1280). Export visual evidence: `reports/mac-export-qa/review.json` (three SVG views, three narrative DOCX pages, 12 source PDF pages, 12 source DOCX pages).
 
-Capacity: 50 components / 100 interfaces load, edit, drag and reopen with intact references and zero model calls. Latest full-gate sample: render about 1,331 ms, saved/rendered placement edits 209–881 ms, reopen 211 ms, 60 drag frame samples p95 16.8 ms / max 50 ms. Timings include Playwright/poll overhead and parallel-test contention; they are not INP or guaranteed performance. `reports/browser-capacity-darwin.json`.
+Capacity: 50 components / 100 interfaces load, edit, drag and reopen with intact references and zero model calls. Latest full-gate sample: render about 364 ms, saved/rendered placement edits 915–978 ms, reopen 340 ms, 60 drag frame samples p95 16.7 ms / max 16.8 ms. Timings include Playwright/poll overhead and parallel-test contention; they are not INP or guaranteed performance. `reports/browser-capacity-darwin.json`.
 
 ## Milestones
 
@@ -82,7 +94,7 @@ F01–F10 and T01–T16 are individually recorded in `docs/ACCEPTANCE.md`. No ti
 **Demo:** the two new prepared scenarios, global policy applicability and optional advisory review, readable proposal/name review, Trash/restore, editable Connections, the authored mock import/follow-up journey, or the previously verified saved Terra prompt/document projects, clarification and source evidence, targeted changes, canvas selection/duplicate/undo/redo, draggable routes, panels/focus, three views and reviewed exports. See `docs/DEMO.md` and `docs/EDITOR.md`.
 
 - **P0:** no known blocker to the verified guided Terra demonstration.
-- **P1:** richer Ollama generation remains unreliable; automatic routes can cross unrelated equipment in dense/System overview views; no alignment-guide overlay. Segment dragging and straight lines are the practical routing controls. Cross-project clipboard and System overview aggregate duplication are not supported.
+- **P1:** richer Ollama generation remains unreliable; overlapping dense geometry and connector crossings can still defeat bounded automatic route clearance; no alignment-guide overlay. Segment dragging and straight lines are the practical routing controls. Cross-project clipboard and System overview aggregate duplication are not supported.
 - **P2:** native VSDX shapes/glue/edit/save/reopen require a licensed compatible Windows/Visio host. SVG is not equivalent. Windows-specific shortcut variants are implemented but this pass executed on Mac Chromium.
 
 Launch on this Mac:
@@ -93,4 +105,4 @@ bash scripts/setup.sh  # only when dependencies need installing
 bash scripts/dev.sh
 ```
 
-Open <http://127.0.0.1:5173/>. Verification: `bash scripts/test.sh`. Keep the launcher running; Ctrl+C stops it. Next useful task: native Visio verification on the appropriate host, or a focused routing/local-model improvement pass without repeating paid calls merely for presentation.
+Open <http://127.0.0.1:5173/>. Verification: `bash scripts/test.sh`. Keep the launcher running; Ctrl+C stops it. Next useful task: native Visio verification on the appropriate host, or an explicitly opted-in focused local-model verification without repeating paid calls merely for presentation.

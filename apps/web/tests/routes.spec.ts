@@ -2,7 +2,7 @@ import {test,expect} from '@playwright/test';
 
 test('whole connector segments, direct line menu, reconnect and prompt preservation',async({page})=>{
  const modelCalls:string[]=[];
- page.on('request',request=>{if(/\/runs(?:\?|$)|\/sources(?:\?|$)/.test(request.url()))modelCalls.push(request.url())});
+ page.on('request',request=>{if(request.method()==='POST'&&/\/(runs|sources|jobs|source-jobs|continue|continue-jobs|policy-review-jobs)(?:\?|$)/.test(request.url()))modelCalls.push(request.url())});
  await page.goto('/');await page.getByText('Legacy examples',{exact:true}).click();await page.getByRole('button',{name:'Load demo A',exact:true}).click();
  await expect(page.locator('.react-flow__node[data-id="vms"]')).toBeVisible();
  await expect(page.getByLabel('Open project')).not.toHaveValue('');const pid=await page.getByLabel('Open project').inputValue();
@@ -32,10 +32,17 @@ test('whole connector segments, direct line menu, reconnect and prompt preservat
  const segment=connector.locator('.route-segment').nth(1);
  // Axis-aligned SVG paths have a zero-width/height geometric box; hit-test their stroke.
  await expect(segment).toBeAttached();
- const dragPoint=await segment.evaluate(element=>{
-  const path=element as SVGPathElement,point=path.getPointAtLength(path.getTotalLength()/2).matrixTransform(path.getScreenCTM()!);
-  return {x:point.x,y:point.y,horizontal:path.classList.contains('horizontal')};
- });
+ let dragPoint={x:0,y:0,horizontal:false};
+ await expect(async()=>{dragPoint=await segment.evaluate(element=>{
+  const path=element as SVGPathElement,matrix=path.getScreenCTM()!;
+  // The label is intentionally draggable and may cover a segment midpoint. Pick a
+  // visible point on this exact segment instead of force-clicking through its label.
+  for(const fraction of [.2,.8,.35,.65,.1,.9,.5]){
+   const point=path.getPointAtLength(path.getTotalLength()*fraction).matrixTransform(matrix);
+   if(document.elementFromPoint(point.x,point.y)?.closest('.route-segment')===path)return {x:point.x,y:point.y,horizontal:path.classList.contains('horizontal')};
+  }
+  throw new Error('Selected route segment has no exposed draggable point');
+ })}).toPass({timeout:5000});
  expect(await page.evaluate(point=>document.elementFromPoint(point.x,point.y)?.classList.contains('route-segment'),dragPoint)).toBe(true);
  await page.mouse.move(dragPoint.x,dragPoint.y);await page.mouse.down();
  await page.mouse.move(dragPoint.x+(dragPoint.horizontal?0:-75),dragPoint.y+(dragPoint.horizontal?-70:0),{steps:10});await page.mouse.up();

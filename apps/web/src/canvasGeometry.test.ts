@@ -1,6 +1,6 @@
 import {test,expect} from 'vitest';
 import {Position} from '@xyflow/react';
-import {moveRouteSegment,routedPath} from './canvasGeometry';
+import {moveLabelOffset,moveRouteSegment,routedPath} from './canvasGeometry';
 
 const endpoints={sourceX:10,sourceY:20,targetX:300,targetY:200,sourcePosition:Position.Right,targetPosition:Position.Left};
 const vertices=(path:string)=>[...path.matchAll(/[ML]\s*(-?[\d.]+)[, ]+(-?[\d.]+)/g)].map(m=>({x:Number(m[1]),y:Number(m[2])}));
@@ -55,4 +55,8 @@ test('zoom measurement noise cannot create extra microscopic connector elbows',(
  const measured={...endpoints,sourceY:19.99997,targetY:199.99993};
  expect(routedPath(measured,'orthogonal',[{x:192,y:20},{x:192,y:200}]).vertices)
   .toEqual([{x:10,y:20},{x:192,y:20},{x:192,y:200},{x:300,y:200}]);
+});
+
+test('moving a connection label preserves its saved offset from a regenerated route',()=>{
+ expect(moveLabelOffset({x:24,y:-8},{x:100,y:50},{x:148,y:82})).toEqual({x:72,y:24});
 });

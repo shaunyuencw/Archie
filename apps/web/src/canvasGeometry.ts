@@ -30,6 +30,11 @@ export function moveRouteSegment(vertices:Point[],index:number,coordinate:Point)
  return simplifyRoute(next);
 }
 
+/** Keep a dragged label relative to the route's current automatic label anchor. */
+export function moveLabelOffset(offset:Point,start:Point,current:Point):Point{
+ return {x:offset.x+current.x-start.x,y:offset.y+current.y-start.y};
+}
+
 function facing(from:Point,to:Point):Position{
  return Math.abs(to.x-from.x)>=Math.abs(to.y-from.y)
   ?to.x>=from.x?Position.Right:Position.Left

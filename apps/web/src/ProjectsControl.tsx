@@ -9,12 +9,13 @@ type Props={
  project:Project|null;
  projects:ProjectSummary[];
  disabled?:boolean;
+ workingIds?:string[];
  onOpen:(id:string)=>unknown;
  onTrashed:(id:string)=>Promise<unknown>|void;
  onRestored:(project:Project)=>Promise<unknown>|void;
 };
 
-export default function ProjectsControl({project,projects,disabled=false,onOpen,onTrashed,onRestored}:Props){
+export default function ProjectsControl({project,projects,disabled=false,workingIds=[],onOpen,onTrashed,onRestored}:Props){
  const [trash,setTrash]=useState<TrashedProject[]>([]),[working,setWorking]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState('');
  const loadTrash=async()=>{setTrash(await api<TrashedProject[]>('/projects/trash'))};
  useEffect(()=>{let active=true;api<TrashedProject[]>('/projects/trash').then(items=>{if(active)setTrash(items)}).catch(e=>{if(active)setError(e.message)});return()=>{active=false}},[]);
@@ -45,7 +46,8 @@ export default function ProjectsControl({project,projects,disabled=false,onOpen,
   }catch(e){setError((e as Error).message)}finally{setWorking(false)}
  };
  return <div className="projects-control">
-  <div className="project-select-row"><select aria-label="Open project" value={project?.id||''} disabled={disabled||working} onChange={event=>{if(event.target.value)onOpen(event.target.value)}}><option value="">Open a saved project…</option>{options.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}</select><button aria-label="Delete project" title="Move selected project to Trash" disabled={!project||disabled||working} onClick={remove}><Trash2 size={15}/></button></div>
+  <div className="project-select-row"><select aria-label="Open project" value={project?.id||''} disabled={disabled||working} onChange={event=>{if(event.target.value)onOpen(event.target.value)}}><option value="">Open a saved project…</option>{options.map(item=><option key={item.id} value={item.id}>{item.name}{workingIds.includes(item.id)?' · Working…':''}</option>)}</select><button aria-label="Delete project" title="Move selected project to Trash" disabled={!project||disabled||working} onClick={remove}><Trash2 size={15}/></button></div>
+  {project&&workingIds.includes(project.id)&&<p className="project-working" role="status"><span className="job-spinner" aria-hidden="true"/>Archie is working. You can open another project.</p>}
   {error&&<p role="alert" className="error">{error}</p>}{notice&&<p role="status" className="project-notice">{notice}</p>}
   <details className="project-trash" onToggle={event=>{if(event.currentTarget.open)loadTrash().catch(e=>setError(e.message))}}><summary>Trash ({trash.length})</summary><p>Restore a project to keep its sources and edit history, or empty Trash to permanently remove that project content. Spending records are retained for budget limits.</p><button className="empty-trash" disabled={!trash.length||disabled||working} onClick={empty}>Empty Trash</button>
    {!trash.length?<p className="muted">Trash is empty.</p>:<ul>{trash.map(item=><li key={item.id} data-project-id={item.id}><span><strong>{item.name}</strong><small>Moved {new Date(item.deleted_at).toLocaleString()}</small></span><button aria-label={'Restore '+item.name} title="Restore project" disabled={disabled||working} onClick={()=>restore(item)}><RotateCcw size={13}/>Restore</button></li>)}</ul>}

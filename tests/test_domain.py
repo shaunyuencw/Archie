@@ -1,5 +1,6 @@
 import pytest
-from apps.api.app.domain.models import Project
+from pydantic import ValidationError
+from apps.api.app.domain.models import Placement,Project,Route
 from apps.api.app.domain.commands import apply,command,DomainError
 from apps.api.app.storage.store import Store
 
@@ -35,6 +36,20 @@ def test_interface_port_validation_is_human_readable_and_keeps_project_unchanged
     assert failure.value.code=='invalid_input'
     assert failure.value.message=='2 connection ports could not be read: “TCP 443”, “TCP 5432”. Enter only a number from 0 to 65535 in Port, for example 443; put the protocol, such as HTTPS or PostgreSQL, in Protocol. Your current design was not changed.'
     assert not p.interfaces
+
+
+def test_presentation_colors_are_hex_only_and_do_not_change_semantic_revision():
+    placement=Placement(fill_color=' #0F766E ',text_color='#abc',border_color='#11223344',icon_color='#d43')
+    route=Route(line_color='#2563EB',text_color='#654321')
+    assert placement.fill_color=='#0f766e' and placement.text_color=='#abc'
+    assert route.line_color=='#2563eb'
+    with pytest.raises(ValidationError): Placement(fill_color='rgb(1, 2, 3)')
+    with pytest.raises(ValidationError): Route(text_color='url(javascript:alert(1))')
+    p=Project(components=[{'id':'a','name':'A','role':'server'}]);before=p.revision
+    p=apply(p,command(p,[{'op':'placement','id':'a','value':{'fill_color':'#123456','icon_color':'#0f766e','z_index':4}}]))
+    assert p.revision==before and p.views['logical'].revision==1
+    assert p.views['logical'].placements['a'].fill_color=='#123456'
+    assert p.views['logical'].placements['a'].z_index==4
 
 def test_host_and_redundancy_validation_and_transaction_undo(tmp_path):
     store=Store(tmp_path/'deployment.sqlite');p=store.create(Project())

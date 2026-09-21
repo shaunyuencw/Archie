@@ -124,7 +124,7 @@ def proposal_from_envelope(p,source,envelope,source_alias=None):
     proposed.operations.extend(question_ops(candidate))
     return proposed
 
-def assisted_run(store,pid,req,settings=None,adapter=None,live_run=None,deadline=None):
+def assisted_run(store,pid,req,settings=None,adapter=None,live_run=None,deadline=None,cancel=None,job_id=None):
     p=store.get(pid);apply(p,req)
     s=settings or Settings.environment()
     if req.provider=='openai' and not s.allow_cloud:raise DomainError('budget_exceeded','OpenAI requires APP_ALLOW_CLOUD=true; a key alone does not authorize calls.')
@@ -134,25 +134,27 @@ def assisted_run(store,pid,req,settings=None,adapter=None,live_run=None,deadline
     except Exception as e:raise DomainError('unavailable_provider','Provider credentials or configuration unavailable',503) from e
     source=parse(req.prompt.encode(),'Prompt','prompt');source.processed=[x.locator for x in source.passages];source.unprocessed=[]
     prompt=json.dumps({'source':{'id':'S1','locator':'prompt/1','text':req.prompt},'context':context(p,req.prompt)},separators=(',',':'))
-    run_id=req.request_id; cancel=threading.Event();CANCELLATIONS[run_id]=cancel
+    run_id=req.request_id;active_cancel=cancel or threading.Event();CANCELLATIONS[run_id]=active_cancel
     with store.connect() as db:
         previous=db.execute('SELECT status,result FROM runs WHERE id=?',(run_id,)).fetchone()
         if previous:raise DomainError('stale_revision','This run ID was already used; requests are never automatically replayed.',409)
+        if active_cancel.is_set():raise DomainError('cancelled','Cancelled before transmission')
         db.execute('INSERT INTO runs VALUES(?,?,?,?)',(run_id,pid,'running','{}'))
     budget=BudgetedProvider(store,s,a); repaired=False; result=None
     try:
         for step in range(min(3,s.max_calls)):
             try:
-                output=budget.call(prompt,pid,run_id,'edit' if p.components else 'draft',cancel,deadline=deadline,live_run=live_run)
+                output=budget.call(prompt,pid,run_id,'edit' if p.components else 'draft',active_cancel,deadline=deadline,live_run=live_run)
                 if output.content.tool:
                     tool_result=dispatch(output.content.tool,p)
                     prompt=json.dumps({'initial':json.loads(prompt),'tool_result':tool_result},separators=(',',':'))
                     continue
                 proposed=proposal_from_envelope(p,source,output.content,source_alias='S1')
-                result={'run_id':run_id,'proposal':store.preview(proposed).model_dump(),'mode':'schema_action_envelope','model':output.model,'repairs':int(repaired)}
+                if active_cancel.is_set():raise DomainError('cancelled','Response received after cancellation; no proposal was saved.')
+                result={'run_id':run_id,'proposal':store.preview(proposed,job_id=job_id).model_dump(),'mode':'schema_action_envelope','model':output.model,'repairs':int(repaired)}
                 break
             except (ValueError,DomainError) as error:
-                if isinstance(error,DomainError) and error.code in ['budget_exceeded','insufficient_context','cancelled','unavailable_provider','provider_timeout']:raise
+                if isinstance(error,DomainError) and (error.code in ['budget_exceeded','insufficient_context','cancelled','unavailable_provider','provider_timeout','stale_revision','project_trashed','not_found'] or getattr(error,'terminal',False)):raise
                 if repaired:raise
                 repaired=True
                 prompt=json.dumps({'initial':json.loads(prompt),'repair':'Previous response was not a valid reference-safe proposal. Return valid schema and exact source citations.'},separators=(',',':'))
@@ -163,4 +165,5 @@ def assisted_run(store,pid,req,settings=None,adapter=None,live_run=None,deadline
         with store.connect() as db:db.execute("UPDATE runs SET status='failed',result=? WHERE id=?",(json.dumps({'code':getattr(e,'code','provider_output')}),run_id))
         if isinstance(e,DomainError):raise
         raise DomainError('provider_output','Invalid provider proposal; accepted state preserved.') from e
-    finally:CANCELLATIONS.pop(run_id,None)
+    finally:
+        if CANCELLATIONS.get(run_id) is active_cancel:CANCELLATIONS.pop(run_id,None)

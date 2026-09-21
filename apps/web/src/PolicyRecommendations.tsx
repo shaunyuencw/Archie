@@ -1,0 +1,13 @@
+import {useState} from 'react';
+import './PolicyRecommendations.css';
+
+export type PolicySuggestion={policy_id:string;title:string;reason:string;category:string;implementation:'implemented'|'manual_review';affected_ids:string[];origin:'rules'};
+type Props={items:PolicySuggestion[];onAdd?:(policyIds:string[])=>Promise<unknown>;busy?:boolean;contextLabel?:string;selection?:string[];onSelectionChange?:(policyIds:string[])=>void;hideApply?:boolean};
+export default function PolicyRecommendations({items,onAdd,busy=false,contextLabel='Suggested from this draft',selection,onSelectionChange,hideApply=false}:Props){
+ const [internal,setInternal]=useState<string[]>([]),[saving,setSaving]=useState(false),[error,setError]=useState('');
+ const chosen=(selection??internal).filter(id=>items.some(item=>item.policy_id===id));
+ const change=(ids:string[])=>{if(onSelectionChange)onSelectionChange(ids);else setInternal(ids)};
+ const add=async()=>{if(!onAdd||!chosen.length)return;setSaving(true);setError('');try{await onAdd(chosen)}catch(error){setError((error as Error).message)}finally{setSaving(false)}};
+ if(!items.length)return null;
+ return <section className="policy-recommendations"><div className="policy-recommendations-heading"><h3>{contextLabel}</h3><span>{items.length} policy suggestions</span></div><p className="policy-recommendations-note">Matched to recorded zones, components and connections. These are relevance suggestions from built-in rules, not an AI compliance verdict. Choose what applies.</p><div className="policy-recommendations-list">{items.map(item=><label className={'policy-recommendation'+(chosen.includes(item.policy_id)?' chosen':'')} key={item.policy_id}><input type="checkbox" aria-label={'Suggest '+item.policy_id} disabled={busy||saving} checked={chosen.includes(item.policy_id)} onChange={event=>change(event.target.checked?[...chosen,item.policy_id]:chosen.filter(id=>id!==item.policy_id))}/><span><strong>{item.title}</strong><span className="policy-recommendation-reason">{item.reason}</span><small>{item.implementation==='implemented'?'Automated fact check':'Manual review'} · {item.policy_id}</small></span></label>)}</div><div className="policy-recommendations-actions"><small>{chosen.length} selected{hideApply?' · added when you accept this draft':''}</small>{!hideApply&&<button className="primary" disabled={busy||saving||!chosen.length||!onAdd} onClick={add}>{saving?'Adding policies…':'Add selected policies'}</button>}<button disabled={!chosen.length||busy||saving} onClick={()=>change([])}>Clear</button></div>{error&&<p className="policy-recommendations-error" role="alert">{error}</p>}</section>
+}

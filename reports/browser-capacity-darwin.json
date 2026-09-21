@@ -8,18 +8,18 @@
   },
   "components": 50,
   "interfaces": 100,
-  "load_to_render_ms": 1331.04,
+  "load_to_render_ms": 363.86,
   "placement_edit_saved_and_rendered_ms": [
-    881.37,
-    395.35,
-    209.29
+    977.73,
+    953.67,
+    915.19
   ],
-  "reopen_ms": 211.21,
+  "reopen_ms": 339.94,
   "drag_frame_intervals_ms": {
     "samples": 60,
     "median": 16.7,
-    "p95": 16.8,
-    "maximum": 50
+    "p95": 16.7,
+    "maximum": 16.8
   },
   "model_calls": 0,
   "references_preserved": true,

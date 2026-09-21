@@ -1,8 +1,11 @@
 import json
+import httpx
 import pytest
 from pathlib import Path
 from apps.api.app.providers.contracts import Envelope,ProviderResult,Usage
 from apps.api.app.providers.config import Settings
+from apps.api.app.providers.adapters import OllamaAdapter
+from apps.api.app.providers.budget import usage_summary
 from apps.api.app.orchestration.live import assisted_run,proposal_from_envelope
 from apps.api.app.domain.commands import apply,command
 from apps.api.app.domain.commands import DomainError
@@ -86,3 +89,36 @@ def test_timed_out_local_run_is_not_replayed(tmp_path):
     with store.connect() as db:
         run=db.execute('SELECT status,result FROM runs WHERE id=?',(req.request_id,)).fetchone()
     assert run['status']=='failed' and json.loads(run['result'])['code']=='provider_timeout'
+
+
+def test_ollama_response_limit_is_not_repaired_or_replayed(tmp_path):
+    calls=[]
+    def length(request):
+        calls.append(request)
+        return httpx.Response(200,json={'done':True,'done_reason':'length','model':'local','message':{'content':'{}'},'prompt_eval_count':615,'eval_count':1536})
+    store=Store(tmp_path/'db');project=store.create(Project())
+    request=RunRequest(**command(project,[{'op':'notes','value':{}}]).model_dump(),prompt='Add a workstation.',provider='ollama')
+    adapter=OllamaAdapter(Settings(),httpx.Client(base_url='http://localhost',transport=httpx.MockTransport(length)))
+    with pytest.raises(DomainError,match='response limit'):
+        assisted_run(store,project.id,request,Settings(),adapter)
+    assert len(calls)==1 and store.get(project.id)==project
+    assert usage_summary(store,project.id)['records'][0]['status']=='truncated'
+    with store.connect() as db:run=db.execute('SELECT status,result FROM runs WHERE id=?',(request.request_id,)).fetchone()
+    assert run['status']=='failed' and json.loads(run['result'])['code']=='provider_output'
+
+
+def test_background_stale_preview_is_terminal_and_preserves_the_manual_edit(tmp_path):
+    store=Store(tmp_path/'db');project=store.create(Project())
+    class ConcurrentEditAdapter(FakeOllama):
+        def __init__(self):self.calls=0
+        def generate_structured(self,*args):
+            self.calls+=1
+            current=store.get(project.id)
+            store.commit(command(current,[{'op':'notes','value':{'text':'Manual edit while ARCHIE was working'}}]))
+            return super().generate_structured(*args)
+    adapter=ConcurrentEditAdapter()
+    request=RunRequest(**command(project,[{'op':'notes','value':{}}]).model_dump(),prompt='Add New node workstation.',provider='ollama')
+    with pytest.raises(DomainError) as error:
+        assisted_run(store,project.id,request,Settings(),adapter)
+    assert error.value.code=='stale_revision' and adapter.calls==1
+    assert store.get(project.id).notes=='Manual edit while ARCHIE was working' and not store.get(project.id).components

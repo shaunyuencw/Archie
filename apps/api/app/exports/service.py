@@ -95,6 +95,16 @@ def _edge_label_position(points, nodes, width, height, occupied):
     return x, y
 
 
+def _edge_label_midpoint(points):
+    """Match Canvas.routedPath: the first longest visible segment owns the label."""
+    label=points[0];longest=-1
+    for first,last in zip(points,points[1:]):
+        length=((last[0]-first[0])**2+(last[1]-first[1])**2)**.5
+        if length>longest:
+            longest=length;label=((first[0]+last[0])/2,(first[1]+last[1])/2)
+    return label
+
+
 def svg(p, kind):
     graph = view_graph(p, kind)
     nodes = {n['id']: dict(n) for n in graph['nodes']}
@@ -108,7 +118,15 @@ def svg(p, kind):
     for e, points in rendered_edges:
         lines = _wrap_label(e['label'], 260, 10)
         label_width = min(280, max(len(line) for line in lines) * 5.6 + 12)
-        x, y = _edge_label_position(points, nodes, label_width, len(lines) * 14 + 6, occupied)
+        offset = e['route'].label_offset if e['route'] else None
+        if offset:
+            # A dragged label is relative to Canvas.routedPath's midpoint, rather than the
+            # exporter's collision-avoidance candidate. Reuse that midpoint for SVG parity.
+            x, y = _edge_label_midpoint(points);x += offset.x;y += offset.y
+            occupied.append((x - label_width / 2, y - len(lines) * 7 - 3,
+                             x + label_width / 2, y + len(lines) * 7 + 3))
+        else:
+            x, y = _edge_label_position(points, nodes, label_width, len(lines) * 14 + 6, occupied)
         labels[e['id']] = (x, y, label_width, lines)
     route_points = [point for _, points in rendered_edges for point in points]
     x0 = min([n['x'] for n in nodes.values()] + [x for x, _ in route_points] + [r[0] for r in occupied] + [0]) - 40
@@ -120,24 +138,41 @@ def svg(p, kind):
     parts = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{x0} {y0} {width} {height}" role="img">'
              f'<title>{escape(p.name)} — {kind} revision {p.revision}</title>'
              f'<metadata>Image export; not native Visio. {label}</metadata>'
-             '<defs><marker id="flow-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto-start-reverse" markerUnits="strokeWidth"><path d="M 0 0 L 8 4 L 0 8 z" fill="#587d93"/></marker></defs>'
+             '<defs><marker id="flow-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto-start-reverse" markerUnits="strokeWidth"><path d="M 0 0 L 8 4 L 0 8 z" fill="context-stroke"/></marker></defs>'
              f'<rect x="{x0}" y="{y0}" width="{width}" height="{height}" fill="#f7fafc"/>'
              f'<text x="{x0 + 24}" y="{y0 + 30}" font-family="Arial" font-size="14" fill="#173c58">{escape(label)} · {kind} · revision {p.revision}</text>']
     from ..domain.catalogue import catalogue
     allowed = {a['id'] for a in catalogue()}
 
+    icon_mask=0
+    def draw_icon(data, x, y, width, height, color=None, class_name='', opacity=None):
+        """Tint from the SVG alpha mask, preserving Lucide's hollow line details."""
+        nonlocal icon_mask
+        attrs = f' class="{class_name}"' if class_name else ''
+        opacity_attr = f' opacity="{opacity}"' if opacity is not None else ''
+        if not color:
+            return f'<image{attrs} x="{x}" y="{y}" width="{width}" height="{height}"{opacity_attr} href="data:image/svg+xml;base64,{data}"/>'
+        icon_mask += 1; mask_id = f'asset-mask-{icon_mask}'
+        return (f'<mask id="{mask_id}" maskUnits="userSpaceOnUse" mask-type="alpha" x="{x}" y="{y}" width="{width}" height="{height}">'
+                f'<image x="{x}" y="{y}" width="{width}" height="{height}" href="data:image/svg+xml;base64,{data}"/></mask>'
+                f'<rect{attrs} x="{x}" y="{y}" width="{width}" height="{height}" fill="{color}"{opacity_attr} mask="url(#{mask_id})"/>')
+
     def draw_node(n, zone=False):
         x, y, w, h = n['x'], n['y'], n['width'], n['height']
         parts.append(f'<g id="{escape(n["id"], quote=True)}" data-object-ids="{escape(json.dumps(n["object_ids"]), quote=True)}" class="{"zone" if zone else "equipment"}"><title>{escape(n["label"])}</title>')
         if zone:
-            parts.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="8" fill="#eef5f7" fill-opacity=".2" stroke="#b29e76" stroke-width="2" stroke-dasharray="7 5"/>')
+            fill=n.get('fill_color') or '#eef5f7';stroke=n.get('border_color') or '#b29e76'
+            opacity='' if n.get('fill_color') else ' fill-opacity=".2"'
+            parts.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="8" fill="{fill}"{opacity} stroke="{stroke}" stroke-width="2" stroke-dasharray="7 5"/>')
         elif n['asset_id'] in allowed:
+            if n.get('fill_color') or n.get('border_color'):
+                parts.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="8" fill="{n.get("fill_color") or "none"}" stroke="{n.get("border_color") or "none"}"/>')
             data = base64.b64encode((ROOT / 'fixtures/assets' / f'{n["asset_id"]}.svg').read_bytes()).decode()
             ix=x+(w-43)/2; iy=y+5
             quantity=n.get('quantity')
             for offset in reversed(range(1,min(quantity or 1,3))):
-                parts.append(f'<image class="stack-copy" x="{ix+offset*6}" y="{iy-offset*4}" width="43" height="43" opacity=".35" href="data:image/svg+xml;base64,{data}"/>')
-            parts.append(f'<image x="{ix}" y="{iy}" width="43" height="43" href="data:image/svg+xml;base64,{data}"/>')
+                parts.append(draw_icon(data,ix+offset*6,iy-offset*4,43,43,n.get('icon_color'),'stack-copy','.35'))
+            parts.append(draw_icon(data,ix,iy,43,43,n.get('icon_color')))
             if quantity and quantity>1:
                 mode={'unknown':'arrangement not decided','active_passive':'active / standby','active_active':'active / active'}[n['redundancy_mode']]
                 parts.append(f'<text class="instance-count" x="{ix+47}" y="{iy+41}" font-family="Arial" font-size="11" fill="#187361"><title>{quantity} instances; {mode}</title>×{quantity}</text>')
@@ -148,25 +183,33 @@ def svg(p, kind):
                 badge=base64.b64encode((ROOT/'fixtures/assets/virtual-firewall.svg').read_bytes()).decode()
                 names=', '.join(c['name'] for c in n['hosted_controls'])
                 parts.append(f'<g class="hosted-control"><title>{escape(names)} hosted here</title><rect x="{ix+44}" y="{iy-1}" width="27" height="27" rx="4" fill="#eef7f6" stroke="#b4d4cf"/><image x="{ix+47}" y="{iy+2}" width="21" height="21" href="data:image/svg+xml;base64,{badge}"/></g>')
+        text_color=n.get('text_color') or ('#655c45' if zone else '#1d3545')
         lines = _wrap_label(n['label'], w - 26 if zone else w - 18)
         for i, line in enumerate(lines):
-            parts.append(f'<text x="{x + 13 if zone else x + w / 2}" y="{y + (27 if zone else 65) + i * 17}" font-family="Arial" font-size="{14 if zone else 13}" font-weight="600" text-anchor="{"start" if zone else "middle"}" fill="{"#655c45" if zone else "#1d3545"}">{escape(line)}</text>')
-        parts.append(f'<text x="{x + 13 if zone else x + w / 2}" y="{y + (27 if zone else 65) + len(lines) * 17}" font-family="Arial" font-size="9" text-anchor="{"start" if zone else "middle"}" fill="#6c8091">{escape("SECURITY ZONE" if zone else n["role"])}</text></g>')
+            parts.append(f'<text x="{x + 13 if zone else x + w / 2}" y="{y + (27 if zone else 65) + i * 17}" font-family="Arial" font-size="{14 if zone else 13}" font-weight="600" text-anchor="{"start" if zone else "middle"}" fill="{text_color}">{escape(line)}</text>')
+        parts.append(f'<text x="{x + 13 if zone else x + w / 2}" y="{y + (27 if zone else 65) + len(lines) * 17}" font-family="Arial" font-size="9" text-anchor="{"start" if zone else "middle"}" fill="{text_color}">{escape("SECURITY ZONE" if zone else n["role"])}</text></g>')
 
-    for n in nodes.values():
+    # Containers stay behind their children; within each layer group, persist the
+    # reader's bring-forward/send-backward order in the SVG paint order.
+    ordered_nodes=sorted(nodes.values(),key=lambda n:n.get('z_index',0))
+    for n in ordered_nodes:
         if n['role'] == 'zone': draw_node(n, True)
+    label_parts=[]
     for e, points in rendered_edges:
         path = 'M ' + ' L '.join(f'{x} {y}' for x, y in points)
-        color = '#2782d4' if e['label'].startswith('video') else '#2b8b72' if e['label'].startswith('events') else '#b9783a' if e['label'].startswith('management') else '#718096'
+        color = e['route'].line_color or ('#2782d4' if e['label'].startswith('video') else '#2b8b72' if e['label'].startswith('events') else '#b9783a' if e['label'].startswith('management') else '#718096')
         markers = (' marker-end="url(#flow-arrow)"' if e['data_direction'] in ['source_to_target', 'bidirectional'] else '') + (' marker-start="url(#flow-arrow)"' if e['data_direction'] in ['target_to_source', 'bidirectional'] else '')
         x, y, label_width, lines = labels[e['id']]
-        parts.append(f'<g id="{escape(e["id"], quote=True)}" data-interface-ids="{escape(json.dumps(e["object_ids"]), quote=True)}"><path d="{path}" fill="none" stroke="{color}" stroke-width="1.8"{markers}/>'
-                     f'<rect x="{x - label_width / 2}" y="{y - len(lines) * 7 - 3}" width="{label_width}" height="{len(lines) * 14 + 6}" rx="3" fill="#f6f9fb" fill-opacity=".96"/>')
+        # Paths belong below equipment; labels mirror Canvas's overlay and stay readable
+        # above an explicitly coloured box.
+        parts.append(f'<g id="{escape(e["id"], quote=True)}" data-interface-ids="{escape(json.dumps(e["object_ids"]), quote=True)}"><path d="{path}" fill="none" stroke="{color}" stroke-width="1.8"{markers}/></g>')
+        label_parts.append(f'<g class="edge-label" data-interface-label-for="{escape(e["id"], quote=True)}"><rect x="{x - label_width / 2}" y="{y - len(lines) * 7 - 3}" width="{label_width}" height="{len(lines) * 14 + 6}" rx="3" fill="#f6f9fb" fill-opacity=".96"/>')
         for i, line in enumerate(lines):
-            parts.append(f'<text x="{x}" y="{y - len(lines) * 7 + 10 + i * 14}" font-family="Arial" font-size="10" text-anchor="middle" fill="#466173">{escape(line)}</text>')
-        parts.append('</g>')
-    for n in nodes.values():
+            label_parts.append(f'<text x="{x}" y="{y - len(lines) * 7 + 10 + i * 14}" font-family="Arial" font-size="10" text-anchor="middle" fill="{e["route"].text_color or "#466173"}">{escape(line)}</text>')
+        label_parts.append('</g>')
+    for n in ordered_nodes:
         if n['role'] != 'zone': draw_node(n)
+    parts.extend(label_parts)
     return ''.join(parts) + '</svg>'
 
 def docx_bytes(p):

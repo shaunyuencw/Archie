@@ -3,7 +3,7 @@ import {mkdir,writeFile} from 'node:fs/promises';
 import {performance} from 'node:perf_hooks';
 
 test('T14 browser loads, edits and reopens 50 components and 100 interfaces',async({page,browser})=>{
- const modelCalls:string[]=[];page.on('request',r=>{if(/\/(runs|sources)(\/|$)/.test(new URL(r.url()).pathname))modelCalls.push(r.url())});
+ const modelCalls:string[]=[];page.on('request',r=>{if(r.method()==='POST'&&/\/(runs|sources|jobs|source-jobs|continue|continue-jobs|policy-review-jobs)(?:\?|$)/.test(r.url()))modelCalls.push(r.url())});
  const placements=Object.fromEntries(Array.from({length:50},(_,i)=>[`capacity-${i}`,{x:50+i%10*210,y:50+Math.floor(i/10)*150,width:185,height:110}]));
  const payload={name:'Synthetic capacity check — 50 components / 100 interfaces',synthetic:true,
   components:Array.from({length:50},(_,i)=>({id:`capacity-${i}`,name:`Component ${i}`,role:'application',asset_id:i%3===0?'server':'application'})),

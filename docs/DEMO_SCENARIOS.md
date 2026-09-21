@@ -21,6 +21,10 @@ Use focus mode and zoom for the larger hybrid diagram. Its explicit presentation
 
 Create a new empty project, explicitly choose a live provider, and upload one of these small specifications. Review the processing plan and proposed changes, then inspect evidence and clarification questions before accepting. Do not upload a specification into an unrelated prepared project when the intention is to create a new architecture.
 
+Interpretation runs in the background. The project shows a working indicator, so you can inspect another project while it runs. A named in-app notice offers **Review draft** when a proposal is ready. Reloading the browser retains job status and completed results. If the server restarts mid-action, the interrupted action is reported and is not automatically replayed.
+
+The activity row also offers **Cancel**. Queued work stops before processing; a running action shows **Stopping…** until the worker exits and discards its result. Already transmitted provider work can still incur costs. Your accepted design remains unchanged.
+
 | Scenario | Human-readable specification | Upload files | Useful uncertainty to inspect |
 | --- | --- | --- | --- |
 | Service portal | [Technical specification](../fixtures/demos/portal/techspec.md) | [DOCX](../fixtures/demos/portal/techspec.docx) / [PDF](../fixtures/demos/portal/techspec.pdf) | Partial redundancy does not establish an end-to-end availability strategy. |
@@ -46,6 +50,15 @@ They encode the same component, deployment and interface facts as the prepared r
 ## Follow-up prompts
 
 Move a node manually before trying a follow-up. Preview the proposal and inspect its affected IDs, then accept or reject. Verify that unrelated coordinates, routes, source references and interface IDs survive. Undo should restore the prior accepted state.
+
+You can load these prompts directly into ARCHIE. Use **Open project / pattern / prompt pack JSON** and select the relevant pack:
+
+- [Service portal follow-ups](../fixtures/demos/portal/followups.json)
+- [Hybrid robotics follow-ups](../fixtures/demos/robotics/followups.json)
+- [Warehouse inventory follow-ups](../fixtures/demos/inventory/followups.json)
+- [Building access follow-ups](../fixtures/demos/building-access/followups.json)
+
+The pack shows each prompt's expected effect and provider guidance. Click **Use prompt N** to fill the editor, inspect the text, choose the intended provider, and then click **Preview proposed changes**. Loading the pack or using a prompt never runs it automatically or switches providers. Keep the matching project open; a prompt pack is not a project import.
 
 **Service portal**
 
@@ -75,6 +88,14 @@ Move a node manually before trying a follow-up. Preview the proposal and inspect
 3. `Add a separate audit service in Z2 and connect Access event service to it. Leave the audit transport undecided.`
 
 Use a live provider for the inventory/building-access document journeys. Once a component with the exact named label exists, Mock's narrow rename command can rename it, but the broader follow-ups require live interpretation. Machine-readable prompt lists and expected effects are in each scenario's `followups.json`.
+
+## Review suggested policies
+
+Each architecture proposal can show **Suggested policies for this draft**, including proposals from follow-up edits. The suggestions use built-in relevance rules against the resulting architecture: for example, a database makes backup review relevant, while an AWS connection can make hybrid-boundary review relevant. They are not model-generated compliance findings and do not prove that a policy applies.
+
+Choose the suggested policies that fit the scenario before accepting the draft. **Accept changes** applies the architecture and the chosen policies in one transaction; undo restores both. Leaving every suggestion unchecked accepts only the proposed architecture changes. The shared library remains available under **Policies**, grouped by network/access, cloud/hybrid, data/backups, resilience/monitoring, devices/testbeds, and ownership/operations. Its search, category counts and **Selected only** filter help you inspect a project's policy set.
+
+For the portal, inspect segmentation, database placement and recovery guidance. For the robotics trial, also inspect production/testbed isolation, the narrow handoff, wireless device access and AWS data boundaries. Manual policies still require human review. Optional AI policy advice and automated fact checks remain separate from relevance suggestions.
 
 ## Regenerate and verify
 

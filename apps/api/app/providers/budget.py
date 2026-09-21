@@ -9,7 +9,25 @@ from .instructions import SYSTEM_PROMPT
 LOCAL_LOCK=threading.Lock()
 LOCAL_MIN_TOKENS_PER_SECOND=8
 LOCAL_STARTUP_SECONDS=15
-LOCAL_TIMEOUT_CAP_SECONDS=210
+LOCAL_TIMEOUT_CAP_SECONDS=480
+LOCAL_CONTEXT_RESERVE_TOKENS=512
+LOCAL_MIN_OUTPUT_TOKENS=512
+
+def local_limits(settings,token_bound):
+    """Keep local input, output and reserve inside the chosen Ollama context."""
+    context=settings.ollama_num_ctx
+    if context<=4096:
+        max_input=min(settings.max_input,2500)
+        max_output=min(settings.max_output,1024)
+    else:
+        # The former fixed 1,536 output cap left ample unused 8k context for
+        # ordinary three-tier proposals. Bound output by this request's actual
+        # conservative input estimate instead of silently truncating it.
+        max_input=min(settings.max_input,5500,context-LOCAL_CONTEXT_RESERVE_TOKENS-LOCAL_MIN_OUTPUT_TOKENS)
+        context_output=max(0,context-token_bound-LOCAL_CONTEXT_RESERVE_TOKENS)
+        time_output=max(0,(LOCAL_TIMEOUT_CAP_SECONDS-LOCAL_STARTUP_SECONDS)*LOCAL_MIN_TOKENS_PER_SECOND)
+        max_output=min(settings.max_output,context_output,time_output)
+    return max_input,max_output
 
 def default_deadline(adapter_name,max_output):
     """Use a bounded local window sized for the response the app requested.
@@ -30,12 +48,14 @@ class BudgetedProvider:
         if a.name=='openai' and not s.allow_cloud: raise DomainError('budget_exceeded','Cloud is disabled. Enable APP_ALLOW_CLOUD explicitly.')
         rates=pricing()['models'].get(a.model) if a.name=='openai' else None
         if a.name=='openai' and rates is None: raise DomainError('budget_exceeded','Unknown billing model price; configure it before a paid request.')
-        local=a.name=='ollama'; max_input=min(s.max_input,2500 if s.ollama_num_ctx==4096 else 5500) if local else s.max_input
-        max_output=min(s.max_output,1024 if s.ollama_num_ctx==4096 else 1536) if local else s.max_output
+        local=a.name=='ollama'
         byte_bound=estimate(SYSTEM_PROMPT+prompt+json.dumps(schema(),separators=(',',':')))+128
-        # Local tokenizer is model-specific. Estimate 2 UTF-8 bytes/token and keep the profile's 512/768 reserve.
+        # Local tokenizer is model-specific. Estimate 2 UTF-8 bytes/token and reserve context for response framing.
         token_bound=(byte_bound+1)//2 if local else byte_bound
+        max_input,max_output=local_limits(s,token_bound) if local else (s.max_input,s.max_output)
         if token_bound>max_input: raise DomainError('insufficient_context',f'Request estimate {token_bound} tokens exceeds {max_input}; select fewer sources/objects. Nothing was sent.')
+        if local and max_output<LOCAL_MIN_OUTPUT_TOKENS:
+            raise DomainError('insufficient_context','This local request leaves too little context for a complete proposal. Select fewer sources or objects; nothing was sent.')
         reserve=(token_bound*max(rates['input'],rates['cache_read'],rates['cache_write'])+max_output*rates['output'])/1_000_000 if rates else 0
         ident=uid(); call_limit=min(s.max_calls,3 if task=='edit' else 8 if task=='document' else 4)
         with self.store.connect() as db:
@@ -48,18 +68,30 @@ class BudgetedProvider:
                 row=db.execute('SELECT count(*),COALESCE(SUM(COALESCE(cost,reserved)),0) FROM usage WHERE action_id LIKE ?',(live_run['id']+'%',)).fetchone()
                 if row[0]>=min(10,live_run['max_calls']) or row[1]+reserve>min(.5,live_run['budget_usd']):raise DomainError('budget_exceeded','Live smoke run ceiling reached.')
             db.execute('INSERT INTO usage VALUES(?,?,?,?,?,?,?,?,?,?)',(ident,project_id,action_id,day,a.name,a.model,'reserved',reserve,None,'{}'))
+        def cancelled_before_send():
+            with self.store.connect() as db:
+                db.execute("UPDATE usage SET status='cancelled_before_send',cost=0 WHERE id=? AND status='reserved'",(ident,))
+            raise DomainError('cancelled','Cancelled before transmission')
         try:
             if cancel and cancel.is_set():
-                with self.store.connect() as db:db.execute("UPDATE usage SET status='cancelled_before_send',cost=0 WHERE id=?",(ident,))
-                raise DomainError('cancelled','Cancelled before transmission')
+                cancelled_before_send()
             fn=a.invoke_tools if native else a.generate_structured
             # An explicit deadline is an upper bound owned by the caller.  Start a
             # default local window only after the serial local-model lock is held.
             if local:
-                with LOCAL_LOCK:
+                while not LOCAL_LOCK.acquire(timeout=.05):
+                    if cancel and cancel.is_set():
+                        cancelled_before_send()
+                try:
+                    if cancel and cancel.is_set():
+                        cancelled_before_send()
                     request_deadline=deadline if deadline is not None else default_deadline(a.name,max_output)
                     result=fn(prompt,max_output,request_deadline,cancel)
+                finally:
+                    LOCAL_LOCK.release()
             else:
+                if cancel and cancel.is_set():
+                    cancelled_before_send()
                 request_deadline=deadline if deadline is not None else default_deadline(a.name,max_output)
                 result=fn(prompt,max_output,request_deadline,cancel)
             actual=cost(result.usage,rates) if rates else 0
@@ -67,6 +99,18 @@ class BudgetedProvider:
             if cancel and cancel.is_set():raise DomainError('cancelled','Response received after cancellation; usage retained.')
             return result
         except Exception as e:
+            if cancel and cancel.is_set():
+                # A provider may already have received work. Retain its reservation
+                # unless an exact completed usage record was already written above.
+                with self.store.connect() as db:
+                    db.execute("UPDATE usage SET status='cancelled_in_flight',details=? WHERE id=? AND status='reserved'",(json.dumps({'error_code':'cancelled'}),ident))
+                raise DomainError('cancelled','Cancellation was requested while provider work was in progress. Any transmitted usage remains recorded.') from e
+            known_usage=getattr(e,'usage',None)
+            if known_usage is not None:
+                actual=cost(known_usage,rates) if rates else 0
+                details=json.dumps({**known_usage.model_dump(mode='json'),'error_code':getattr(e,'code','provider_output'),'finish_reason':'length'},separators=(',',':'))
+                with self.store.connect() as db:
+                    db.execute("UPDATE usage SET status='truncated',cost=?,model=?,details=? WHERE id=? AND status='reserved'",(actual,getattr(e,'model',a.model),details,ident))
             status=getattr(e,'status_code',None)
             if status is None and getattr(e,'response',None) is not None:status=e.response.status_code
             if status in [400,401,403,404,422,429]:

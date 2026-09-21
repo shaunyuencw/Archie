@@ -1,5 +1,127 @@
 """Deterministic projections over canonical semantic IDs."""
-from .models import Project, Placement, Route
+from itertools import product
+from .models import Project, Placement, Point, Route
+
+_CLEARANCE=22.0
+_SIDES=('left','right','top','bottom')
+_VECTORS={'left':(-1,0),'right':(1,0),'top':(0,-1),'bottom':(0,1)}
+
+def _center(node,by_id):
+    x,y=node['x']+node['width']/2,node['y']+node['height']/2
+    parent=by_id.get(node.get('parentId'))
+    if parent:x+=parent['x'];y+=parent['y']
+    return x,y
+
+def _absolute_bounds(nodes):
+    by_id={n['id']:n for n in nodes};bounds={}
+    for ident,node in by_id.items():
+        if node['role']=='zone':continue
+        x,y=node['x'],node['y'];parent=by_id.get(node.get('parentId'))
+        if parent:x+=parent['x'];y+=parent['y']
+        bounds[ident]=(x,y,x+node['width'],y+node['height'])
+    return bounds
+
+def _anchor(box,side):
+    x0,y0,x1,y1=box;side_y=y0+min(27,(y1-y0)/2)
+    return {'left':(x0,side_y),'right':(x1,side_y),'top':((x0+x1)/2,y0),'bottom':((x0+x1)/2,y1)}[side]
+
+def _outward(point,side):
+    dx,dy=_VECTORS[side];return point[0]+dx*_CLEARANCE,point[1]+dy*_CLEARANCE
+
+def _expanded(box):
+    return box[0]-_CLEARANCE,box[1]-_CLEARANCE,box[2]+_CLEARANCE,box[3]+_CLEARANCE
+
+def _inside(point,box):
+    return box[0]<point[0]<box[2] and box[1]<point[1]<box[3]
+
+def _segment_clear(first,last,obstacles):
+    """Strict intersections leave a route free to follow an obstacle clearance edge."""
+    if first[0]!=last[0] and first[1]!=last[1]:return False
+    if first==last:return True
+    for box in obstacles:
+        if first[1]==last[1]:
+            lo,hi=sorted((first[0],last[0]))
+            if box[1]<first[1]<box[3] and lo<box[2] and hi>box[0]:return False
+        else:
+            lo,hi=sorted((first[1],last[1]))
+            if box[0]<first[0]<box[2] and lo<box[3] and hi>box[1]:return False
+    return True
+
+def _simplify(points):
+    result=[]
+    for point in points:
+        point=(round(point[0],3),round(point[1],3))
+        if result and result[-1]==point:continue
+        if len(result)>1:
+            a,b=result[-2],result[-1]
+            if (a[0]==b[0]==point[0] or a[1]==b[1]==point[1]):
+                result.pop()
+        result.append(point)
+    return result
+
+def _path_cost(points):
+    return sum(abs(b[0]-a[0])+abs(b[1]-a[1]) for a,b in zip(points,points[1:]))+24*(len(points)-2)
+
+def _core_path(start,end,obstacles):
+    """Choose a short clear rectilinear lane; bounded for 50 components / 100 edges."""
+    if any(_inside(start,box) for box in obstacles) or any(_inside(end,box) for box in obstacles):return None
+    candidates=[[start,(end[0],start[1]),end],[start,(start[0],end[1]),end]]
+    left=min(box[0] for box in obstacles)-_CLEARANCE;right=max(box[2] for box in obstacles)+_CLEARANCE
+    top=min(box[1] for box in obstacles)-_CLEARANCE;bottom=max(box[3] for box in obstacles)+_CLEARANCE
+    midpoint=((start[0]+end[0])/2,(start[1]+end[1])/2)
+    xs=sorted({left,right,start[0],end[0],*(value for box in obstacles for value in (box[0],box[2]))},key=lambda value:(abs(value-midpoint[0]),value))
+    ys=sorted({top,bottom,start[1],end[1],*(value for box in obstacles for value in (box[1],box[3]))},key=lambda value:(abs(value-midpoint[1]),value))
+    # A single outside lane handles ordinary blocked elbows without growing a graph.
+    for y in ys[:32]:candidates.append([start,(start[0],y),(end[0],y),end])
+    for x in xs[:32]:candidates.append([start,(x,start[1]),(x,end[1]),end])
+    # Two-lane detours cover boxes that block a source or target clearance leg.
+    outer_x=tuple(dict.fromkeys((left,right,*xs[:8])))
+    outer_y=tuple(dict.fromkeys((top,bottom,*ys[:8])))
+    for x,y in product(outer_x,outer_y):
+        candidates.append([start,(start[0],y),(x,y),(x,end[1]),end])
+        candidates.append([start,(x,start[1]),(x,y),(end[0],y),end])
+    clear=[]
+    for candidate in candidates:
+        path=_simplify(candidate)
+        if all(_segment_clear(a,b,obstacles) for a,b in zip(path,path[1:])):clear.append(path)
+    return min(clear,key=_path_cost) if clear else None
+
+def _automatic_points(source,target,boxes,source_side,target_side):
+    source_anchor,target_anchor=_anchor(boxes[source],source_side),_anchor(boxes[target],target_side)
+    start,end=_outward(source_anchor,source_side),_outward(target_anchor,target_side)
+    obstacles=[_expanded(box) for box in boxes.values()]
+    # The handle's short outward segment may cross another component in a dense layout.
+    source_obstacles=[_expanded(box) for ident,box in boxes.items() if ident!=source]
+    target_obstacles=[_expanded(box) for ident,box in boxes.items() if ident!=target]
+    if not _segment_clear(source_anchor,start,source_obstacles) or not _segment_clear(end,target_anchor,target_obstacles):return None
+    core=_core_path(start,end,obstacles)
+    if core is None:return None
+    vertices=_simplify([source_anchor,*core,target_anchor])
+    return [Point(x=x,y=y) for x,y in vertices[1:-1]]
+
+def _preferred_sides(first,last):
+    dx,dy=last[0]-first[0],last[1]-first[1]
+    preferred=(('right','left') if dx>=0 else ('left','right')) if abs(dx)>=abs(dy) else (('bottom','top') if dy>=0 else ('top','bottom'))
+    source=(preferred[0],*(side for side in _SIDES if side!=preferred[0]))
+    target=(preferred[1],*(side for side in _SIDES if side!=preferred[1]))
+    return source,target
+
+def _safe_route(source,target,route,boxes,centers):
+    """Derive an orthogonal route without mutating the canonical presentation model."""
+    stored=route
+    if stored and (stored.locked or stored.style=='straight' or (stored.points and not stored.automatic)):
+        return stored
+    if stored:
+        source_sides,target_sides=(stored.source_handle,),(stored.target_handle,)
+        base=stored
+    else:
+        source_sides,target_sides=_preferred_sides(centers[source],centers[target]);base=Route(automatic=True)
+    for source_side,target_side in product(source_sides,target_sides):
+        points=_automatic_points(source,target,boxes,source_side,target_side)
+        if points is not None:
+            return base.model_copy(update={'source_handle':source_side,'target_handle':target_side,'points':points,'automatic':True})
+    # Retain the selected handles and a visible connector if no clearance path exists.
+    return base.model_copy(update={'automatic':True,'points':[]})
 
 def view_graph(p:Project,kind:str):
     view=p.views[kind]; nodes=[]; edges=[]; mappings={}; member={}
@@ -32,20 +154,13 @@ def view_graph(p:Project,kind:str):
             label=e.purpose or 'purpose ?'
             if kind=='sv2': label+=f' | {e.protocol or "protocol ?"}:{e.port if e.port is not None else "?"} | initiator: {e.initiator or "?"}'
             mappings[e.id]=[e.id]; edges.append(dict(id=e.id,source=e.source,target=e.target,label=label,object_ids=[e.id],route=view.routes.get(e.id),data_direction=e.data_direction))
-    # Unrouted connections face the other component using absolute, zone-aware positions.
-    # This is derived presentation only; a user's persisted handle choice takes precedence.
-    by_id={n['id']:n for n in nodes}
-    def center(n):
-        x,y=n['x']+n['width']/2,n['y']+n['height']/2
-        parent=by_id.get(n.get('parentId'))
-        if parent: x+=parent['x']; y+=parent['y']
-        return x,y
+    # Automatic routes use absolute child positions and component clearance boxes. They are
+    # presentation only; a locked route remains literal through layout changes and exports.
+    by_id={n['id']:n for n in nodes};boxes=_absolute_bounds(nodes)
+    centers={ident:_center(node,by_id) for ident,node in by_id.items() if ident in boxes}
     for edge in edges:
-        if edge['route'] is not None or edge['source'] not in by_id or edge['target'] not in by_id: continue
-        ax,ay=center(by_id[edge['source']]); bx,by=center(by_id[edge['target']])
-        dx,dy=bx-ax,by-ay
-        source,target=(('right','left') if dx>=0 else ('left','right')) if abs(dx)>=abs(dy) else (('bottom','top') if dy>=0 else ('top','bottom'))
-        edge['route']=Route(source_handle=source,target_handle=target)
+        if edge['source'] in boxes and edge['target'] in boxes:
+            edge['route']=_safe_route(edge['source'],edge['target'],edge['route'],boxes,centers)
     components={c.id:c for c in p.components}; deployments={d.component_id:d for d in p.deployments}
     for n in nodes:
         component=components.get(n['id'])

@@ -1,6 +1,6 @@
 import {test,expect} from '@playwright/test';
 test('T07 manual edit, route, undo, reopen and three views without provider calls',async({page})=>{
- const calls:string[]=[];page.on('request',r=>{if(r.url().includes('/runs'))calls.push(r.url())});
+ const calls:string[]=[];page.on('request',r=>{if(r.method()==='POST'&&/\/(runs|sources|jobs|source-jobs|continue|continue-jobs|policy-review-jobs)(?:\?|$)/.test(r.url()))calls.push(r.url())});
  await page.goto('/');await page.getByText('Legacy examples',{exact:true}).click();await page.getByRole('button',{name:'Load demo A',exact:true}).click();
  const node=page.locator('.react-flow__node[data-id="vms"]');await expect(node).toBeVisible();await node.click();
  await page.getByLabel('Object name',{exact:true}).fill('Video management renamed');await page.getByLabel('Object name',{exact:true}).press('Tab');

@@ -788,6 +788,61 @@
           ],
           "default": null,
           "title": "Label"
+        },
+        "fill_color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fill Color"
+        },
+        "text_color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text Color"
+        },
+        "border_color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Border Color"
+        },
+        "icon_color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Icon Color"
+        },
+        "z_index": {
+          "default": 0,
+          "maximum": 10000,
+          "minimum": -10000,
+          "title": "Z Index",
+          "type": "integer"
         }
       },
       "title": "Placement",
@@ -799,7 +854,12 @@
         "height",
         "visible",
         "locked",
-        "label"
+        "label",
+        "fill_color",
+        "text_color",
+        "border_color",
+        "icon_color",
+        "z_index"
       ]
     },
     "Point": {
@@ -1033,6 +1093,46 @@
           "default": false,
           "title": "Locked",
           "type": "boolean"
+        },
+        "automatic": {
+          "default": false,
+          "title": "Automatic",
+          "type": "boolean"
+        },
+        "label_offset": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Point"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "line_color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Line Color"
+        },
+        "text_color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text Color"
         }
       },
       "title": "Route",
@@ -1042,7 +1142,11 @@
         "points",
         "source_handle",
         "target_handle",
-        "locked"
+        "locked",
+        "automatic",
+        "label_offset",
+        "line_color",
+        "text_color"
       ]
     },
     "Source": {

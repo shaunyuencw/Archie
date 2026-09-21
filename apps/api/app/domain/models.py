@@ -3,7 +3,8 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Literal, Any
 from uuid import uuid4
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+import re
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 def uid(): return str(uuid4())
 def now(): return datetime.now(timezone.utc).isoformat()
@@ -115,6 +116,20 @@ class Placement(Record):
     visible: bool = True
     locked: bool = False
     label: str | None = None
+    fill_color: str | None = None
+    text_color: str | None = None
+    border_color: str | None = None
+    icon_color: str | None = None
+    z_index: int = Field(default=0,ge=-10000,le=10000)
+
+    @field_validator('fill_color','text_color','border_color','icon_color')
+    @classmethod
+    def hex_color(cls,value):
+        if value is None:return None
+        color=value.strip().lower() if isinstance(value,str) else ''
+        if not re.fullmatch(r'#[0-9a-f]{3,4}|#[0-9a-f]{6}|#[0-9a-f]{8}',color):
+            raise ValueError('Presentation colors must be CSS hex values such as #0f766e')
+        return color
 
 class Point(Record):
     x:float
@@ -126,6 +141,19 @@ class Route(Record):
     source_handle: Literal['left','right','top','bottom'] = 'right'
     target_handle: Literal['left','right','top','bottom'] = 'left'
     locked: bool = False
+    automatic: bool = False
+    label_offset: Point | None = None
+    line_color: str | None = None
+    text_color: str | None = None
+
+    @field_validator('line_color','text_color')
+    @classmethod
+    def hex_color(cls,value):
+        if value is None:return None
+        color=value.strip().lower() if isinstance(value,str) else ''
+        if not re.fullmatch(r'#[0-9a-f]{3,4}|#[0-9a-f]{6}|#[0-9a-f]{8}',color):
+            raise ValueError('Presentation colors must be CSS hex values such as #0f766e')
+        return color
 
 class View(Record):
     type: Literal['logical','sv1','sv2']

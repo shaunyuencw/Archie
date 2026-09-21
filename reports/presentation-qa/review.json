@@ -1,0 +1,27 @@
+{
+  "reviewed_on": "2026-09-21",
+  "review_method": "Local rendered images visually inspected",
+  "files": [
+    "colors-and-labels.svg",
+    "colors-and-labels.png",
+    "../archie-presentation-palette.png",
+    "../archie-change-history.png",
+    "../archie-background-projects.png",
+    "../archie-cancel-action.png"
+  ],
+  "checked": [
+    "Ten swatches and Default shown in inspector",
+    "Box fill/border, text, icon and connector colors visible",
+    "SVG icon alpha masks preserve symbol detail",
+    "Custom label offset visible and labels render above opaque fills",
+    "History decisions and named change summaries readable",
+    "Other-project completion notice does not replace current project",
+    "Stopping status and project spinner visible while cancellation waits"
+  ],
+  "limitations": [
+    "Synthetic examples only",
+    "Screenshotted job lifecycle uses controlled browser responses backed by separate backend lifecycle tests",
+    "Dense overlaps and connector crossings still need manual adjustment",
+    "SVG is an image export, not native editable Visio"
+  ]
+}

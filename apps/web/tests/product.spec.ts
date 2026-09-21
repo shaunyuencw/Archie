@@ -1,7 +1,7 @@
 import {test,expect,type Page} from '@playwright/test';
 
 const node=(page:Page,id:string)=>page.locator(`.react-flow__node[data-id="${id}"]`);
-const trackModelRequests=(page:Page)=>{const requests:string[]=[];page.on('request',r=>{if(/\/(runs|sources)(?:\?|$)/.test(r.url()))requests.push(r.url())});return requests};
+const trackModelRequests=(page:Page)=>{const requests:string[]=[];page.on('request',r=>{if(r.method()==='POST'&&/\/(runs|sources|jobs|source-jobs|continue-jobs)(?:\?|$)/.test(r.url()))requests.push(r.url())});return requests};
 const currentProject=async(page:Page)=>{await expect(page.getByLabel('Open project')).not.toHaveValue('');const id=await page.getByLabel('Open project').inputValue();return (await page.request.get('/api/projects/'+id)).json()};
 
 // These are user-facing contract tests: editing metadata must change the accepted model,
@@ -123,7 +123,7 @@ test('global policy drafts are shared but applicability and checks belong to eac
 
 test('optional mock policy advice is explicit, free, read-only and marked stale after editing',async({page})=>{
  const modelRequests=trackModelRequests(page);let reviewPosts=0;
- page.on('request',request=>{if(request.method()==='POST'&&request.url().endsWith('/policy-review'))reviewPosts++});
+ page.on('request',request=>{if(request.method()==='POST'&&/\/policy-review(?:-jobs)?$/.test(request.url()))reviewPosts++});
  await page.goto('/');await page.getByRole('button',{name:/^Production portal/}).click();
  await expect(node(page,'portal-web')).toBeVisible();const before=await currentProject(page);
  expect(before.policy_ids).toHaveLength(17);

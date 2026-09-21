@@ -2,13 +2,22 @@
 .arch-node .react-flow__handle:hover,.arch-node .react-flow__handle.connecting{opacity:1;background:#10a593}
 .arch-node:not(.zone-node) strong{max-width:100%;overflow-wrap:anywhere}
 .arch-node:not(.zone-node) img{flex-shrink:0}
+.arch-node .equipment-symbol .icon-tint{display:block;width:43px;height:43px;flex-shrink:0}
+.equipment-symbol .primary-symbol.icon-tint{position:relative;z-index:2;border-radius:3px}
+.equipment-symbol .stack-copy.icon-tint{position:absolute;border-radius:3px;z-index:1;opacity:.5}
+.equipment-symbol .stack-copy.third.icon-tint{opacity:.3;z-index:0}
 .react-flow__edgelabel-renderer{z-index:1002}
 .react-flow__edgelabel-renderer .edge-label{max-width:220px;line-height:1.35;background:#f7fafcef;border:1px solid #dbe6ed80;padding:2px 6px;border-radius:5px}
 .react-flow__edgelabel-renderer .edge-label-selected{color:#126e67;background:#f0faf7;border-color:#a7d6cc}
+.react-flow__edgelabel-renderer .edge-label.edge-label-movable{pointer-events:all;cursor:grab;touch-action:none;user-select:none}
+.react-flow__edgelabel-renderer .edge-label.edge-label-movable:active{cursor:grabbing}
+.react-flow__edgelabel-renderer .edge-label.edge-label-movable:focus-visible{outline:2px solid #168479;outline-offset:2px}
 .route-segment{fill:none;stroke:transparent;stroke-width:16;pointer-events:stroke;touch-action:none}
 .route-segment.horizontal{cursor:ns-resize}.route-segment.vertical{cursor:ew-resize}
 .route-segment:hover,.route-segment:focus-visible{stroke:#16847920;outline:none}
 .react-flow__edgelabel-renderer .route-menu{position:absolute;pointer-events:all;z-index:30;min-width:190px;padding:5px;background:white;border:1px solid #bed5db;border-radius:8px;box-shadow:0 5px 24px #173b5030;display:flex;flex-direction:column;gap:2px}
 .route-menu button{justify-content:flex-start;border:0;padding:7px 10px}.route-menu small{max-width:190px;padding:5px 10px;color:#587184;font-size:10px}
+.node-menu{position:fixed;z-index:2000;min-width:156px;padding:5px;background:white;border:1px solid #bed5db;border-radius:8px;box-shadow:0 5px 24px #173b5030;display:flex;flex-direction:column;gap:2px}.node-menu button{justify-content:flex-start;border:0;padding:7px 10px}
 .react-flow__edge:not(.selected) .react-flow__edgeupdater{pointer-events:none}
 .react-flow__edge.selected .react-flow__edgeupdater{pointer-events:all;fill:#fff;stroke:#138276;stroke-width:1.5px}
+.inspector .presentation-color{margin:8px 0}.presentation-color-controls{display:grid;grid-template-columns:repeat(5,20px);gap:4px;margin-top:5px}.presentation-color-controls .color-swatch{width:20px;height:20px;min-width:20px;padding:0;border:1px solid #9bb2be;border-radius:50%;box-shadow:inset 0 0 0 1px #ffffff80}.presentation-color-controls .color-swatch.chosen{outline:2px solid #173c58;outline-offset:1px}.inspector .color-default{margin-top:5px;padding:3px 8px;font-size:10px}

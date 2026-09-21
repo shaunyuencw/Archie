@@ -45,6 +45,8 @@ def test_mock_advisory_is_explicit_cached_and_stale_without_model_usage(tmp_path
     assert result['assessments'][0]['status']=='potential_concern'
     assert store.get(project.id).model_dump_json()==before
     assert usage_summary(store,project.id)['calls']==0
+    assert latest_review(store,project.id)['review']['cached'] is True
+    assert latest_review(store,project.id)['review']['id']==result['id']
     assert review_project(store,project.id,ReviewRequest(base_revision=0))['cached']
     changed=store.commit(command(project,[{'op':'notes','value':{'text':'New accepted note'}}]))
     assert latest_review(store,project.id)['review']['stale']
