@@ -1,6 +1,6 @@
 {
   "components": 50,
   "interfaces": 100,
-  "create_edit_reopen_ms": 8.979,
+  "create_edit_reopen_ms": 12.2,
   "measurement": "Python SQLite transaction plus reload; browser measurement separate"
 }

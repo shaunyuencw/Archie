@@ -1,9 +1,24 @@
 import json
 from uuid import uuid5,NAMESPACE_URL
+from pydantic import ValidationError
 from .models import Project, ChangeSet, uid, now
 
 class DomainError(Exception):
     def __init__(self,code,message,status=422): self.code=code; self.message=message; self.status=status
+
+def validation_message(error:ValidationError)->str:
+    """Translate the one common user-editable connection error without hiding other validation detail."""
+    invalid_ports=[]
+    for issue in error.errors():
+        location=issue.get('loc',())
+        if len(location)>=3 and location[0]=='interfaces' and isinstance(location[1],int) and location[2]=='port':
+            value=issue.get('input')
+            if value is not None:invalid_ports.append(str(value))
+    if invalid_ports:
+        quoted=', '.join(f'“{value}”' for value in invalid_ports[:3])
+        count='A connection port' if len(invalid_ports)==1 else f'{len(invalid_ports)} connection ports'
+        return f'{count} could not be read: {quoted}. Enter only a number from 0 to 65535 in Port, for example 443; put the protocol, such as HTTPS or PostgreSQL, in Protocol. Your current design was not changed.'
+    return str(error)
 
 def apply(project:Project,change:ChangeSet)->Project:
     if change.project_id!=project.id: raise DomainError('invalid_input','Project mismatch')
@@ -80,6 +95,7 @@ def apply(project:Project,change:ChangeSet)->Project:
     try:
         from .views import initialise_views
         return initialise_views(Project.model_validate(data))
+    except ValidationError as e: raise DomainError('invalid_input',validation_message(e)) from e
     except ValueError as e: raise DomainError('invalid_input',str(e)) from e
 
 def command(project,operations,**kwargs):

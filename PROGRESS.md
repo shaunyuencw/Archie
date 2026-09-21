@@ -4,7 +4,7 @@ Updated: 21 September 2026, Mac continuation. **Presentable local prototype read
 
 ## Current checkpoint
 
-The Mac offline gate passes: **86 backend tests, 19 frontend unit tests, 21 browser journeys, TypeScript and production build**. Evidence: `reports/offline-gate.json`, `reports/m7-tests.xml`, `reports/browser-tests.json`. The application runs at <http://127.0.0.1:5173/>. No model calls occur in the offline gate.
+The Mac offline gate passes: **88 backend tests, 19 frontend unit tests, 21 browser journeys, TypeScript and production build**. Evidence: `reports/offline-gate.json`, `reports/m7-tests.xml`, `reports/browser-tests.json`. The application runs at <http://127.0.0.1:5173/>. No model calls occur in the offline gate.
 
 The restored checkpoint initially passed 25 backend tests, one frontend test and the build, but one browser journey failed due to a late view response. This was fixed alongside serialized local commands and captured file/project inputs, preventing rapid edits from using stale local state. External revision conflicts still reject. Baseline evidence is in `reports/mac-baseline`; earlier Windows reports and screenshots are preserved in `reports/windows-checkpoint` and historical live reports.
 
@@ -31,6 +31,7 @@ The default examples are now **Production service portal** (Client → Z1 applic
 - Portal and robotics layouts occupy 47% and 48% less area; labels appear 36% and 48% larger at the same laptop viewport. Existing saved layouts are preserved. See `reports/demo-pack-qa/compact-layout/review.json`.
 - Panel arrows follow their state. Below 900 pixels, side panels start collapsed and open as overlays; the 640×800 browser case verifies usable drawing width and no body overflow.
 - Four technical specifications in Markdown/DOCX/PDF and 15 follow-up prompts: `docs/DEMO_SCENARIOS.md`. Separate authored mock DOCX fixtures support repeatable offline import and rename journeys. Ordinary natural-language specs and broader prompts require a live provider and have **not** been live-tested for this new pack.
+- Live document and prompt proposals convert one transport-qualified port such as `TCP 443` into canonical port `443`. Ambiguous values stay unknown with a review note; manual port errors now explain the required numeric value without exposing a raw schema trace. Reopen waits for queued saves.
 
 One bounded real OpenAI call verified the new advisory policy review; it cost an estimated US$0.01538 and preserved the accepted architecture (`reports/mac-policy-review-20260921.json`). All layout and wording work used no provider calls. The earlier prompt/document evidence below remains separate. Visual QA: 22 document pages and six current SVGs (`reports/demo-pack-qa/review.json`). New screenshots: `reports/archie-robotics-testbed.png` and `reports/archie-narrow-browser.png`. Dense Connection details labels can still partly cover short arrowheads; Architecture and System overview are clearer for the guided demo.
 

@@ -1,12 +1,12 @@
 # Acceptance checkpoint — 21 September 2026
 
-This matrix records the Mac continuation. The full offline gate passes (86 backend, 19 frontend unit, 21 browser journeys, TypeScript and production build). New product scenarios and library are covered by `apps/web/tests/product.spec.ts`. Mac handover is ready; full native Visio acceptance remains conditional. Fixture version is 1.0; historical Windows results are retained separately.
+This matrix records the Mac continuation. The full offline gate passes (88 backend, 19 frontend unit, 21 browser journeys, TypeScript and production build). New product scenarios and library are covered by `apps/web/tests/product.spec.ts`. Mac handover is ready; full native Visio acceptance remains conditional. Fixture version is 1.0; historical Windows results are retained separately.
 
 ## Product requirements
 
 | ID | Status | Evidence / qualification |
 | --- | --- | --- |
-| F01 | Passed for offline fixtures and real Terra journeys | Prompt and B SoW DOCX service flows passed with exact source locators; `reports/mac-resume-20260921-openai/report.json`, `tests/test_ingest.py`, `tests/test_live_documents.py`. |
+| F01 | Passed for offline fixtures and real Terra journeys | Prompt and B SoW DOCX service flows passed with exact source locators; transport-qualified single ports normalize to the canonical integer while ambiguous values remain unknown. `reports/mac-resume-20260921-openai/report.json`, `tests/test_ingest.py`, `tests/test_live_documents.py`, `tests/test_live_orchestrator.py`. |
 | F02 | Passed | Unknown fields, visible radio-card options and saved answers: ingestion and browser tests. |
 | F03 | Passed | `tests/test_policies.py` preserves the original eight checks/12 manual clauses; `tests/test_policy_library.py` verifies 42 global clauses, 11 available checks, project applicability, local drafts and three-tier/hybrid separation. Optional advisory review is tested independently in `tests/test_policy_review.py`; one real three-policy Terra review passed. |
 | F04 | Passed | `tests/test_consistency.py`, manual browser journey: one model, three projections. |

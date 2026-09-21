@@ -1,4 +1,4 @@
-import json,threading
+import json,re,threading
 from pathlib import Path
 from ..domain.models import Operation,Claim,uid
 from ..domain.naming import name_operation,can_suggest_name,explicit_name_request
@@ -13,6 +13,30 @@ from .service import question_ops
 
 ROOT=Path(__file__).resolve().parents[4]
 CANCELLATIONS={}
+_PORT_VALUE=re.compile(r'^\s*(?:(?:tcp|udp|sctp|dccp)\s*(?:[/:\-]\s*)?)?(?:port\s*)?(\d{1,5})(?:\s*/\s*(?:tcp|udp|sctp|dccp))?\s*$',re.I)
+_UNKNOWN_PORT_VALUES={'','-','n/a','na','none','not decided','not specified','null','unknown','unspecified'}
+
+def normalize_interface_port(value,ident,uncertainties):
+    """Keep the canonical port scalar while accepting a few common model spellings."""
+    if value is None:
+        return None
+    if isinstance(value,int) and not isinstance(value,bool):
+        port=value
+    elif isinstance(value,str):
+        text=value.strip()
+        if text.lower() in _UNKNOWN_PORT_VALUES:return None
+        match=_PORT_VALUE.fullmatch(text)
+        if match:
+            port=int(match.group(1))
+        else:
+            port=None
+    else:
+        port=None
+    if isinstance(port,int) and 0<=port<=65535:return port
+    # A range or several ports cannot be represented by one canonical interface port.
+    # Keep it unknown rather than selecting a value that was never specified.
+    uncertainties.append(f'{ident}: port was left unknown because the supplied value was not one valid numeric port. Split the connection or provide one port.')
+    return None
 
 def context(p,query):
     matched=[c for c in p.components if c.name.lower() in query.lower() or c.id.lower() in query.lower()]
@@ -52,6 +76,8 @@ def proposal_from_envelope(p,source,envelope,source_alias=None):
     for w in envelope.operations:
         value=json.loads(w.value_json)
         if not isinstance(value,dict):raise DomainError('provider_output','Operation value must be an object')
+        if w.entity=='interfaces' and 'port' in value:
+            value['port']=normalize_interface_port(value['port'],w.id,uncertainties)
         # Domain defaults help manual creation; model omissions are unknown facts.
         if w.op=='add' and w.entity in ['components','systems']:
             if value.get('scope') is None:value['scope']='unknown'

@@ -3,10 +3,10 @@ import pytest
 from pathlib import Path
 from apps.api.app.providers.contracts import Envelope,ProviderResult,Usage
 from apps.api.app.providers.config import Settings
-from apps.api.app.orchestration.live import assisted_run
-from apps.api.app.domain.commands import command
+from apps.api.app.orchestration.live import assisted_run,proposal_from_envelope
+from apps.api.app.domain.commands import apply,command
 from apps.api.app.domain.commands import DomainError
-from apps.api.app.domain.models import Project
+from apps.api.app.domain.models import Component,Passage,Project,Source
 from apps.api.app.storage.store import Store
 from apps.api.app.main import RunRequest
 
@@ -50,3 +50,23 @@ def test_live_journey_ceiling_spans_separate_actions_and_projects(tmp_path):
             with pytest.raises(DomainError,match='Live smoke run ceiling'):
                 assisted_run(store,p.id,req,settings,adapter,live_run=limit)
         assert not store.get(p.id).components
+
+def test_document_port_text_is_normalized_without_choosing_ambiguous_ports():
+    project=Project(components=[
+        Component(id='web',name='Web service',role='application'),
+        Component(id='database',name='Database',role='database'),
+    ])
+    source=Source(id='document-source',name='Spec',kind='document',sha256='source',canonical_id='source',passages=[
+        Passage(locator='paragraph/1',text='HTTPS uses TCP 443. PostgreSQL uses TCP 5432.'),
+    ])
+    def claim(target):
+        return {'source_id':'S1','locator':'paragraph/1','excerpt':'HTTPS uses TCP 443. PostgreSQL uses TCP 5432.','target_id':target,'field':'record','value_json':'null'}
+    envelope=Envelope(operations=[
+        {'op':'add','entity':'interfaces','id':'web-db','value_json':json.dumps({'source':'web','target':'database','protocol':'HTTPS','port':'TCP 443'})},
+        {'op':'add','entity':'interfaces','id':'db-web','value_json':json.dumps({'source':'database','target':'web','protocol':'PostgreSQL','port':'TCP 5432'})},
+        {'op':'add','entity':'interfaces','id':'ambiguous','value_json':json.dumps({'source':'web','target':'database','protocol':'HTTPS','port':'TCP 443 or 8443'})},
+    ],claims=[claim('web-db'),claim('db-web'),claim('ambiguous')],tool=None,message='Review')
+    proposal=proposal_from_envelope(project,source,envelope,source_alias='S1')
+    accepted=apply(project,proposal)
+    assert {item.id:item.port for item in accepted.interfaces}=={'web-db':443,'db-web':5432,'ambiguous':None}
+    assert proposal.findings==['ambiguous: port was left unknown because the supplied value was not one valid numeric port. Split the connection or provide one port.']

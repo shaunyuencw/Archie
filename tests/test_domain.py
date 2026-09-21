@@ -21,6 +21,21 @@ def test_temp_id_resolution_and_unknown():
     assert p.deployments[0].component_id==p.components[0].id
     assert p.deployments[0].quantity is None
 
+def test_interface_port_validation_is_human_readable_and_keeps_project_unchanged():
+    p=Project()
+    p=apply(p,command(p,[
+        {'op':'add','entity':'components','id':'web','value':{'name':'Web service','role':'application'}},
+        {'op':'add','entity':'components','id':'database','value':{'name':'Database','role':'database'}},
+    ]))
+    with pytest.raises(DomainError) as failure:
+        apply(p,command(p,[
+            {'op':'add','entity':'interfaces','id':'web-to-db','value':{'source':'web','target':'database','protocol':'HTTPS','port':'TCP 443'}},
+            {'op':'add','entity':'interfaces','id':'db-to-web','value':{'source':'database','target':'web','protocol':'PostgreSQL','port':'TCP 5432'}},
+        ]))
+    assert failure.value.code=='invalid_input'
+    assert failure.value.message=='2 connection ports could not be read: “TCP 443”, “TCP 5432”. Enter only a number from 0 to 65535 in Port, for example 443; put the protocol, such as HTTPS or PostgreSQL, in Protocol. Your current design was not changed.'
+    assert not p.interfaces
+
 def test_host_and_redundancy_validation_and_transaction_undo(tmp_path):
     store=Store(tmp_path/'deployment.sqlite');p=store.create(Project())
     p=store.commit(command(p,[
