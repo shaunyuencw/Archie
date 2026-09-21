@@ -118,11 +118,6 @@ export type Id10 = string;
 export type ProjectId = string;
 export type RequestId = string;
 export type BaseRevision = number;
-/**
- * @minItems 1
- * @maxItems 500
- */
-export type Operations = [Operation, ...Operation[]];
 export type Op = "add" | "update" | "remove" | "placement" | "route" | "notes";
 export type Entity =
   | (
@@ -140,6 +135,11 @@ export type Entity =
 export type Id11 = string;
 export type View1 = "logical" | "sv1" | "sv2";
 export type Confirmed = boolean;
+/**
+ * @minItems 1
+ * @maxItems 500
+ */
+export type Operations = Operation[];
 export type AffectedIds = string[];
 export type Evidence4 = string[];
 export type Findings = string[];
@@ -152,31 +152,31 @@ export interface Contract {
   [k: string]: unknown;
 }
 export interface Project {
-  id?: Id;
-  name?: Name;
-  schema_version?: SchemaVersion;
-  revision?: Revision;
-  created_at?: CreatedAt;
-  updated_at?: UpdatedAt;
-  synthetic?: Synthetic;
-  policy_version?: PolicyVersion;
-  template_version?: TemplateVersion;
-  systems?: Systems;
-  zones?: Zones;
-  components?: Components;
-  deployments?: Deployments;
-  interfaces?: Interfaces;
-  sources?: Sources;
-  claims?: Claims;
-  constraints?: Constraints;
-  decisions?: Decisions;
-  views?: Views;
-  notes?: Notes;
+  id: Id;
+  name: Name;
+  schema_version: SchemaVersion;
+  revision: Revision;
+  created_at: CreatedAt;
+  updated_at: UpdatedAt;
+  synthetic: Synthetic;
+  policy_version: PolicyVersion;
+  template_version: TemplateVersion;
+  systems: Systems;
+  zones: Zones;
+  components: Components;
+  deployments: Deployments;
+  interfaces: Interfaces;
+  sources: Sources;
+  claims: Claims;
+  constraints: Constraints;
+  decisions: Decisions;
+  views: Views;
+  notes: Notes;
 }
 export interface System {
   id: Id1;
   name: Name1;
-  scope?: Scope;
+  scope: Scope;
 }
 export interface Zone {
   id: Id2;
@@ -186,55 +186,55 @@ export interface Component {
   id: Id3;
   name: Name3;
   role: Role;
-  system_id?: SystemId;
-  status?: Status;
-  asset_id?: AssetId;
-  scope?: Scope1;
-  audit_destination?: AuditDestination;
-  storage_destination?: StorageDestination;
-  local_only?: LocalOnly;
-  internet_hosted?: InternetHosted;
-  evidence?: Evidence;
+  system_id: SystemId;
+  status: Status;
+  asset_id: AssetId;
+  scope: Scope1;
+  audit_destination: AuditDestination;
+  storage_destination: StorageDestination;
+  local_only: LocalOnly;
+  internet_hosted: InternetHosted;
+  evidence: Evidence;
 }
 export interface Deployment {
   id: Id4;
   component_id: ComponentId;
-  zone_id?: ZoneId;
-  host?: Host;
-  site?: Site;
-  quantity?: Quantity;
+  zone_id: ZoneId;
+  host: Host;
+  site: Site;
+  quantity: Quantity;
 }
 export interface Interface {
   id: Id5;
   source: Source;
   target: Target;
-  purpose?: Purpose;
-  data_direction?: DataDirection;
-  initiator?: Initiator;
-  protocol?: Protocol;
-  port?: Port;
-  enforcement?: Enforcement;
-  delivery?: Delivery;
-  evidence?: Evidence1;
+  purpose: Purpose;
+  data_direction: DataDirection;
+  initiator: Initiator;
+  protocol: Protocol;
+  port: Port;
+  enforcement: Enforcement;
+  delivery: Delivery;
+  evidence: Evidence1;
 }
 export interface Source1 {
   id: Id6;
   name: Name4;
-  version?: Version;
+  version: Version;
   kind: Kind;
   sha256: Sha256;
   canonical_id: CanonicalId;
-  variants?: Variants;
-  passages?: Passages;
-  processed?: Processed;
-  unprocessed?: Unprocessed;
-  unsupported_pages?: UnsupportedPages;
+  variants: Variants;
+  passages: Passages;
+  processed: Processed;
+  unprocessed: Unprocessed;
+  unsupported_pages: UnsupportedPages;
 }
 export interface Passage {
   locator: Locator;
-  heading?: Heading;
+  heading: Heading;
   text: Text;
-  page?: Page;
+  page: Page;
 }
 export interface Claim {
   id: Id7;
@@ -244,19 +244,19 @@ export interface Claim {
   excerpt: Excerpt;
   target_id: TargetId;
   field: Field;
-  value?: Value;
+  value: Value;
   source_kind: SourceKind;
-  review?: Review;
+  review: Review;
 }
 export interface Value {
   [k: string]: unknown;
 }
 export interface Constraint {
   id: Id8;
-  scope?: Scope2;
+  scope: Scope2;
   key: Key;
-  value?: Value1;
-  evidence?: Evidence2;
+  value: Value1;
+  evidence: Evidence2;
 }
 export interface Value1 {
   [k: string]: unknown;
@@ -264,44 +264,44 @@ export interface Value1 {
 export interface Decision {
   id: Id9;
   question: Question;
-  target_id?: TargetId1;
+  target_id: TargetId1;
   field: Field1;
   options: Options;
-  answer?: Answer;
-  state?: State;
-  evidence?: Evidence3;
+  answer: Answer;
+  state: State;
+  evidence: Evidence3;
 }
 export interface Views {
   [k: string]: View;
 }
 export interface View {
   type: Type;
-  revision?: Revision1;
-  placements?: Placements;
-  routes?: Routes;
-  mappings?: Mappings;
+  revision: Revision1;
+  placements: Placements;
+  routes: Routes;
+  mappings: Mappings;
 }
 export interface Placements {
   [k: string]: Placement;
 }
 export interface Placement {
-  x?: X;
-  y?: Y;
-  width?: Width;
-  height?: Height;
-  visible?: Visible;
-  locked?: Locked;
-  label?: Label;
+  x: X;
+  y: Y;
+  width: Width;
+  height: Height;
+  visible: Visible;
+  locked: Locked;
+  label: Label;
 }
 export interface Routes {
   [k: string]: Route;
 }
 export interface Route {
-  style?: Style;
-  points?: Points;
-  source_handle?: SourceHandle;
-  target_handle?: TargetHandle;
-  locked?: Locked1;
+  style: Style;
+  points: Points;
+  source_handle: SourceHandle;
+  target_handle: TargetHandle;
+  locked: Locked1;
 }
 export interface Mappings {
   [k: string]: string[];

@@ -152,7 +152,9 @@
         "excerpt",
         "target_id",
         "field",
-        "source_kind"
+        "value",
+        "source_kind",
+        "review"
       ],
       "title": "Claim",
       "type": "object"
@@ -270,7 +272,16 @@
       "required": [
         "id",
         "name",
-        "role"
+        "role",
+        "system_id",
+        "status",
+        "asset_id",
+        "scope",
+        "audit_destination",
+        "storage_destination",
+        "local_only",
+        "internet_hosted",
+        "evidence"
       ],
       "title": "Component",
       "type": "object"
@@ -305,7 +316,10 @@
       },
       "required": [
         "id",
-        "key"
+        "scope",
+        "key",
+        "value",
+        "evidence"
       ],
       "title": "Constraint",
       "type": "object"
@@ -376,8 +390,12 @@
       "required": [
         "id",
         "question",
+        "target_id",
         "field",
-        "options"
+        "options",
+        "answer",
+        "state",
+        "evidence"
       ],
       "title": "Decision",
       "type": "object"
@@ -445,7 +463,11 @@
       },
       "required": [
         "id",
-        "component_id"
+        "component_id",
+        "zone_id",
+        "host",
+        "site",
+        "quantity"
       ],
       "title": "Deployment",
       "type": "object"
@@ -558,7 +580,15 @@
       "required": [
         "id",
         "source",
-        "target"
+        "target",
+        "purpose",
+        "data_direction",
+        "initiator",
+        "protocol",
+        "port",
+        "enforcement",
+        "delivery",
+        "evidence"
       ],
       "title": "Interface",
       "type": "object"
@@ -664,7 +694,9 @@
       },
       "required": [
         "locator",
-        "text"
+        "heading",
+        "text",
+        "page"
       ],
       "title": "Passage",
       "type": "object"
@@ -720,7 +752,16 @@
         }
       },
       "title": "Placement",
-      "type": "object"
+      "type": "object",
+      "required": [
+        "x",
+        "y",
+        "width",
+        "height",
+        "visible",
+        "locked",
+        "label"
+      ]
     },
     "Project": {
       "additionalProperties": false,
@@ -847,7 +888,29 @@
         }
       },
       "title": "Project",
-      "type": "object"
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "schema_version",
+        "revision",
+        "created_at",
+        "updated_at",
+        "synthetic",
+        "policy_version",
+        "template_version",
+        "systems",
+        "zones",
+        "components",
+        "deployments",
+        "interfaces",
+        "sources",
+        "claims",
+        "constraints",
+        "decisions",
+        "views",
+        "notes"
+      ]
     },
     "Route": {
       "additionalProperties": false,
@@ -889,7 +952,14 @@
         }
       },
       "title": "Route",
-      "type": "object"
+      "type": "object",
+      "required": [
+        "style",
+        "points",
+        "source_handle",
+        "target_handle",
+        "locked"
+      ]
     },
     "Source": {
       "additionalProperties": false,
@@ -964,9 +1034,15 @@
       "required": [
         "id",
         "name",
+        "version",
         "kind",
         "sha256",
-        "canonical_id"
+        "canonical_id",
+        "variants",
+        "passages",
+        "processed",
+        "unprocessed",
+        "unsupported_pages"
       ],
       "title": "Source",
       "type": "object"
@@ -996,7 +1072,8 @@
       },
       "required": [
         "id",
-        "name"
+        "name",
+        "scope"
       ],
       "title": "System",
       "type": "object"
@@ -1044,7 +1121,11 @@
         }
       },
       "required": [
-        "type"
+        "type",
+        "revision",
+        "placements",
+        "routes",
+        "mappings"
       ],
       "title": "View",
       "type": "object"

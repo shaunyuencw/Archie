@@ -1,0 +1,3 @@
+import {defineConfig} from '@playwright/test';
+export default defineConfig({testDir:'./tests',timeout:45000,use:{baseURL:'http://127.0.0.1:5173',viewport:{width:1600,height:1000},screenshot:'only-on-failure'},reporter:[['list'],['json',{outputFile:'../../reports/browser-tests.json'}]],webServer:[{command:'..\\..\\.venv\\Scripts\\python.exe -m uvicorn apps.api.app.main:app --app-dir ../.. --host 127.0.0.1 --port 8000',url:'http://127.0.0.1:8000/api/health',reuseExistingServer:true},{command:'node node_modules/vite/bin/vite.js --host 127.0.0.1',url:'http://127.0.0.1:5173',reuseExistingServer:true}]});
+
