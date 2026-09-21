@@ -1,0 +1,12 @@
+.venv/
+node_modules/
+dist/
+__pycache__/
+.pytest_cache/
+.env
+data/
+tmp/
+test-results/
+playwright-report/
+reports/handover.zip
+*.log
