@@ -1,0 +1,151 @@
+{
+  "provider": "openai",
+  "model": "gpt-5.6-terra",
+  "run_id": "smoke-87e2b9e0-06a3-481b-b087-f66cac88635e",
+  "checks": [
+    {
+      "task": "extract",
+      "passed": false,
+      "error_code": "invalid_input",
+      "latency_ms": 5608.99999999674,
+      "validation_message": "2 validation errors for Project\ncomponents.0.asset_id\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type\ncomponents.0.scope\n  Input should be 'internal' or 'external' [type=literal_error, input_value=None, input_type=NoneType]\n    For further information visit https://errors.pydantic.dev/2.11/v/literal_error",
+      "cause_type": "ValidationError",
+      "http_status": null,
+      "candidate": {
+        "operations": [
+          {
+            "op": "add",
+            "entity": "components",
+            "id": "tmp:review-station",
+            "value_json": "{\"name\":\"Review station\",\"role\":\"workstation\",\"asset_id\":null,\"system_id\":null,\"status\":\"proposed\",\"scope\":null}"
+          }
+        ],
+        "claims": [
+          {
+            "source_id": "39b4c8ae-d171-4911-a417-9beb4c6e6b71",
+            "locator": "prompt/1",
+            "excerpt": "Add one workstation named Review station with role workstation. Its zone is unspecified.",
+            "target_id": "tmp:review-station",
+            "field": "name",
+            "value_json": "\"Review station\""
+          },
+          {
+            "source_id": "39b4c8ae-d171-4911-a417-9beb4c6e6b71",
+            "locator": "prompt/1",
+            "excerpt": "Add one workstation named Review station with role workstation. Its zone is unspecified.",
+            "target_id": "tmp:review-station",
+            "field": "role",
+            "value_json": "\"workstation\""
+          }
+        ],
+        "tool": null,
+        "message": "Proposed the Review station component. No deployment was proposed because its zone is unspecified."
+      }
+    },
+    {
+      "task": "native_tool",
+      "schema_valid": true,
+      "model": "gpt-5.6-terra",
+      "usage": {
+        "input_tokens": 88,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "output_tokens": 25,
+        "reasoning_tokens": 0,
+        "latency_ms": 2235.000000000582
+      },
+      "passed": true,
+      "latency_ms": 2235.000000000582,
+      "candidate": {
+        "operations": [],
+        "claims": [],
+        "tool": {
+          "name": "lookup_policies",
+          "query": "management"
+        },
+        "message": "Native tool probe"
+      }
+    },
+    {
+      "task": "targeted_edit",
+      "passed": false,
+      "error_code": "insufficient_context",
+      "latency_ms": 1859.0000000003783,
+      "validation_message": "Cannot rename \u201cReview station\u201d because no existing component or other architecture object with that name and ID was supplied. Please provide the relevant architecture context.",
+      "candidate": {
+        "operations": [],
+        "claims": [],
+        "tool": null,
+        "message": "Cannot rename \u201cReview station\u201d because no existing component or other architecture object with that name and ID was supplied. Please provide the relevant architecture context."
+      }
+    }
+  ],
+  "repair_count": 0,
+  "fixture_version": "1.0",
+  "hardware_measurement": "nvidia-smi and ollama ps; no peak sampling",
+  "usage": {
+    "total": 0.006086,
+    "calls": 3,
+    "records": [
+      {
+        "id": "3fc25810-b22a-4531-a416-32a5b78cc99d",
+        "project_id": "62c5e867-d4f8-485c-b418-aed7bb45b127",
+        "action_id": "smoke-87e2b9e0-06a3-481b-b087-f66cac88635e-0",
+        "day": "2026-09-21",
+        "provider": "openai",
+        "model": "gpt-5.6-terra",
+        "status": "completed",
+        "reserved": 0.0427825,
+        "cost": 0.003908,
+        "details": {
+          "input_tokens": 556,
+          "cache_read_tokens": 0,
+          "cache_write_tokens": 0,
+          "output_tokens": 233,
+          "reasoning_tokens": 0,
+          "latency_ms": 5577.999999997701
+        }
+      },
+      {
+        "id": "8cd57778-1643-4250-a98f-a8d1edbe7197",
+        "project_id": "62c5e867-d4f8-485c-b418-aed7bb45b127",
+        "action_id": "smoke-87e2b9e0-06a3-481b-b087-f66cac88635e-1",
+        "day": "2026-09-21",
+        "provider": "openai",
+        "model": "gpt-5.6-terra",
+        "status": "completed",
+        "reserved": 0.0424675,
+        "cost": 0.000476,
+        "details": {
+          "input_tokens": 88,
+          "cache_read_tokens": 0,
+          "cache_write_tokens": 0,
+          "output_tokens": 25,
+          "reasoning_tokens": 0,
+          "latency_ms": 2235.000000000582
+        }
+      },
+      {
+        "id": "67468404-9896-4dd7-b242-4bb62f9af0f8",
+        "project_id": "62c5e867-d4f8-485c-b418-aed7bb45b127",
+        "action_id": "smoke-87e2b9e0-06a3-481b-b087-f66cac88635e-2",
+        "day": "2026-09-21",
+        "provider": "openai",
+        "model": "gpt-5.6-terra",
+        "status": "completed",
+        "reserved": 0.0426675,
+        "cost": 0.001702,
+        "details": {
+          "input_tokens": 545,
+          "cache_read_tokens": 0,
+          "cache_write_tokens": 0,
+          "output_tokens": 51,
+          "reasoning_tokens": 0,
+          "latency_ms": 1829.0000000015425
+        }
+      }
+    ]
+  },
+  "all_passed": false,
+  "ollama_ps": null
+}

@@ -11,7 +11,7 @@ export type PolicyVersion = string;
 export type TemplateVersion = string;
 export type Id1 = string;
 export type Name1 = string;
-export type Scope = "internal" | "external";
+export type Scope = "internal" | "external" | "unknown";
 export type Systems = System[];
 export type Id2 = string;
 export type Name2 = string;
@@ -22,7 +22,7 @@ export type Role = string;
 export type SystemId = string | null;
 export type Status = "existing" | "new" | "proposed";
 export type AssetId = string;
-export type Scope1 = "internal" | "external";
+export type Scope1 = "internal" | "external" | "unknown";
 export type AuditDestination = string | null;
 export type StorageDestination = string | null;
 export type LocalOnly = boolean | null;
@@ -104,14 +104,14 @@ export type Visible = boolean;
 export type Locked = boolean;
 export type Label = string | null;
 export type Style = "straight" | "orthogonal";
+export type X1 = number;
+export type Y1 = number;
 /**
  * @maxItems 30
  */
-export type Points = {
-  [k: string]: number;
-}[];
-export type SourceHandle = string;
-export type TargetHandle = string;
+export type Points = Point[];
+export type SourceHandle = "left" | "right" | "top" | "bottom";
+export type TargetHandle = "left" | "right" | "top" | "bottom";
 export type Locked1 = boolean;
 export type Notes = string;
 export type Id10 = string;
@@ -302,6 +302,10 @@ export interface Route {
   source_handle: SourceHandle;
   target_handle: TargetHandle;
   locked: Locked1;
+}
+export interface Point {
+  x: X1;
+  y: Y1;
 }
 export interface Mappings {
   [k: string]: string[];

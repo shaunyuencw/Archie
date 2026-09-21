@@ -1,0 +1,90 @@
+{
+  "provider": "ollama",
+  "model": "qwen3:4b",
+  "run_id": "smoke-951a859b-a169-41c9-a4d7-32972016f188",
+  "checks": [
+    {
+      "task": "extract",
+      "passed": false,
+      "error_code": "provider_output",
+      "latency_ms": 40875.0,
+      "validation_message": "Evidence was not in the supplied source context",
+      "candidate": {
+        "operations": [
+          {
+            "op": "add",
+            "entity": "components",
+            "id": "tmp:component-1",
+            "value_json": "components: {\"name\": \"Review station\", \"role\": \"workstation\", \"asset_id\": \"tmp:asset-1\", \"system_id\": \"tmp:system-1\", \"status\": \"existing\", \"scope\": \"internal\"}"
+          }
+        ],
+        "claims": [
+          {
+            "source_id": "027ab22b-d35:5f-4422-a509-2596fbed1a18",
+            "locator": "prompt/1",
+            "excerpt": "Add one workstation named Review station with role workstation. Its zone is unspecified.",
+            "target_id": "tmp:component-1",
+            "field": "name",
+            "value_json": "{\"name\": \"Review station\"}"
+          },
+          {
+            "source_id": "027ab22b-d35f-4422-a509-2596fbed1a18",
+            "locator": "prompt/1",
+            "excerpt": "Add one workstation named Review station with role workstation. Its zone is unspecified.",
+            "target_id": "tmp:component-1",
+            "field": "role",
+            "value_json": "{\"role\": \"workstation\"}"
+          },
+          {
+            "source_id": "027ab22b-d35f-4422-a509-2596fbed1a18",
+            "locator": "prompt/1",
+            "excerpt": "Add one workstation named Review station with role workstation. Its zone is unspecified.",
+            "target_id": "tmp:component-1",
+            "field": "status",
+            "value_json": "{\"status\": \"existing\"}"
+          },
+          {
+            "source_id": "027ab22b-d35f-4422-a509-2596fbed1a18",
+            "locator": "prompt/1",
+            "excerpt": "Add one workstation named Review station with role workstation. Its zone is unspecified.",
+            "target_id": "tmp:component-1",
+            "field": "scope",
+            "value_json": "{\"scope\": \"internal\"}"
+          }
+        ],
+        "tool": null,
+        "message": "Added component: Review station (workstation) with status existing and scope internal."
+      }
+    }
+  ],
+  "repair_count": 0,
+  "fixture_version": "1.0",
+  "hardware_measurement": "nvidia-smi and ollama ps; no peak sampling",
+  "usage": {
+    "total": 0.0,
+    "calls": 1,
+    "records": [
+      {
+        "id": "4b25f982-3365-454f-9e3c-9d6c43207bee",
+        "project_id": "91e52ed1-2346-482a-9e6c-f8f7275c5573",
+        "action_id": "smoke-951a859b-a169-41c9-a4d7-32972016f188-0",
+        "day": "2026-09-21",
+        "provider": "ollama",
+        "model": "qwen3:4b",
+        "status": "completed",
+        "reserved": 0.0,
+        "cost": 0.0,
+        "details": {
+          "input_tokens": 235,
+          "cache_read_tokens": 0,
+          "cache_write_tokens": 0,
+          "output_tokens": 546,
+          "reasoning_tokens": 0,
+          "latency_ms": 40859.00000000038
+        }
+      }
+    ]
+  },
+  "all_passed": false,
+  "ollama_ps": "NAME        ID              SIZE      PROCESSOR    CONTEXT    UNTIL              \nqwen3:4b    359d7dd4bcda    3.2 GB    100% GPU     4096       4 minutes from now    \n"
+}

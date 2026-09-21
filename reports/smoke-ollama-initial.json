@@ -1,0 +1,102 @@
+{
+  "provider": "ollama",
+  "model": "qwen3:4b",
+  "run_id": "smoke-c3c86344-6d15-4dad-8d35-dc00f7a06b3a",
+  "checks": [
+    {
+      "task": "extract",
+      "passed": false,
+      "error_code": "provider_output",
+      "latency_ms": 76125.0
+    },
+    {
+      "task": "native_tool",
+      "schema_valid": true,
+      "model": "qwen3:4b",
+      "usage": {
+        "input_tokens": 322,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "output_tokens": 354,
+        "reasoning_tokens": 0,
+        "latency_ms": 26453.00000000134
+      },
+      "passed": true,
+      "latency_ms": 26469.00000000096
+    },
+    {
+      "task": "targeted_edit",
+      "passed": false,
+      "error_code": "provider_output",
+      "latency_ms": 18015.99999999962
+    }
+  ],
+  "repair_count": 0,
+  "fixture_version": "1.0",
+  "hardware_measurement": "nvidia-smi and ollama ps; no peak sampling",
+  "usage": {
+    "total": 0.0,
+    "calls": 3,
+    "records": [
+      {
+        "id": "86a8da70-9844-4a3c-8b02-4e66d9a9c96c",
+        "project_id": "cf4f3906-d0c3-4ee7-8e35-274616df8091",
+        "action_id": "smoke-c3c86344-6d15-4dad-8d35-dc00f7a06b3a-0",
+        "day": "2026-09-21",
+        "provider": "ollama",
+        "model": "qwen3:4b",
+        "status": "completed",
+        "reserved": 0.0,
+        "cost": 0.0,
+        "details": {
+          "input_tokens": 237,
+          "cache_read_tokens": 0,
+          "cache_write_tokens": 0,
+          "output_tokens": 375,
+          "reasoning_tokens": 0,
+          "latency_ms": 76125.0
+        }
+      },
+      {
+        "id": "b52dacba-bd23-4258-8200-a9976ccc5612",
+        "project_id": "cf4f3906-d0c3-4ee7-8e35-274616df8091",
+        "action_id": "smoke-c3c86344-6d15-4dad-8d35-dc00f7a06b3a-1",
+        "day": "2026-09-21",
+        "provider": "ollama",
+        "model": "qwen3:4b",
+        "status": "completed",
+        "reserved": 0.0,
+        "cost": 0.0,
+        "details": {
+          "input_tokens": 322,
+          "cache_read_tokens": 0,
+          "cache_write_tokens": 0,
+          "output_tokens": 354,
+          "reasoning_tokens": 0,
+          "latency_ms": 26453.00000000134
+        }
+      },
+      {
+        "id": "b94de579-067e-4845-ada5-ac87488d5540",
+        "project_id": "cf4f3906-d0c3-4ee7-8e35-274616df8091",
+        "action_id": "smoke-c3c86344-6d15-4dad-8d35-dc00f7a06b3a-2",
+        "day": "2026-09-21",
+        "provider": "ollama",
+        "model": "qwen3:4b",
+        "status": "completed",
+        "reserved": 0.0,
+        "cost": 0.0,
+        "details": {
+          "input_tokens": 226,
+          "cache_read_tokens": 0,
+          "cache_write_tokens": 0,
+          "output_tokens": 228,
+          "reasoning_tokens": 0,
+          "latency_ms": 18000.0
+        }
+      }
+    ]
+  },
+  "all_passed": false,
+  "ollama_ps": "NAME        ID              SIZE      PROCESSOR    CONTEXT    UNTIL              \nqwen3:4b    359d7dd4bcda    3.2 GB    100% GPU     4096       4 minutes from now    \n"
+}

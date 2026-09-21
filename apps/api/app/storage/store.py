@@ -1,4 +1,5 @@
 import json, os, sqlite3
+from contextlib import contextmanager
 from pathlib import Path
 from ..domain.models import Project, ChangeSet, now, uid
 from ..domain.commands import apply, DomainError
@@ -18,9 +19,12 @@ class Store:
             CREATE TABLE IF NOT EXISTS cache(hash TEXT PRIMARY KEY,body TEXT);
             ''')
             db.execute("UPDATE runs SET status='interrupted' WHERE status='running'")
+    @contextmanager
     def connect(self):
         db=sqlite3.connect(self.path,timeout=30); db.row_factory=sqlite3.Row
-        return db
+        try:
+            with db:yield db
+        finally:db.close()
     def get(self,pid,db=None):
         if db is None:
             with self.connect() as db: return self.get(pid,db)

@@ -20,7 +20,7 @@ def view_graph(p:Project,kind:str):
             if a!=b: combined.setdefault((a,b),[]).append(e)
         for (a,b),items in combined.items():
             ident='aggregate:'+a+':'+b; mappings[ident]=[e.id for e in items]
-            edges.append(dict(id=ident,source=a,target=b,label=' / '.join(dict.fromkeys(e.purpose or 'purpose ?' for e in items)),object_ids=mappings[ident],route=view.routes.get(ident)))
+            edges.append(dict(id=ident,source=a,target=b,label=' / '.join(dict.fromkeys(e.purpose or 'purpose ?' for e in items)),object_ids=mappings[ident],route=view.routes.get(ident),data_direction=items[0].data_direction if len({e.data_direction for e in items})==1 else 'unknown'))
     else:
         for i,z in enumerate(p.zones): node(z.id,z.name,'network-zone',[z.id],role='zone',default=Placement(x=40+i%2*580,y=60+i//2*400,width=530,height=350))
         counts={}
@@ -31,7 +31,7 @@ def view_graph(p:Project,kind:str):
         for e in p.interfaces:
             label=e.purpose or 'purpose ?'
             if kind=='sv2': label+=f' | {e.protocol or "protocol ?"}:{e.port if e.port is not None else "?"} | initiator: {e.initiator or "?"}'
-            mappings[e.id]=[e.id]; edges.append(dict(id=e.id,source=e.source,target=e.target,label=label,object_ids=[e.id],route=view.routes.get(e.id)))
+            mappings[e.id]=[e.id]; edges.append(dict(id=e.id,source=e.source,target=e.target,label=label,object_ids=[e.id],route=view.routes.get(e.id),data_direction=e.data_direction))
     return {'type':kind,'semantic_revision':p.revision,'presentation_revision':view.revision,'nodes':nodes,'edges':edges,'mappings':mappings}
 
 def initialise_views(p:Project):

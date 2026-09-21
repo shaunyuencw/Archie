@@ -1,0 +1,78 @@
+{
+  "provider": "openai",
+  "model": "gpt-5.6-terra",
+  "run_id": "smoke-f46192c6-4195-42fc-a0ee-c2201390999e",
+  "checks": [
+    {
+      "task": "extract",
+      "passed": false,
+      "error_code": "unavailable_provider",
+      "latency_ms": 953.0000000013388,
+      "cause_type": "AuthenticationError",
+      "http_status": 401
+    },
+    {
+      "task": "native_tool",
+      "passed": false,
+      "error_code": "unavailable_provider",
+      "latency_ms": 264.9999999994179,
+      "cause_type": "AuthenticationError",
+      "http_status": 401
+    },
+    {
+      "task": "targeted_edit",
+      "passed": false,
+      "error_code": "unavailable_provider",
+      "latency_ms": 265.99999999962165,
+      "cause_type": "AuthenticationError",
+      "http_status": 401
+    }
+  ],
+  "repair_count": 0,
+  "fixture_version": "1.0",
+  "hardware_measurement": "nvidia-smi and ollama ps; no peak sampling",
+  "usage": {
+    "total": 0.1279175,
+    "calls": 3,
+    "records": [
+      {
+        "id": "5b533682-43cc-41f0-bd53-b172c0b64106",
+        "project_id": "0a59e84e-aa7d-44ab-9101-22e6cf254350",
+        "action_id": "smoke-f46192c6-4195-42fc-a0ee-c2201390999e-0",
+        "day": "2026-09-21",
+        "provider": "openai",
+        "model": "gpt-5.6-terra",
+        "status": "unresolved",
+        "reserved": 0.0427825,
+        "cost": null,
+        "details": {}
+      },
+      {
+        "id": "0f3aab96-6fb8-4e95-83eb-70a51beeb814",
+        "project_id": "0a59e84e-aa7d-44ab-9101-22e6cf254350",
+        "action_id": "smoke-f46192c6-4195-42fc-a0ee-c2201390999e-1",
+        "day": "2026-09-21",
+        "provider": "openai",
+        "model": "gpt-5.6-terra",
+        "status": "unresolved",
+        "reserved": 0.0424675,
+        "cost": null,
+        "details": {}
+      },
+      {
+        "id": "8c3958de-b6fb-4149-a225-a7d2b7068268",
+        "project_id": "0a59e84e-aa7d-44ab-9101-22e6cf254350",
+        "action_id": "smoke-f46192c6-4195-42fc-a0ee-c2201390999e-2",
+        "day": "2026-09-21",
+        "provider": "openai",
+        "model": "gpt-5.6-terra",
+        "status": "unresolved",
+        "reserved": 0.0426675,
+        "cost": null,
+        "details": {}
+      }
+    ]
+  },
+  "all_passed": false,
+  "ollama_ps": null
+}

@@ -24,7 +24,7 @@ def evaluate(p):
         affected=list(dict.fromkeys(ident for _,ids,_ in issues for ident in ids))
         evidence=list(dict.fromkeys(e for ident in affected for e in getattr(c.get(ident) or next((i for i in p.interfaces if i.id==ident),None) or next((i for i in p.constraints if i.id==ident),None),'evidence',[])))
         results.append(dict(clause_id=rule,version='1.0',execution='implemented',result=result,affected_ids=affected,evidence=evidence,message='; '.join(msg for _,_,msg in issues) or ('Predicate passed on supplied facts.' if applicable else 'Requirement is not applicable.'),clause=clause['text']))
-    add('DEMO-ZON-01',[('insufficient_information',[x.id],'Deployment zone is unspecified.') for x in p.components if x.scope=='internal' and not zones.get(x.id)],bool(p.components))
+    add('DEMO-ZON-01',[('insufficient_information',[x.id],'Deployment zone or internal/external scope is unspecified.') for x in p.components if x.scope=='unknown' or (x.scope=='internal' and not zones.get(x.id))],bool(p.components))
     issues=[]
     for i in p.interfaces:
         if zones.get(i.source)=='client' or c[i.source].asset_id=='workstation':

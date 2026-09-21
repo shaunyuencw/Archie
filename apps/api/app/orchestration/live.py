@@ -31,20 +31,23 @@ def dispatch(tool,p):
         return views[tool.query]
     raise DomainError('invalid_input','Tool is not allowed')
 
-def proposal_from_envelope(p,source,envelope):
+def proposal_from_envelope(p,source,envelope,source_alias=None):
     if not envelope.operations:raise DomainError('insufficient_context',envelope.message or 'No changes proposed')
     claims=[]; ops=[]
     for w in envelope.claims:
-        if w.source_id!=source.id: raise DomainError('provider_output','Evidence was not in the supplied source context')
-        claims.append(Claim(id=uid(),source_id=w.source_id,source_version=source.version,locator=w.locator,excerpt=w.excerpt,target_id=w.target_id,field=w.field,value=json.loads(w.value_json),source_kind=source.kind,review='confirmed'))
+        if w.source_id not in {source.id,source_alias}: raise DomainError('provider_output','Evidence was not in the supplied source context')
+        claims.append(Claim(id=uid(),source_id=source.id,source_version=source.version,locator=w.locator,excerpt=w.excerpt,target_id=w.target_id,field=w.field,value=json.loads(w.value_json),source_kind=source.kind,review='confirmed'))
     for w in envelope.operations:
         value=json.loads(w.value_json)
         if not isinstance(value,dict):raise DomainError('provider_output','Operation value must be an object')
+        if w.entity=='components':
+            if value.get('asset_id','') is None:value['asset_id']='generic-role-a'
+            if value.get('scope','') is None:value['scope']='unknown'
         evidence=[c.id for c in claims if c.target_id in [w.id,value.get('component_id')]]
         if not evidence:raise DomainError('provider_output','Proposed semantic change lacks source evidence')
         if w.entity in ['components','interfaces','constraints'] and w.op=='add':value['evidence']=evidence
         ops.append(Operation(op=w.op,entity=w.entity,id=w.id,value=value))
-    all_ops=[Operation(op='add',entity='sources',id=source.id,value=source.model_dump(exclude={'id'}))]+[Operation(op='add',entity='claims',id=c.id,value=c.model_dump(exclude={'id'})) for c in claims]+ops
+    all_ops=[Operation(op='update' if any(x.id==source.id for x in p.sources) else 'add',entity='sources',id=source.id,value=source.model_dump(exclude={'id'}))]+[Operation(op='add',entity='claims',id=c.id,value=c.model_dump(exclude={'id'})) for c in claims]+ops
     proposed=command(p,all_ops,origin='assistant')
     candidate=apply(p,proposed)
     proposed.operations.extend(question_ops(candidate))
@@ -59,7 +62,7 @@ def assisted_run(store,pid,req,settings=None,adapter=None):
     try:a=adapter or (OpenAIAdapter(s) if req.provider=='openai' else OllamaAdapter(s))
     except Exception as e:raise DomainError('unavailable_provider','Provider credentials or configuration unavailable',503) from e
     source=parse(req.prompt.encode(),'Prompt','prompt');source.processed=[x.locator for x in source.passages];source.unprocessed=[]
-    prompt=json.dumps({'source':{'id':source.id,'locator':'prompt/1','text':req.prompt},'context':context(p,req.prompt)},separators=(',',':'))
+    prompt=json.dumps({'source':{'id':'S1','locator':'prompt/1','text':req.prompt},'context':context(p,req.prompt)},separators=(',',':'))
     run_id=req.request_id; cancel=threading.Event();CANCELLATIONS[run_id]=cancel
     with store.connect() as db:
         previous=db.execute('SELECT status,result FROM runs WHERE id=?',(run_id,)).fetchone()
@@ -74,7 +77,7 @@ def assisted_run(store,pid,req,settings=None,adapter=None):
                     tool_result=dispatch(output.content.tool,p)
                     prompt=json.dumps({'initial':json.loads(prompt),'tool_result':tool_result},separators=(',',':'))
                     continue
-                proposed=proposal_from_envelope(p,source,output.content)
+                proposed=proposal_from_envelope(p,source,output.content,source_alias='S1')
                 result={'run_id':run_id,'proposal':store.preview(proposed).model_dump(),'mode':'schema_action_envelope','model':output.model,'repairs':int(repaired)}
                 break
             except (ValueError,DomainError) as error:

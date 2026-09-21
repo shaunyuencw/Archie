@@ -4,6 +4,7 @@ from .contracts import Usage,cost,estimate,schema
 from .config import pricing
 from ..domain.models import uid
 from ..domain.commands import DomainError
+from .instructions import SYSTEM_PROMPT
 
 LOCAL_LOCK=threading.Lock()
 
@@ -17,9 +18,11 @@ class BudgetedProvider:
         if a.name=='openai' and rates is None: raise DomainError('budget_exceeded','Unknown billing model price; configure it before a paid request.')
         local=a.name=='ollama'; max_input=min(s.max_input,2500 if s.ollama_num_ctx==4096 else 5500) if local else s.max_input
         max_output=min(s.max_output,1024 if s.ollama_num_ctx==4096 else 1536) if local else s.max_output
-        token_bound=estimate(prompt+json.dumps(schema(),separators=(',',':')))+100
-        if token_bound>max_input: raise DomainError('insufficient_context',f'Request upper bound {token_bound} tokens exceeds {max_input}; select fewer sources/objects. Nothing was sent.')
-        reserve=cost(Usage(input_tokens=token_bound,output_tokens=max_output),rates) if rates else 0
+        byte_bound=estimate(SYSTEM_PROMPT+prompt+json.dumps(schema(),separators=(',',':')))+128
+        # Local tokenizer is model-specific. Estimate 2 UTF-8 bytes/token and keep the profile's 512/768 reserve.
+        token_bound=(byte_bound+1)//2 if local else byte_bound
+        if token_bound>max_input: raise DomainError('insufficient_context',f'Request estimate {token_bound} tokens exceeds {max_input}; select fewer sources/objects. Nothing was sent.')
+        reserve=(token_bound*max(rates['input'],rates['cache_read'],rates['cache_write'])+max_output*rates['output'])/1_000_000 if rates else 0
         ident=uid(); call_limit=min(s.max_calls,3 if task=='edit' else 8 if task=='document' else 4)
         with self.store.connect() as db:
             db.execute('BEGIN IMMEDIATE')
@@ -44,6 +47,10 @@ class BudgetedProvider:
             if cancel and cancel.is_set():raise DomainError('cancelled','Response received after cancellation; usage retained.')
             return result
         except Exception as e:
+            status=getattr(e,'status_code',None)
+            if status is None and getattr(e,'response',None) is not None:status=e.response.status_code
+            if status in [400,401,403,404,422,429]:
+                with self.store.connect() as db:db.execute("UPDATE usage SET status='rejected_before_generation',cost=0 WHERE id=? AND status='reserved'",(ident,))
             # Unknown transport outcomes retain their conservative cost reservation across restarts.
             with self.store.connect() as db:db.execute("UPDATE usage SET status='unresolved' WHERE id=? AND status='reserved'",(ident,))
             if isinstance(e,DomainError):raise

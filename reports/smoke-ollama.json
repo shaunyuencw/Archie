@@ -1,0 +1,136 @@
+{
+  "provider": "ollama",
+  "model": "qwen3:4b",
+  "run_id": "smoke-46b5ce44-60ed-4d19-b464-aea5fc7cf02d",
+  "checks": [
+    {
+      "task": "extract",
+      "passed": false,
+      "error_code": "invalid_input",
+      "latency_ms": 17108.99999999674,
+      "validation_message": "1 validation error for Project\n  Value error, Unresolved reference:  [type=value_error, input_value={'id': 'a0213c99-ba26-4d6...ngs': {}}}, 'notes': ''}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/value_error",
+      "cause_type": "ValidationError",
+      "http_status": null,
+      "candidate": {
+        "operations": [
+          {
+            "op": "add",
+            "entity": "components",
+            "id": "tmp:component1",
+            "value_json": "{\"name\": \"Review station\", \"role\": \"workstation\", \"asset_id\": \"workstation\", \"system_id\": \"\", \"status\": \"existing\", \"scope\": \"unknown\"}"
+          }
+        ],
+        "claims": [
+          {
+            "source_id": "S1",
+            "locator": "prompt/1",
+            "excerpt": "Add one workstation named Review station with role workstation. Its zone is unspecified.",
+            "target_id": "tmp:component1",
+            "field": "components",
+            "value_json": "{\"name\": \"Review station\", \"role\": \"workstation\", \"asset_id\": \"workstation\", \"system_id\": \"\", \"status\": \"existing\", \"scope\": \"unknown\"}"
+          }
+        ],
+        "tool": null,
+        "message": "Added component: Review station (workstation) with status existing and scope unknown."
+      }
+    },
+    {
+      "task": "native_tool",
+      "passed": false,
+      "error_code": "provider_output",
+      "latency_ms": 18719.00000000096,
+      "validation_message": "Unexpected native tool request",
+      "candidate": null
+    },
+    {
+      "task": "targeted_edit",
+      "passed": false,
+      "error_code": "invalid_input",
+      "latency_ms": 14813.00000000192,
+      "validation_message": "Object no longer exists",
+      "candidate": {
+        "operations": [
+          {
+            "op": "update",
+            "entity": "components",
+            "id": "tmp:component-1",
+            "value_json": "{\"name\": \"Reviewed station\", \"role\": \"review\", \"asset_id\": \"generic-role-a\", \"system_id\": \"tmp:system-1\", \"status\": \"existing\", \"scope\": \"unknown\"}"
+          }
+        ],
+        "claims": [
+          {
+            "source_id": "S1",
+            "locator": "prompt/1",
+            "excerpt": "Rename Review station to Reviewed station.",
+            "target_id": "tmp:component-1",
+            "field": "name",
+            "value_json": "{\"name\": \"Reviewed station\"}"
+          }
+        ],
+        "tool": null,
+        "message": "Proposed update to component name: Reviewed station"
+      }
+    }
+  ],
+  "repair_count": 0,
+  "fixture_version": "1.0",
+  "hardware_measurement": "nvidia-smi and ollama ps; no peak sampling",
+  "usage": {
+    "total": 0.0,
+    "calls": 3,
+    "records": [
+      {
+        "id": "7a84abc7-d3ca-4107-9c71-e8368ad6ec69",
+        "project_id": "a0213c99-ba26-4d65-8a44-0f8437d70b41",
+        "action_id": "smoke-46b5ce44-60ed-4d19-b464-aea5fc7cf02d-0",
+        "day": "2026-09-21",
+        "provider": "ollama",
+        "model": "qwen3:4b",
+        "status": "completed",
+        "reserved": 0.0,
+        "cost": 0.0,
+        "details": {
+          "input_tokens": 244,
+          "cache_read_tokens": 0,
+          "cache_write_tokens": 0,
+          "output_tokens": 227,
+          "reasoning_tokens": 0,
+          "latency_ms": 17093.999999997322
+        }
+      },
+      {
+        "id": "00f0b433-7afe-4cbe-bee5-a6e71f3488cc",
+        "project_id": "a0213c99-ba26-4d65-8a44-0f8437d70b41",
+        "action_id": "smoke-46b5ce44-60ed-4d19-b464-aea5fc7cf02d-1",
+        "day": "2026-09-21",
+        "provider": "ollama",
+        "model": "qwen3:4b",
+        "status": "unresolved",
+        "reserved": 0.0,
+        "cost": null,
+        "details": {}
+      },
+      {
+        "id": "799f35c8-1e57-4ca2-aa21-faed78bf39cc",
+        "project_id": "a0213c99-ba26-4d65-8a44-0f8437d70b41",
+        "action_id": "smoke-46b5ce44-60ed-4d19-b464-aea5fc7cf02d-2",
+        "day": "2026-09-21",
+        "provider": "ollama",
+        "model": "qwen3:4b",
+        "status": "completed",
+        "reserved": 0.0,
+        "cost": 0.0,
+        "details": {
+          "input_tokens": 236,
+          "cache_read_tokens": 0,
+          "cache_write_tokens": 0,
+          "output_tokens": 186,
+          "reasoning_tokens": 0,
+          "latency_ms": 14781.000000002678
+        }
+      }
+    ]
+  },
+  "all_passed": false,
+  "ollama_ps": "NAME        ID              SIZE      PROCESSOR    CONTEXT    UNTIL              \nqwen3:4b    359d7dd4bcda    3.2 GB    100% GPU     4096       4 minutes from now    \n"
+}

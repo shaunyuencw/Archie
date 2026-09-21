@@ -1,0 +1,225 @@
+{
+  "revision": 0,
+  "implemented": 8,
+  "manual_review": 12,
+  "findings": [
+    {
+      "clause_id": "DEMO-ZON-01",
+      "version": "1.0",
+      "execution": "implemented",
+      "result": "pass",
+      "affected_ids": [],
+      "evidence": [],
+      "message": "Predicate passed on supplied facts.",
+      "clause": "Every in-scope networked deployment has a declared zone."
+    },
+    {
+      "clause_id": "DEMO-ADM-01",
+      "version": "1.0",
+      "execution": "implemented",
+      "result": "insufficient_information",
+      "affected_ids": [
+        "administration"
+      ],
+      "evidence": [
+        "claim-administration"
+      ],
+      "message": "Client interface purpose is unspecified.",
+      "clause": "Client management access uses the declared management interface and never a direct processing service path."
+    },
+    {
+      "clause_id": "DEMO-FW-01",
+      "version": "1.0",
+      "execution": "implemented",
+      "result": "not_applicable",
+      "affected_ids": [],
+      "evidence": [],
+      "message": "Requirement is not applicable.",
+      "clause": "Each cross-zone management session identifies its mediation or enforcement control by interface reference."
+    },
+    {
+      "clause_id": "DEMO-NET-01",
+      "version": "1.0",
+      "execution": "implemented",
+      "result": "pass",
+      "affected_ids": [],
+      "evidence": [],
+      "message": "Predicate passed on supplied facts.",
+      "clause": "A no-internet system has no required internet hosted dependency."
+    },
+    {
+      "clause_id": "DEMO-IF-01",
+      "version": "1.0",
+      "execution": "implemented",
+      "result": "insufficient_information",
+      "affected_ids": [
+        "video",
+        "events",
+        "administration",
+        "integration"
+      ],
+      "evidence": [
+        "claim-video",
+        "claim-events",
+        "claim-administration",
+        "claim-integration"
+      ],
+      "message": "Session initiator or protocol is unspecified.; Session initiator or protocol is unspecified.; Session initiator or protocol is unspecified.; Session initiator or protocol is unspecified.",
+      "clause": "Each network session identifies its initiator and protocol."
+    },
+    {
+      "clause_id": "DEMO-HA-01",
+      "version": "1.0",
+      "execution": "implemented",
+      "result": "not_applicable",
+      "affected_ids": [],
+      "evidence": [],
+      "message": "Requirement is not applicable.",
+      "clause": "A resilience requirement has an explicit availability strategy."
+    },
+    {
+      "clause_id": "DEMO-AUD-01",
+      "version": "1.0",
+      "execution": "implemented",
+      "result": "insufficient_information",
+      "affected_ids": [
+        "vms"
+      ],
+      "evidence": [
+        "claim-vms"
+      ],
+      "message": "Management function has no audit destination.",
+      "clause": "Management functions identify an audit destination."
+    },
+    {
+      "clause_id": "DEMO-DAT-01",
+      "version": "1.0",
+      "execution": "implemented",
+      "result": "not_applicable",
+      "affected_ids": [],
+      "evidence": [],
+      "message": "Requirement is not applicable.",
+      "clause": "Local-only data is not assigned an external storage destination."
+    },
+    {
+      "clause_id": "DEMO-MAN-01",
+      "version": "1.0",
+      "execution": "manual_review",
+      "result": null,
+      "affected_ids": [],
+      "evidence": [],
+      "message": "Review identity lifecycle responsibilities with the owner.",
+      "clause": "Review identity lifecycle responsibilities with the owner."
+    },
+    {
+      "clause_id": "DEMO-MAN-02",
+      "version": "1.0",
+      "execution": "manual_review",
+      "result": null,
+      "affected_ids": [],
+      "evidence": [],
+      "message": "Review backup restoration evidence and scope.",
+      "clause": "Review backup restoration evidence and scope."
+    },
+    {
+      "clause_id": "DEMO-MAN-03",
+      "version": "1.0",
+      "execution": "manual_review",
+      "result": null,
+      "affected_ids": [],
+      "evidence": [],
+      "message": "Review patch ownership and maintenance windows.",
+      "clause": "Review patch ownership and maintenance windows."
+    },
+    {
+      "clause_id": "DEMO-MAN-04",
+      "version": "1.0",
+      "execution": "manual_review",
+      "result": null,
+      "affected_ids": [],
+      "evidence": [],
+      "message": "Review physical access assumptions at each site.",
+      "clause": "Review physical access assumptions at each site."
+    },
+    {
+      "clause_id": "DEMO-MAN-05",
+      "version": "1.0",
+      "execution": "manual_review",
+      "result": null,
+      "affected_ids": [],
+      "evidence": [],
+      "message": "Review personal information retention and authorised use.",
+      "clause": "Review personal information retention and authorised use."
+    },
+    {
+      "clause_id": "DEMO-MAN-06",
+      "version": "1.0",
+      "execution": "manual_review",
+      "result": null,
+      "affected_ids": [],
+      "evidence": [],
+      "message": "Review cryptographic key lifecycle and custody.",
+      "clause": "Review cryptographic key lifecycle and custody."
+    },
+    {
+      "clause_id": "DEMO-MAN-07",
+      "version": "1.0",
+      "execution": "manual_review",
+      "result": null,
+      "affected_ids": [],
+      "evidence": [],
+      "message": "Review supplier support and software provenance.",
+      "clause": "Review supplier support and software provenance."
+    },
+    {
+      "clause_id": "DEMO-MAN-08",
+      "version": "1.0",
+      "execution": "manual_review",
+      "result": null,
+      "affected_ids": [],
+      "evidence": [],
+      "message": "Review incident response and monitoring ownership.",
+      "clause": "Review incident response and monitoring ownership."
+    },
+    {
+      "clause_id": "DEMO-MAN-09",
+      "version": "1.0",
+      "execution": "manual_review",
+      "result": null,
+      "affected_ids": [],
+      "evidence": [],
+      "message": "Review measured capacity against workload assumptions.",
+      "clause": "Review measured capacity against workload assumptions."
+    },
+    {
+      "clause_id": "DEMO-MAN-10",
+      "version": "1.0",
+      "execution": "manual_review",
+      "result": null,
+      "affected_ids": [],
+      "evidence": [],
+      "message": "Review operator accessibility and operational usability.",
+      "clause": "Review operator accessibility and operational usability."
+    },
+    {
+      "clause_id": "DEMO-MAN-11",
+      "version": "1.0",
+      "execution": "manual_review",
+      "result": null,
+      "affected_ids": [],
+      "evidence": [],
+      "message": "Review secure decommissioning procedures.",
+      "clause": "Review secure decommissioning procedures."
+    },
+    {
+      "clause_id": "DEMO-MAN-12",
+      "version": "1.0",
+      "execution": "manual_review",
+      "result": null,
+      "affected_ids": [],
+      "evidence": [],
+      "message": "Obtain human review of applicable organisational PPM requirements when supplied.",
+      "clause": "Obtain human review of applicable organisational PPM requirements when supplied."
+    }
+  ]
+}

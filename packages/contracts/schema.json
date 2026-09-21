@@ -208,7 +208,8 @@
           "default": "internal",
           "enum": [
             "internal",
-            "external"
+            "external",
+            "unknown"
           ],
           "title": "Scope",
           "type": "string"
@@ -763,6 +764,25 @@
         "label"
       ]
     },
+    "Point": {
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "title": "Y",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ],
+      "title": "Point",
+      "type": "object"
+    },
     "Project": {
       "additionalProperties": false,
       "properties": {
@@ -926,10 +946,7 @@
         },
         "points": {
           "items": {
-            "additionalProperties": {
-              "type": "number"
-            },
-            "type": "object"
+            "$ref": "#/$defs/Point"
           },
           "maxItems": 30,
           "title": "Points",
@@ -937,11 +954,23 @@
         },
         "source_handle": {
           "default": "right",
+          "enum": [
+            "left",
+            "right",
+            "top",
+            "bottom"
+          ],
           "title": "Source Handle",
           "type": "string"
         },
         "target_handle": {
           "default": "left",
+          "enum": [
+            "left",
+            "right",
+            "top",
+            "bottom"
+          ],
           "title": "Target Handle",
           "type": "string"
         },
@@ -1064,7 +1093,8 @@
           "default": "internal",
           "enum": [
             "internal",
-            "external"
+            "external",
+            "unknown"
           ],
           "title": "Scope",
           "type": "string"

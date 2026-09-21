@@ -1,0 +1,31 @@
+{
+  "offline": true,
+  "platform": "win32",
+  "checks": [
+    {
+      "check": "backend",
+      "exit_code": 0,
+      "seconds": 5.985
+    },
+    {
+      "check": "typescript",
+      "exit_code": 0,
+      "seconds": 1.515
+    },
+    {
+      "check": "frontend-unit",
+      "exit_code": 0,
+      "seconds": 1.031
+    },
+    {
+      "check": "browser",
+      "exit_code": 0,
+      "seconds": 14.047
+    },
+    {
+      "check": "production-build",
+      "exit_code": 0,
+      "seconds": 14.328
+    }
+  ]
+}

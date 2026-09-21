@@ -15,7 +15,8 @@ def question_ops(p):
         if i.purpose is None: candidates.insert(0,Decision(id='question-purpose-'+i.id,question=f'What is the administration route purpose for {i.id}?',target_id=i.id,field='purpose',options=['management','integration','video'],evidence=i.evidence))
     for c in p.constraints:
         if c.key=='availability_strategy' and c.value is None: candidates.append(Decision(id='question-availability',question='What availability strategy is intended?',target_id=c.id,field='value',options=['active_passive','recovery_plan','single_instance'],evidence=c.evidence))
-    return [Operation(op='add',entity='decisions',id=d.id,value=d.model_dump(exclude={'id'})) for d in candidates if d.id not in existing][:3]
+    capacity=max(0,3-sum(d.state=='unknown' for d in p.decisions))
+    return [Operation(op='add',entity='decisions',id=d.id,value=d.model_dump(exclude={'id'})) for d in candidates if d.id not in existing][:capacity]
 
 def ingest(store,pid,data,name,kind='document',source_id=None):
     p=store.get(pid)
@@ -39,9 +40,11 @@ def ingest(store,pid,data,name,kind='document',source_id=None):
     p=store.commit(command(p,metadata,origin='ingest'))
     if not ops: return {'proposal':None,'message':'No supported candidate facts found. Mock understands the authored fixture statements and a small set of prompts; use a live provider for broader interpretation.','coverage':{'processed':processed,'unprocessed':remaining}}
     review=[Operation(op='update',entity='claims',id=c.id,value={'review':'confirmed' if c.review!='conflicting' else 'conflicting'}) for c in claims]
-    candidate=apply(p,command(p,ops+review,origin='assistant'))
+    proposed=command(p,ops+review,origin='assistant')
+    candidate=apply(p,proposed)
     questions=question_ops(candidate)
-    proposal=store.preview(command(p,ops+review+questions,origin='assistant'))
+    proposed.operations.extend(questions)
+    proposal=store.preview(proposed)
     return {'proposal':proposal,'coverage':{'processed':processed,'unprocessed':remaining},'questions':len(questions),'mode':'deterministic_mock'}
 
 def answer(store,pid,request):
@@ -53,4 +56,5 @@ def answer(store,pid,request):
         entity='interfaces' if any(i.id==d.target_id for i in p.interfaces) else 'constraints'
         # Free text answers to typed reference fields stay decisions until a valid object is selected.
         if d.field!='initiator' or request.answer in {c.id for c in p.components}: ops.append(Operation(op='update',entity=entity,id=d.target_id,value={d.field:request.answer}))
-    return store.commit(command(p,ops))
+    c=command(p,ops);candidate=apply(p,c);c.operations.extend(question_ops(candidate))
+    return store.commit(c)

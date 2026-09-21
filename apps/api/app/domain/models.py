@@ -14,7 +14,7 @@ class Record(BaseModel):
 class System(Record):
     id: str
     name: str = Field(min_length=1, max_length=160)
-    scope: Literal['internal','external'] = 'internal'
+    scope: Literal['internal','external','unknown'] = 'internal'
 
 class Zone(Record):
     id: str
@@ -27,7 +27,7 @@ class Component(Record):
     system_id: str | None = None
     status: Literal['existing','new','proposed'] = 'proposed'
     asset_id: str = 'server'
-    scope: Literal['internal','external'] = 'internal'
+    scope: Literal['internal','external','unknown'] = 'internal'
     audit_destination: str | None = None
     storage_destination: str | None = None
     local_only: bool | None = None
@@ -112,11 +112,15 @@ class Placement(Record):
     locked: bool = False
     label: str | None = None
 
+class Point(Record):
+    x:float
+    y:float
+
 class Route(Record):
     style: Literal['straight','orthogonal'] = 'orthogonal'
-    points: list[dict[str,float]] = Field(default_factory=list,max_length=30)
-    source_handle: str = 'right'
-    target_handle: str = 'left'
+    points: list[Point] = Field(default_factory=list,max_length=30)
+    source_handle: Literal['left','right','top','bottom'] = 'right'
+    target_handle: Literal['left','right','top','bottom'] = 'left'
     locked: bool = False
 
 class View(Record):
