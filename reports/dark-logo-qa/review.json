@@ -1,0 +1,62 @@
+{
+  "date": "2026-09-22",
+  "checks": [
+    {
+      "theme": "light",
+      "logos": [
+        {
+          "className": "brand-logo",
+          "alt": "ARCHIE",
+          "loaded": true,
+          "background": "rgba(0, 0, 0, 0)",
+          "filter": "none",
+          "padding": "0px",
+          "width": 139,
+          "height": 46
+        },
+        {
+          "className": "welcome-logo",
+          "alt": "ARCHIE",
+          "loaded": true,
+          "background": "rgba(0, 0, 0, 0)",
+          "filter": "none",
+          "padding": "0px",
+          "width": 300,
+          "height": 100
+        }
+      ]
+    },
+    {
+      "theme": "dark",
+      "logos": [
+        {
+          "className": "brand-logo",
+          "alt": "ARCHIE",
+          "loaded": true,
+          "background": "rgba(0, 0, 0, 0)",
+          "filter": "invert(1) hue-rotate(180deg) contrast(0.5) brightness(1.8)",
+          "padding": "0px",
+          "width": 139,
+          "height": 46
+        },
+        {
+          "className": "welcome-logo",
+          "alt": "ARCHIE",
+          "loaded": true,
+          "background": "rgba(0, 0, 0, 0)",
+          "filter": "invert(1) hue-rotate(180deg) contrast(0.5) brightness(1.8)",
+          "padding": "0px",
+          "width": 300,
+          "height": 100
+        }
+      ]
+    }
+  ],
+  "mutations": [],
+  "theme_reload": "passed",
+  "return_to_light": "passed",
+  "typescript": "passed",
+  "production_build": "passed",
+  "visual_review": "Header screenshots in both themes and dark welcome screenshot inspected; dark lettering is light, mint accent visible and no pale backing card.",
+  "full_suite": "Latest full application gate remains reports/offline-gate.json; focused browser checks and build used for this CSS-only change."
+}

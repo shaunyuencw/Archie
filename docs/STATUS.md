@@ -20,6 +20,8 @@ Mini-map follow-up: fixed mismatched internal SVG/panel dimensions that cropped 
 
 Browser branding follow-up: the existing robot mascot now serves as the favicon. README and branding provenance are refreshed for this checkpoint. TypeScript, production build and focused browser favicon checks pass in development and the production build (`reports/favicon-qa-20260922.json`). This metadata/documentation change uses no model calls; the application gate above remains the latest full-suite evidence.
 
+Dark-logo follow-up: header and welcome wordmarks now use light lettering and a mint accent on transparent backgrounds, replacing the pale backing cards. Light mode retains the original artwork. Focused browser checks cover both logos, theme reload, switching back to light and unchanged dimensions with no API mutations; screenshots are in `reports/dark-logo-qa/`.
+
 Environment: macOS 26.6.2, M2 Max, 32 GiB, Python 3.12.0, Node 22.23.1, pnpm 11.19.0, Chromium 153.0.8010.12, Ollama 0.34.2. Qwen14B observed 10 GB loaded / 100% GPU / 8192 context, not peak sampling. Historical Windows RTX evidence remains in `reports/windows-checkpoint` and prior smoke reports.
 
 QA: all source DOCX/PDF pages, three narrative pages and three SVG views inspected (`reports/mac-export-qa/review.json`). Browser capacity records 50 components/100 interfaces with intact references and zero provider requests. Initial application JS is about 469 kB; the on-demand ELK chunk still triggers a size warning. FastAPI startup hooks and the Starlette test client emit deprecation warnings.

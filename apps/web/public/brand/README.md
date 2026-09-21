@@ -6,3 +6,5 @@ Prompt: Extract only the large top-left ARCHIE wordmark, preserve its exact bold
 Robot cutout: extracted the original infographic mascot with its navy and white body, mint eyes and card reading Good Architectures Start Here :3. Built-in image-generation tool; transparent background. Added at the explicit request of the user.
 
 `archie-wordmark.png` is the application wordmark. `archie-assistant.png` is the existing robot mascot used in the assistant greeting and, from 22 September 2026, as the browser favicon. The favicon reuses that PNG unchanged; no new artwork was generated for it.
+
+Dark mode displays the header and welcome-screen wordmarks with light lettering and a mint accent directly on the dark surface. A theme-scoped CSS filter adapts the transparent PNG; the original artwork and light-mode colors remain unchanged. Browser screenshots and theme-switch checks are in `reports/dark-logo-qa/`.

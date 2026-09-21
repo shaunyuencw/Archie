@@ -66,8 +66,10 @@
 :root[data-theme="dark"] :is(.project-trash li, .inspector-note, .redundancy-section,
   .overview-stats, .overview-evidence, .review-totals, .review-actions, .job-notice+article,
   .prompt-pack article) { border-color: var(--theme-border); }
-:root[data-theme="dark"] .brand-logo { background: #edf4f8; border-radius: 6px; padding: 2px 7px; }
-:root[data-theme="dark"] .welcome-logo { background: #edf4f8; border-radius: 14px; padding: 10px 18px; }
+:root[data-theme="dark"] :is(.brand-logo, .welcome-logo) {
+  /* Keep the transparent artwork and mint accent, with light lettering on dark surfaces. */
+  filter: invert(1) hue-rotate(180deg) contrast(0.5) brightness(1.8);
+}
 :root[data-theme="dark"] .assistant-intro { background: linear-gradient(130deg, #203743, #203b36); border-color: var(--theme-border); }
 :root[data-theme="dark"] .assistant-intro p { color: var(--theme-muted); }
 
