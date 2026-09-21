@@ -1,0 +1,116 @@
+{
+  "scope": "Presentation-only compact authored demo layouts",
+  "provider_calls": 0,
+  "tests": {
+    "passed": 5,
+    "failed": 0,
+    "junit": "tests.xml"
+  },
+  "references": {
+    "portal": {
+      "semantic_and_evidence_unchanged": true,
+      "views": {
+        "logical": {
+          "before_svg": {
+            "width": 1420.0,
+            "height": 830.0
+          },
+          "after_svg": {
+            "width": 1010.0,
+            "height": 620.0
+          },
+          "area_reduction_percent": 46.9,
+          "same_font_apparent_scale_gain_at_1280x800": 1.36,
+          "component_overlap_count": 0,
+          "out_of_zone_components": 0
+        },
+        "sv1": {
+          "before_svg": {
+            "width": 1480.0,
+            "height": 620.0
+          },
+          "after_svg": {
+            "width": 1125.0,
+            "height": 620.0
+          },
+          "area_reduction_percent": 24.0,
+          "same_font_apparent_scale_gain_at_1280x800": 1.32,
+          "component_overlap_count": 0,
+          "out_of_zone_components": 0
+        },
+        "sv2": {
+          "before_svg": {
+            "width": 1420.0,
+            "height": 830.0
+          },
+          "after_svg": {
+            "width": 1032.3,
+            "height": 620.0
+          },
+          "area_reduction_percent": 45.7,
+          "same_font_apparent_scale_gain_at_1280x800": 1.36,
+          "component_overlap_count": 0,
+          "out_of_zone_components": 0
+        }
+      }
+    },
+    "robotics": {
+      "semantic_and_evidence_unchanged": true,
+      "views": {
+        "logical": {
+          "before_svg": {
+            "width": 1454.0,
+            "height": 1610.0
+          },
+          "after_svg": {
+            "width": 1122.0,
+            "height": 1085.0
+          },
+          "area_reduction_percent": 48.0,
+          "same_font_apparent_scale_gain_at_1280x800": 1.48,
+          "component_overlap_count": 0,
+          "out_of_zone_components": 0
+        },
+        "sv1": {
+          "before_svg": {
+            "width": 1480.0,
+            "height": 620.0
+          },
+          "after_svg": {
+            "width": 1125.0,
+            "height": 620.0
+          },
+          "area_reduction_percent": 24.0,
+          "same_font_apparent_scale_gain_at_1280x800": 1.32,
+          "component_overlap_count": 0,
+          "out_of_zone_components": 0
+        },
+        "sv2": {
+          "before_svg": {
+            "width": 1515.6,
+            "height": 1610.0
+          },
+          "after_svg": {
+            "width": 1183.6,
+            "height": 1085.0
+          },
+          "area_reduction_percent": 47.4,
+          "same_font_apparent_scale_gain_at_1280x800": 1.48,
+          "component_overlap_count": 0,
+          "out_of_zone_components": 0
+        }
+      }
+    }
+  },
+  "visual_checks": [
+    "All six regenerated logical/SV1/SV2 SVGs reviewed.",
+    "1280x800 and 1440x800 comparison screenshots generated; 1280x800 portal and robotics logical screenshots inspected.",
+    "No component rectangles overlap; declared components remain inside their zones.",
+    "Robot telemetry and production handoff labels moved into clear horizontal lanes; hosted badges remain visible."
+  ],
+  "limitations": [
+    "This is exported SVG geometry at a fixed laptop viewport, not a claim about browser app performance.",
+    "Dense SV2 labels can still cover portions of nearby connector lines or arrowheads; node names remain readable and are not covered.",
+    "Native Visio is unverified."
+  ]
+}

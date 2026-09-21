@@ -1,0 +1,3093 @@
+{
+  "id": "demo-robotics",
+  "name": "Hybrid robotics trial",
+  "schema_version": "1.0",
+  "revision": 0,
+  "created_at": "2026-09-21T00:00:00+00:00",
+  "updated_at": "2026-09-21T00:00:00+00:00",
+  "synthetic": true,
+  "policy_version": "1.0",
+  "policy_ids": [
+    "DEMO-ZON-01",
+    "DEMO-IF-01",
+    "DEMO-HA-01",
+    "ARCH-SEG-01",
+    "ARCH-DAT-01",
+    "ARCH-FLW-01",
+    "ARCH-TLS-01",
+    "ARCH-IAM-01",
+    "ARCH-SEC-01",
+    "ARCH-LPR-01",
+    "ARCH-BAK-01",
+    "ARCH-AVL-01",
+    "ARCH-LOG-01",
+    "ARCH-PAT-01",
+    "ARCH-DATA-01",
+    "ARCH-OWN-01",
+    "ARCH-BOUND-01",
+    "ARCH-CLD-01",
+    "ARCH-EGR-01",
+    "ARCH-HYB-01",
+    "ARCH-TST-01",
+    "ARCH-HND-01",
+    "ARCH-WLS-01",
+    "ARCH-ROB-01",
+    "ARCH-TRL-01"
+  ],
+  "template_version": "1.0",
+  "systems": [
+    {
+      "id": "production-system",
+      "name": "Production operations",
+      "scope": "internal"
+    },
+    {
+      "id": "testbed-system",
+      "name": "Robotics testbed",
+      "scope": "internal"
+    },
+    {
+      "id": "telemetry-system",
+      "name": "AWS telemetry",
+      "scope": "external"
+    }
+  ],
+  "zones": [
+    {
+      "id": "prod-client",
+      "name": "Production · Client · user devices"
+    },
+    {
+      "id": "prod-z1",
+      "name": "Production · Z1 · application services"
+    },
+    {
+      "id": "prod-z2",
+      "name": "Production · Z2 · protected data"
+    },
+    {
+      "id": "test-client",
+      "name": "Testbed · Client · trial devices"
+    },
+    {
+      "id": "test-z1",
+      "name": "Testbed · Z1 · trial services"
+    },
+    {
+      "id": "test-z2",
+      "name": "Testbed · Z2 · trial data"
+    },
+    {
+      "id": "aws-z1",
+      "name": "AWS · Z1 · telemetry ingestion"
+    },
+    {
+      "id": "aws-z2",
+      "name": "AWS · Z2 · protected telemetry"
+    }
+  ],
+  "components": [
+    {
+      "id": "prod-operator",
+      "name": "Production operator workstation",
+      "role": "production operator access",
+      "system_id": "production-system",
+      "status": "proposed",
+      "asset_id": "workstation",
+      "scope": "internal",
+      "form_factor": "physical",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "claim-prod-operator"
+      ]
+    },
+    {
+      "id": "prod-api",
+      "name": "Production integration API",
+      "role": "production status application",
+      "system_id": "production-system",
+      "status": "proposed",
+      "asset_id": "api-service",
+      "scope": "internal",
+      "form_factor": "virtual",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "claim-prod-api"
+      ]
+    },
+    {
+      "id": "prod-db",
+      "name": "Production job database",
+      "role": "protected production data",
+      "system_id": "production-system",
+      "status": "proposed",
+      "asset_id": "database",
+      "scope": "internal",
+      "form_factor": "physical",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "claim-prod-db"
+      ]
+    },
+    {
+      "id": "trial-robot",
+      "name": "Trial robot",
+      "role": "trial mobile robot",
+      "system_id": "testbed-system",
+      "status": "proposed",
+      "asset_id": "robot",
+      "scope": "internal",
+      "form_factor": "physical",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "claim-trial-robot"
+      ]
+    },
+    {
+      "id": "trial-tablet",
+      "name": "Trial operator tablet",
+      "role": "trial operator access",
+      "system_id": "testbed-system",
+      "status": "proposed",
+      "asset_id": "operator-tablet",
+      "scope": "internal",
+      "form_factor": "physical",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "claim-trial-tablet"
+      ]
+    },
+    {
+      "id": "trial-ap",
+      "name": "Trial wireless access point",
+      "role": "isolated trial wireless access",
+      "system_id": "testbed-system",
+      "status": "proposed",
+      "asset_id": "wireless-access-point",
+      "scope": "internal",
+      "form_factor": "physical",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "claim-trial-ap"
+      ]
+    },
+    {
+      "id": "trial-host",
+      "name": "Trial compute host",
+      "role": "trial compute host",
+      "system_id": "testbed-system",
+      "status": "proposed",
+      "asset_id": "server",
+      "scope": "internal",
+      "form_factor": "physical",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "claim-trial-host"
+      ]
+    },
+    {
+      "id": "robot-controller",
+      "name": "Robot controller",
+      "role": "robot trial control and telemetry",
+      "system_id": "testbed-system",
+      "status": "proposed",
+      "asset_id": "application-server",
+      "scope": "internal",
+      "form_factor": "virtual",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "claim-robot-controller"
+      ]
+    },
+    {
+      "id": "trial-gateway",
+      "name": "Trial integration gateway",
+      "role": "bounded status and telemetry gateway",
+      "system_id": "testbed-system",
+      "status": "proposed",
+      "asset_id": "edge-gateway",
+      "scope": "internal",
+      "form_factor": "virtual",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "claim-trial-gateway"
+      ]
+    },
+    {
+      "id": "trial-firewall",
+      "name": "Trial virtual firewall",
+      "role": "trial boundary enforcement",
+      "system_id": "testbed-system",
+      "status": "proposed",
+      "asset_id": "virtual-firewall",
+      "scope": "internal",
+      "form_factor": "virtual",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "claim-trial-firewall"
+      ]
+    },
+    {
+      "id": "trial-data",
+      "name": "Trial data store",
+      "role": "protected trial data",
+      "system_id": "testbed-system",
+      "status": "proposed",
+      "asset_id": "database",
+      "scope": "internal",
+      "form_factor": "virtual",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "claim-trial-data"
+      ]
+    },
+    {
+      "id": "aws-api",
+      "name": "Amazon API Gateway",
+      "role": "managed telemetry ingress",
+      "system_id": "telemetry-system",
+      "status": "proposed",
+      "asset_id": "aws-api-gateway",
+      "scope": "external",
+      "form_factor": "managed",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": true,
+      "evidence": [
+        "claim-aws-api"
+      ]
+    },
+    {
+      "id": "aws-function",
+      "name": "AWS Lambda telemetry function",
+      "role": "managed telemetry transformation",
+      "system_id": "telemetry-system",
+      "status": "proposed",
+      "asset_id": "aws-lambda",
+      "scope": "external",
+      "form_factor": "managed",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": true,
+      "evidence": [
+        "claim-aws-function"
+      ]
+    },
+    {
+      "id": "aws-telemetry",
+      "name": "Amazon S3 telemetry bucket",
+      "role": "protected managed telemetry storage",
+      "system_id": "telemetry-system",
+      "status": "proposed",
+      "asset_id": "aws-s3",
+      "scope": "external",
+      "form_factor": "managed",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": true,
+      "evidence": [
+        "claim-aws-telemetry"
+      ]
+    }
+  ],
+  "deployments": [
+    {
+      "id": "deployment-prod-operator",
+      "component_id": "prod-operator",
+      "zone_id": "prod-client",
+      "host": null,
+      "site": null,
+      "quantity": 1,
+      "redundancy_mode": "unknown",
+      "host_component_id": null
+    },
+    {
+      "id": "deployment-prod-api",
+      "component_id": "prod-api",
+      "zone_id": "prod-z1",
+      "host": null,
+      "site": null,
+      "quantity": 2,
+      "redundancy_mode": "active_active",
+      "host_component_id": null
+    },
+    {
+      "id": "deployment-prod-db",
+      "component_id": "prod-db",
+      "zone_id": "prod-z2",
+      "host": null,
+      "site": null,
+      "quantity": 2,
+      "redundancy_mode": "active_passive",
+      "host_component_id": null
+    },
+    {
+      "id": "deployment-trial-robot",
+      "component_id": "trial-robot",
+      "zone_id": "test-client",
+      "host": null,
+      "site": null,
+      "quantity": 1,
+      "redundancy_mode": "unknown",
+      "host_component_id": null
+    },
+    {
+      "id": "deployment-trial-tablet",
+      "component_id": "trial-tablet",
+      "zone_id": "test-client",
+      "host": null,
+      "site": null,
+      "quantity": 1,
+      "redundancy_mode": "unknown",
+      "host_component_id": null
+    },
+    {
+      "id": "deployment-trial-ap",
+      "component_id": "trial-ap",
+      "zone_id": "test-client",
+      "host": null,
+      "site": null,
+      "quantity": 1,
+      "redundancy_mode": "unknown",
+      "host_component_id": null
+    },
+    {
+      "id": "deployment-trial-host",
+      "component_id": "trial-host",
+      "zone_id": "test-z1",
+      "host": null,
+      "site": null,
+      "quantity": 1,
+      "redundancy_mode": "unknown",
+      "host_component_id": null
+    },
+    {
+      "id": "deployment-robot-controller",
+      "component_id": "robot-controller",
+      "zone_id": "test-z1",
+      "host": null,
+      "site": null,
+      "quantity": 1,
+      "redundancy_mode": "unknown",
+      "host_component_id": "trial-host"
+    },
+    {
+      "id": "deployment-trial-gateway",
+      "component_id": "trial-gateway",
+      "zone_id": "test-z1",
+      "host": null,
+      "site": null,
+      "quantity": 1,
+      "redundancy_mode": "unknown",
+      "host_component_id": "trial-host"
+    },
+    {
+      "id": "deployment-trial-firewall",
+      "component_id": "trial-firewall",
+      "zone_id": "test-z1",
+      "host": null,
+      "site": null,
+      "quantity": 1,
+      "redundancy_mode": "unknown",
+      "host_component_id": "trial-host"
+    },
+    {
+      "id": "deployment-trial-data",
+      "component_id": "trial-data",
+      "zone_id": "test-z2",
+      "host": null,
+      "site": null,
+      "quantity": 1,
+      "redundancy_mode": "unknown",
+      "host_component_id": null
+    },
+    {
+      "id": "deployment-aws-api",
+      "component_id": "aws-api",
+      "zone_id": "aws-z1",
+      "host": null,
+      "site": null,
+      "quantity": 1,
+      "redundancy_mode": "unknown",
+      "host_component_id": null
+    },
+    {
+      "id": "deployment-aws-function",
+      "component_id": "aws-function",
+      "zone_id": "aws-z1",
+      "host": null,
+      "site": null,
+      "quantity": 1,
+      "redundancy_mode": "unknown",
+      "host_component_id": null
+    },
+    {
+      "id": "deployment-aws-telemetry",
+      "component_id": "aws-telemetry",
+      "zone_id": "aws-z2",
+      "host": null,
+      "site": null,
+      "quantity": 1,
+      "redundancy_mode": "unknown",
+      "host_component_id": null
+    }
+  ],
+  "interfaces": [
+    {
+      "id": "production-access",
+      "source": "prod-operator",
+      "target": "prod-api",
+      "purpose": "production operations",
+      "data_direction": "bidirectional",
+      "initiator": "prod-operator",
+      "protocol": "HTTPS",
+      "port": 443,
+      "enforcement": [],
+      "delivery": null,
+      "evidence": [
+        "claim-production-access"
+      ]
+    },
+    {
+      "id": "production-database",
+      "source": "prod-api",
+      "target": "prod-db",
+      "purpose": "production database access",
+      "data_direction": "bidirectional",
+      "initiator": "prod-api",
+      "protocol": "PostgreSQL",
+      "port": 5432,
+      "enforcement": [],
+      "delivery": null,
+      "evidence": [
+        "claim-production-database"
+      ]
+    },
+    {
+      "id": "trial-wireless",
+      "source": "trial-robot",
+      "target": "trial-ap",
+      "purpose": "wireless association",
+      "data_direction": "bidirectional",
+      "initiator": "trial-robot",
+      "protocol": "IEEE 802.11 / WPA3-Enterprise",
+      "port": null,
+      "enforcement": [],
+      "delivery": null,
+      "evidence": [
+        "claim-trial-wireless"
+      ]
+    },
+    {
+      "id": "robot-telemetry",
+      "source": "trial-robot",
+      "target": "robot-controller",
+      "purpose": "robot telemetry",
+      "data_direction": "bidirectional",
+      "initiator": "trial-robot",
+      "protocol": "MQTT/TLS",
+      "port": 8883,
+      "enforcement": [
+        "trial-firewall"
+      ],
+      "delivery": "publish",
+      "evidence": [
+        "claim-robot-telemetry"
+      ]
+    },
+    {
+      "id": "trial-operator-access",
+      "source": "trial-tablet",
+      "target": "robot-controller",
+      "purpose": "trial operator application",
+      "data_direction": "bidirectional",
+      "initiator": "trial-tablet",
+      "protocol": "HTTPS",
+      "port": 443,
+      "enforcement": [
+        "trial-firewall"
+      ],
+      "delivery": null,
+      "evidence": [
+        "claim-trial-operator-access"
+      ]
+    },
+    {
+      "id": "trial-database",
+      "source": "robot-controller",
+      "target": "trial-data",
+      "purpose": "trial database access",
+      "data_direction": "bidirectional",
+      "initiator": "robot-controller",
+      "protocol": "PostgreSQL",
+      "port": 5432,
+      "enforcement": [
+        "trial-firewall"
+      ],
+      "delivery": null,
+      "evidence": [
+        "claim-trial-database"
+      ]
+    },
+    {
+      "id": "trial-snapshot",
+      "source": "trial-gateway",
+      "target": "robot-controller",
+      "purpose": "bounded status snapshot",
+      "data_direction": "bidirectional",
+      "initiator": "trial-gateway",
+      "protocol": "HTTPS",
+      "port": 443,
+      "enforcement": [],
+      "delivery": "pull",
+      "evidence": [
+        "claim-trial-snapshot"
+      ]
+    },
+    {
+      "id": "production-handoff",
+      "source": "trial-gateway",
+      "target": "prod-api",
+      "purpose": "bounded trial status handoff",
+      "data_direction": "source_to_target",
+      "initiator": "trial-gateway",
+      "protocol": "HTTPS",
+      "port": 443,
+      "enforcement": [
+        "trial-firewall"
+      ],
+      "delivery": "push",
+      "evidence": [
+        "claim-production-handoff"
+      ]
+    },
+    {
+      "id": "cloud-telemetry",
+      "source": "trial-gateway",
+      "target": "aws-api",
+      "purpose": "outbound trial telemetry",
+      "data_direction": "source_to_target",
+      "initiator": "trial-gateway",
+      "protocol": "HTTPS",
+      "port": 443,
+      "enforcement": [
+        "trial-firewall"
+      ],
+      "delivery": "push",
+      "evidence": [
+        "claim-cloud-telemetry"
+      ]
+    },
+    {
+      "id": "telemetry-transform",
+      "source": "aws-api",
+      "target": "aws-function",
+      "purpose": "telemetry transformation",
+      "data_direction": "source_to_target",
+      "initiator": "aws-api",
+      "protocol": "AWS-managed Lambda integration",
+      "port": null,
+      "enforcement": [],
+      "delivery": null,
+      "evidence": [
+        "claim-telemetry-transform"
+      ]
+    },
+    {
+      "id": "telemetry-store",
+      "source": "aws-function",
+      "target": "aws-telemetry",
+      "purpose": "telemetry object writes",
+      "data_direction": "source_to_target",
+      "initiator": "aws-function",
+      "protocol": "HTTPS",
+      "port": 443,
+      "enforcement": [],
+      "delivery": null,
+      "evidence": [
+        "claim-telemetry-store"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "demo-robotics-source",
+      "name": "techspec.docx",
+      "version": "1.0",
+      "kind": "document",
+      "origin": "bundled_demo",
+      "sha256": "055cc1111c345f9eee4a193ebc90ecaed50d67c2efbf585ec58cb371d3c0ef7b",
+      "canonical_id": "demo-robotics-techspec",
+      "variants": [
+        "055cc1111c345f9eee4a193ebc90ecaed50d67c2efbf585ec58cb371d3c0ef7b",
+        "2392ab6b8fbf719b85e4f55298566461e9de029a0c706b040308ddc29d857602"
+      ],
+      "passages": [
+        {
+          "locator": "paragraph/1",
+          "heading": "",
+          "text": "Hybrid robotics trial technical specification",
+          "page": null
+        },
+        {
+          "locator": "paragraph/2",
+          "heading": "",
+          "text": "SYNTHETIC — DEMONSTRATION ONLY",
+          "page": null
+        },
+        {
+          "locator": "paragraph/3",
+          "heading": "",
+          "text": "Version 1.0 · Fixed fixture date 21 September 2026",
+          "page": null
+        },
+        {
+          "locator": "paragraph/4",
+          "heading": "",
+          "text": "A bounded wireless robotics trial that is isolated from a small production operations service. Testbed data may leave through two named interfaces: a narrow production status handoff and an AWS telemetry path. Cloud services are shown explicitly as managed services, not as software secretly placed inside an on-premises zone.",
+          "page": null
+        },
+        {
+          "locator": "paragraph/5",
+          "heading": "Purpose and placement",
+          "text": "Purpose and placement",
+          "page": null
+        },
+        {
+          "locator": "paragraph/6",
+          "heading": "Purpose and placement",
+          "text": "[R01] Production uses Production · Client · user devices, Production · Z1 · application services and Production · Z2 · protected data. Testbed uses separate Testbed · Client · trial devices, Testbed · Z1 · trial services and Testbed · Z2 · trial data. The Production operations and Robotics testbed systems are separate; a shared zone name must never merge their trust boundaries.",
+          "page": null
+        },
+        {
+          "locator": "paragraph/7",
+          "heading": "Purpose and placement",
+          "text": "[R02] Production Client contains one physical Production operator workstation. Production Z1 contains two virtual Production integration API instances operating active-active. Production Z2 contains two physical Production job database servers operating active-passive. The API and database have no declared shared physical host.",
+          "page": null
+        },
+        {
+          "locator": "paragraph/8",
+          "heading": "Purpose and placement",
+          "text": "[R03] Testbed Client contains one physical Trial robot, one physical Trial operator tablet and one physical Trial wireless access point. The trial uses its own WPA3-Enterprise wireless network. It does not bridge to the production client LAN. Authentication server details, radio survey and RF coverage remain undecided; an access-point icon does not prove those controls exist.",
+          "page": null
+        },
+        {
+          "locator": "paragraph/9",
+          "heading": "Purpose and placement",
+          "text": "[R04] Testbed Z1 contains one physical Trial compute host. It runs three single-instance virtual components: Robot controller, Trial integration gateway and Trial virtual firewall. Testbed Z2 contains one virtual Trial data store; its host is not specified. No resilience claim is made for these single-instance trial services.",
+          "page": null
+        },
+        {
+          "locator": "paragraph/10",
+          "heading": "AWS telemetry placement",
+          "text": "AWS telemetry placement",
+          "page": null
+        },
+        {
+          "locator": "paragraph/11",
+          "heading": "AWS telemetry placement",
+          "text": "[R05] AWS telemetry is a separate external managed-service system with AWS · Z1 · telemetry ingestion and AWS · Z2 · protected telemetry. One Amazon API Gateway endpoint and one AWS Lambda telemetry function belong to its ingestion tier; one Amazon S3 telemetry bucket belongs to its protected-data tier. These labels are logical trust tiers, not assertions that the regional managed services reside in a private subnet or VPC.",
+          "page": null
+        },
+        {
+          "locator": "paragraph/13",
+          "heading": "Interfaces",
+          "text": "Interfaces",
+          "page": null
+        },
+        {
+          "locator": "paragraph/14",
+          "heading": "Interfaces",
+          "text": "[R06] Production operator workstation initiates HTTPS on TCP 443 to Production integration API. That API initiates PostgreSQL on TCP 5432 to Production job database. There is no Testbed-to-production-database interface, no cloud-to-robot command interface and no unrestricted lateral production access.",
+          "page": null
+        },
+        {
+          "locator": "paragraph/15",
+          "heading": "Interfaces",
+          "text": "[R07] Trial robot associates with Trial wireless access point using WPA3-Enterprise over IEEE 802.11. Its separate application session initiates MQTT over TLS on TCP 8883 to Robot controller; Trial virtual firewall is the enforcement reference. Trial operator tablet initiates HTTPS on TCP 443 to Robot controller through the same enforcement control. Radio association is not evidence of application session initiation.",
+          "page": null
+        },
+        {
+          "locator": "paragraph/16",
+          "heading": "Interfaces",
+          "text": "[R08] Robot controller initiates PostgreSQL on TCP 5432 to Trial data store through Trial virtual firewall. Trial integration gateway polls Robot controller using HTTPS on TCP 443 to read a bounded status snapshot. Telemetry delivery retries, queueing limits and failure handling are not yet specified.",
+          "page": null
+        },
+        {
+          "locator": "paragraph/17",
+          "heading": "Interfaces",
+          "text": "[R09] The only proposed Testbed-to-Production handoff is Trial integration gateway initiating HTTPS on TCP 443 to Production integration API, through Trial virtual firewall. It pushes only trial ID, job ID, readiness state and timestamp; robot control commands and personal data are excluded. The gateway uses a dedicated trial service identity. Production must validate that identity and schema and may reject the request. This synthetic intended rule is not organisational approval.",
+          "page": null
+        },
+        {
+          "locator": "paragraph/18",
+          "heading": "Interfaces",
+          "text": "[R10] Trial integration gateway initiates HTTPS on TCP 443 to Amazon API Gateway for outbound operational telemetry, through Trial virtual firewall. The telemetry excludes production records and personal data. A dedicated IAM principal signs the requests; key provisioning and rotation remain to be designed. API Gateway invokes the AWS Lambda telemetry function using the AWS-managed Lambda integration, and Lambda writes telemetry objects to Amazon S3 using HTTPS on TCP 443. No reverse command path is defined.",
+          "page": null
+        },
+        {
+          "locator": "paragraph/19",
+          "heading": "Operations and open decisions",
+          "text": "Operations and open decisions",
+          "page": null
+        },
+        {
+          "locator": "paragraph/20",
+          "heading": "Operations and open decisions",
+          "text": "[R11] AWS region, data residency approval, private connectivity versus public TLS, telemetry retention, permitted telemetry schema, credential lifecycle and the trial decommissioning date remain undecided. A routed network path or a cloud icon must not be treated as approval. Production database and trial raw data stay on premises; only the explicitly bounded status/telemetry payloads may cross the stated interfaces.",
+          "page": null
+        },
+        {
+          "locator": "paragraph/21",
+          "heading": "Operations and open decisions",
+          "text": "[R12] Production has the stated API and database redundancy. Testbed recovery is manual restart and does not have a production availability commitment. End-to-end resilience, recovery times and evidence of firewall configuration are unverified. Do not describe this source as proof of compliance or operational readiness.",
+          "page": null
+        }
+      ],
+      "processed": [
+        "paragraph/1",
+        "paragraph/2",
+        "paragraph/3",
+        "paragraph/4",
+        "paragraph/5",
+        "paragraph/6",
+        "paragraph/7",
+        "paragraph/8",
+        "paragraph/9",
+        "paragraph/10",
+        "paragraph/11",
+        "paragraph/13",
+        "paragraph/14",
+        "paragraph/15",
+        "paragraph/16",
+        "paragraph/17",
+        "paragraph/18",
+        "paragraph/19",
+        "paragraph/20",
+        "paragraph/21"
+      ],
+      "unprocessed": [],
+      "unsupported_pages": []
+    }
+  ],
+  "claims": [
+    {
+      "id": "claim-production-system",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/6",
+      "excerpt": "[R01] Production uses Production · Client · user devices, Production · Z1 · application services and Production · Z2 · protected data. Testbed uses separate Testbed · Client · trial devices, Testbed · Z1 · trial services and Testbed · Z2 · trial data. The Production operations and Robotics testbed systems are separate; a shared zone name must never merge their trust boundaries.",
+      "target_id": "production-system",
+      "field": "record",
+      "value": {
+        "id": "production-system",
+        "name": "Production operations",
+        "scope": "internal"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-testbed-system",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/6",
+      "excerpt": "[R01] Production uses Production · Client · user devices, Production · Z1 · application services and Production · Z2 · protected data. Testbed uses separate Testbed · Client · trial devices, Testbed · Z1 · trial services and Testbed · Z2 · trial data. The Production operations and Robotics testbed systems are separate; a shared zone name must never merge their trust boundaries.",
+      "target_id": "testbed-system",
+      "field": "record",
+      "value": {
+        "id": "testbed-system",
+        "name": "Robotics testbed",
+        "scope": "internal"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-telemetry-system",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/11",
+      "excerpt": "[R05] AWS telemetry is a separate external managed-service system with AWS · Z1 · telemetry ingestion and AWS · Z2 · protected telemetry. One Amazon API Gateway endpoint and one AWS Lambda telemetry function belong to its ingestion tier; one Amazon S3 telemetry bucket belongs to its protected-data tier. These labels are logical trust tiers, not assertions that the regional managed services reside in a private subnet or VPC.",
+      "target_id": "telemetry-system",
+      "field": "record",
+      "value": {
+        "id": "telemetry-system",
+        "name": "AWS telemetry",
+        "scope": "external"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-prod-client",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/6",
+      "excerpt": "[R01] Production uses Production · Client · user devices, Production · Z1 · application services and Production · Z2 · protected data. Testbed uses separate Testbed · Client · trial devices, Testbed · Z1 · trial services and Testbed · Z2 · trial data. The Production operations and Robotics testbed systems are separate; a shared zone name must never merge their trust boundaries.",
+      "target_id": "prod-client",
+      "field": "record",
+      "value": {
+        "id": "prod-client",
+        "name": "Production · Client · user devices"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-prod-z1",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/6",
+      "excerpt": "[R01] Production uses Production · Client · user devices, Production · Z1 · application services and Production · Z2 · protected data. Testbed uses separate Testbed · Client · trial devices, Testbed · Z1 · trial services and Testbed · Z2 · trial data. The Production operations and Robotics testbed systems are separate; a shared zone name must never merge their trust boundaries.",
+      "target_id": "prod-z1",
+      "field": "record",
+      "value": {
+        "id": "prod-z1",
+        "name": "Production · Z1 · application services"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-prod-z2",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/6",
+      "excerpt": "[R01] Production uses Production · Client · user devices, Production · Z1 · application services and Production · Z2 · protected data. Testbed uses separate Testbed · Client · trial devices, Testbed · Z1 · trial services and Testbed · Z2 · trial data. The Production operations and Robotics testbed systems are separate; a shared zone name must never merge their trust boundaries.",
+      "target_id": "prod-z2",
+      "field": "record",
+      "value": {
+        "id": "prod-z2",
+        "name": "Production · Z2 · protected data"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-test-client",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/6",
+      "excerpt": "[R01] Production uses Production · Client · user devices, Production · Z1 · application services and Production · Z2 · protected data. Testbed uses separate Testbed · Client · trial devices, Testbed · Z1 · trial services and Testbed · Z2 · trial data. The Production operations and Robotics testbed systems are separate; a shared zone name must never merge their trust boundaries.",
+      "target_id": "test-client",
+      "field": "record",
+      "value": {
+        "id": "test-client",
+        "name": "Testbed · Client · trial devices"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-test-z1",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/6",
+      "excerpt": "[R01] Production uses Production · Client · user devices, Production · Z1 · application services and Production · Z2 · protected data. Testbed uses separate Testbed · Client · trial devices, Testbed · Z1 · trial services and Testbed · Z2 · trial data. The Production operations and Robotics testbed systems are separate; a shared zone name must never merge their trust boundaries.",
+      "target_id": "test-z1",
+      "field": "record",
+      "value": {
+        "id": "test-z1",
+        "name": "Testbed · Z1 · trial services"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-test-z2",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/6",
+      "excerpt": "[R01] Production uses Production · Client · user devices, Production · Z1 · application services and Production · Z2 · protected data. Testbed uses separate Testbed · Client · trial devices, Testbed · Z1 · trial services and Testbed · Z2 · trial data. The Production operations and Robotics testbed systems are separate; a shared zone name must never merge their trust boundaries.",
+      "target_id": "test-z2",
+      "field": "record",
+      "value": {
+        "id": "test-z2",
+        "name": "Testbed · Z2 · trial data"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-aws-z1",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/11",
+      "excerpt": "[R05] AWS telemetry is a separate external managed-service system with AWS · Z1 · telemetry ingestion and AWS · Z2 · protected telemetry. One Amazon API Gateway endpoint and one AWS Lambda telemetry function belong to its ingestion tier; one Amazon S3 telemetry bucket belongs to its protected-data tier. These labels are logical trust tiers, not assertions that the regional managed services reside in a private subnet or VPC.",
+      "target_id": "aws-z1",
+      "field": "record",
+      "value": {
+        "id": "aws-z1",
+        "name": "AWS · Z1 · telemetry ingestion"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-aws-z2",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/11",
+      "excerpt": "[R05] AWS telemetry is a separate external managed-service system with AWS · Z1 · telemetry ingestion and AWS · Z2 · protected telemetry. One Amazon API Gateway endpoint and one AWS Lambda telemetry function belong to its ingestion tier; one Amazon S3 telemetry bucket belongs to its protected-data tier. These labels are logical trust tiers, not assertions that the regional managed services reside in a private subnet or VPC.",
+      "target_id": "aws-z2",
+      "field": "record",
+      "value": {
+        "id": "aws-z2",
+        "name": "AWS · Z2 · protected telemetry"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-prod-operator",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/7",
+      "excerpt": "[R02] Production Client contains one physical Production operator workstation. Production Z1 contains two virtual Production integration API instances operating active-active. Production Z2 contains two physical Production job database servers operating active-passive. The API and database have no declared shared physical host.",
+      "target_id": "prod-operator",
+      "field": "record",
+      "value": {
+        "id": "prod-operator",
+        "name": "Production operator workstation",
+        "role": "production operator access",
+        "asset_id": "workstation",
+        "form_factor": "physical",
+        "system_id": "production-system",
+        "status": "proposed",
+        "scope": "internal"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-prod-api",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/7",
+      "excerpt": "[R02] Production Client contains one physical Production operator workstation. Production Z1 contains two virtual Production integration API instances operating active-active. Production Z2 contains two physical Production job database servers operating active-passive. The API and database have no declared shared physical host.",
+      "target_id": "prod-api",
+      "field": "record",
+      "value": {
+        "id": "prod-api",
+        "name": "Production integration API",
+        "role": "production status application",
+        "asset_id": "api-service",
+        "form_factor": "virtual",
+        "system_id": "production-system",
+        "status": "proposed",
+        "scope": "internal"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-prod-db",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/7",
+      "excerpt": "[R02] Production Client contains one physical Production operator workstation. Production Z1 contains two virtual Production integration API instances operating active-active. Production Z2 contains two physical Production job database servers operating active-passive. The API and database have no declared shared physical host.",
+      "target_id": "prod-db",
+      "field": "record",
+      "value": {
+        "id": "prod-db",
+        "name": "Production job database",
+        "role": "protected production data",
+        "asset_id": "database",
+        "form_factor": "physical",
+        "system_id": "production-system",
+        "status": "proposed",
+        "scope": "internal"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-trial-robot",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/8",
+      "excerpt": "[R03] Testbed Client contains one physical Trial robot, one physical Trial operator tablet and one physical Trial wireless access point. The trial uses its own WPA3-Enterprise wireless network. It does not bridge to the production client LAN. Authentication server details, radio survey and RF coverage remain undecided; an access-point icon does not prove those controls exist.",
+      "target_id": "trial-robot",
+      "field": "record",
+      "value": {
+        "id": "trial-robot",
+        "name": "Trial robot",
+        "role": "trial mobile robot",
+        "asset_id": "robot",
+        "form_factor": "physical",
+        "system_id": "testbed-system",
+        "status": "proposed",
+        "scope": "internal"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-trial-tablet",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/8",
+      "excerpt": "[R03] Testbed Client contains one physical Trial robot, one physical Trial operator tablet and one physical Trial wireless access point. The trial uses its own WPA3-Enterprise wireless network. It does not bridge to the production client LAN. Authentication server details, radio survey and RF coverage remain undecided; an access-point icon does not prove those controls exist.",
+      "target_id": "trial-tablet",
+      "field": "record",
+      "value": {
+        "id": "trial-tablet",
+        "name": "Trial operator tablet",
+        "role": "trial operator access",
+        "asset_id": "operator-tablet",
+        "form_factor": "physical",
+        "system_id": "testbed-system",
+        "status": "proposed",
+        "scope": "internal"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-trial-ap",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/8",
+      "excerpt": "[R03] Testbed Client contains one physical Trial robot, one physical Trial operator tablet and one physical Trial wireless access point. The trial uses its own WPA3-Enterprise wireless network. It does not bridge to the production client LAN. Authentication server details, radio survey and RF coverage remain undecided; an access-point icon does not prove those controls exist.",
+      "target_id": "trial-ap",
+      "field": "record",
+      "value": {
+        "id": "trial-ap",
+        "name": "Trial wireless access point",
+        "role": "isolated trial wireless access",
+        "asset_id": "wireless-access-point",
+        "form_factor": "physical",
+        "system_id": "testbed-system",
+        "status": "proposed",
+        "scope": "internal"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-trial-host",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/9",
+      "excerpt": "[R04] Testbed Z1 contains one physical Trial compute host. It runs three single-instance virtual components: Robot controller, Trial integration gateway and Trial virtual firewall. Testbed Z2 contains one virtual Trial data store; its host is not specified. No resilience claim is made for these single-instance trial services.",
+      "target_id": "trial-host",
+      "field": "record",
+      "value": {
+        "id": "trial-host",
+        "name": "Trial compute host",
+        "role": "trial compute host",
+        "asset_id": "server",
+        "form_factor": "physical",
+        "system_id": "testbed-system",
+        "status": "proposed",
+        "scope": "internal"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-robot-controller",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/9",
+      "excerpt": "[R04] Testbed Z1 contains one physical Trial compute host. It runs three single-instance virtual components: Robot controller, Trial integration gateway and Trial virtual firewall. Testbed Z2 contains one virtual Trial data store; its host is not specified. No resilience claim is made for these single-instance trial services.",
+      "target_id": "robot-controller",
+      "field": "record",
+      "value": {
+        "id": "robot-controller",
+        "name": "Robot controller",
+        "role": "robot trial control and telemetry",
+        "asset_id": "application-server",
+        "form_factor": "virtual",
+        "system_id": "testbed-system",
+        "status": "proposed",
+        "scope": "internal"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-trial-gateway",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/9",
+      "excerpt": "[R04] Testbed Z1 contains one physical Trial compute host. It runs three single-instance virtual components: Robot controller, Trial integration gateway and Trial virtual firewall. Testbed Z2 contains one virtual Trial data store; its host is not specified. No resilience claim is made for these single-instance trial services.",
+      "target_id": "trial-gateway",
+      "field": "record",
+      "value": {
+        "id": "trial-gateway",
+        "name": "Trial integration gateway",
+        "role": "bounded status and telemetry gateway",
+        "asset_id": "edge-gateway",
+        "form_factor": "virtual",
+        "system_id": "testbed-system",
+        "status": "proposed",
+        "scope": "internal"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-trial-firewall",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/9",
+      "excerpt": "[R04] Testbed Z1 contains one physical Trial compute host. It runs three single-instance virtual components: Robot controller, Trial integration gateway and Trial virtual firewall. Testbed Z2 contains one virtual Trial data store; its host is not specified. No resilience claim is made for these single-instance trial services.",
+      "target_id": "trial-firewall",
+      "field": "record",
+      "value": {
+        "id": "trial-firewall",
+        "name": "Trial virtual firewall",
+        "role": "trial boundary enforcement",
+        "asset_id": "virtual-firewall",
+        "form_factor": "virtual",
+        "system_id": "testbed-system",
+        "status": "proposed",
+        "scope": "internal"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-trial-data",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/9",
+      "excerpt": "[R04] Testbed Z1 contains one physical Trial compute host. It runs three single-instance virtual components: Robot controller, Trial integration gateway and Trial virtual firewall. Testbed Z2 contains one virtual Trial data store; its host is not specified. No resilience claim is made for these single-instance trial services.",
+      "target_id": "trial-data",
+      "field": "record",
+      "value": {
+        "id": "trial-data",
+        "name": "Trial data store",
+        "role": "protected trial data",
+        "asset_id": "database",
+        "form_factor": "virtual",
+        "system_id": "testbed-system",
+        "status": "proposed",
+        "scope": "internal"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-aws-api",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/11",
+      "excerpt": "[R05] AWS telemetry is a separate external managed-service system with AWS · Z1 · telemetry ingestion and AWS · Z2 · protected telemetry. One Amazon API Gateway endpoint and one AWS Lambda telemetry function belong to its ingestion tier; one Amazon S3 telemetry bucket belongs to its protected-data tier. These labels are logical trust tiers, not assertions that the regional managed services reside in a private subnet or VPC.",
+      "target_id": "aws-api",
+      "field": "record",
+      "value": {
+        "id": "aws-api",
+        "name": "Amazon API Gateway",
+        "role": "managed telemetry ingress",
+        "asset_id": "aws-api-gateway",
+        "form_factor": "managed",
+        "system_id": "telemetry-system",
+        "status": "proposed",
+        "scope": "external",
+        "internet_hosted": true
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-aws-function",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/11",
+      "excerpt": "[R05] AWS telemetry is a separate external managed-service system with AWS · Z1 · telemetry ingestion and AWS · Z2 · protected telemetry. One Amazon API Gateway endpoint and one AWS Lambda telemetry function belong to its ingestion tier; one Amazon S3 telemetry bucket belongs to its protected-data tier. These labels are logical trust tiers, not assertions that the regional managed services reside in a private subnet or VPC.",
+      "target_id": "aws-function",
+      "field": "record",
+      "value": {
+        "id": "aws-function",
+        "name": "AWS Lambda telemetry function",
+        "role": "managed telemetry transformation",
+        "asset_id": "aws-lambda",
+        "form_factor": "managed",
+        "system_id": "telemetry-system",
+        "status": "proposed",
+        "scope": "external",
+        "internet_hosted": true
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-aws-telemetry",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/11",
+      "excerpt": "[R05] AWS telemetry is a separate external managed-service system with AWS · Z1 · telemetry ingestion and AWS · Z2 · protected telemetry. One Amazon API Gateway endpoint and one AWS Lambda telemetry function belong to its ingestion tier; one Amazon S3 telemetry bucket belongs to its protected-data tier. These labels are logical trust tiers, not assertions that the regional managed services reside in a private subnet or VPC.",
+      "target_id": "aws-telemetry",
+      "field": "record",
+      "value": {
+        "id": "aws-telemetry",
+        "name": "Amazon S3 telemetry bucket",
+        "role": "protected managed telemetry storage",
+        "asset_id": "aws-s3",
+        "form_factor": "managed",
+        "system_id": "telemetry-system",
+        "status": "proposed",
+        "scope": "external",
+        "internet_hosted": true
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-deployment-prod-operator",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/7",
+      "excerpt": "[R02] Production Client contains one physical Production operator workstation. Production Z1 contains two virtual Production integration API instances operating active-active. Production Z2 contains two physical Production job database servers operating active-passive. The API and database have no declared shared physical host.",
+      "target_id": "deployment-prod-operator",
+      "field": "record",
+      "value": {
+        "id": "deployment-prod-operator",
+        "component_id": "prod-operator",
+        "zone_id": "prod-client",
+        "quantity": 1,
+        "redundancy_mode": "unknown",
+        "host_component_id": null
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-deployment-prod-api",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/7",
+      "excerpt": "[R02] Production Client contains one physical Production operator workstation. Production Z1 contains two virtual Production integration API instances operating active-active. Production Z2 contains two physical Production job database servers operating active-passive. The API and database have no declared shared physical host.",
+      "target_id": "deployment-prod-api",
+      "field": "record",
+      "value": {
+        "id": "deployment-prod-api",
+        "component_id": "prod-api",
+        "zone_id": "prod-z1",
+        "quantity": 2,
+        "redundancy_mode": "active_active",
+        "host_component_id": null
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-deployment-prod-db",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/7",
+      "excerpt": "[R02] Production Client contains one physical Production operator workstation. Production Z1 contains two virtual Production integration API instances operating active-active. Production Z2 contains two physical Production job database servers operating active-passive. The API and database have no declared shared physical host.",
+      "target_id": "deployment-prod-db",
+      "field": "record",
+      "value": {
+        "id": "deployment-prod-db",
+        "component_id": "prod-db",
+        "zone_id": "prod-z2",
+        "quantity": 2,
+        "redundancy_mode": "active_passive",
+        "host_component_id": null
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-deployment-trial-robot",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/8",
+      "excerpt": "[R03] Testbed Client contains one physical Trial robot, one physical Trial operator tablet and one physical Trial wireless access point. The trial uses its own WPA3-Enterprise wireless network. It does not bridge to the production client LAN. Authentication server details, radio survey and RF coverage remain undecided; an access-point icon does not prove those controls exist.",
+      "target_id": "deployment-trial-robot",
+      "field": "record",
+      "value": {
+        "id": "deployment-trial-robot",
+        "component_id": "trial-robot",
+        "zone_id": "test-client",
+        "quantity": 1,
+        "redundancy_mode": "unknown",
+        "host_component_id": null
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-deployment-trial-tablet",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/8",
+      "excerpt": "[R03] Testbed Client contains one physical Trial robot, one physical Trial operator tablet and one physical Trial wireless access point. The trial uses its own WPA3-Enterprise wireless network. It does not bridge to the production client LAN. Authentication server details, radio survey and RF coverage remain undecided; an access-point icon does not prove those controls exist.",
+      "target_id": "deployment-trial-tablet",
+      "field": "record",
+      "value": {
+        "id": "deployment-trial-tablet",
+        "component_id": "trial-tablet",
+        "zone_id": "test-client",
+        "quantity": 1,
+        "redundancy_mode": "unknown",
+        "host_component_id": null
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-deployment-trial-ap",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/8",
+      "excerpt": "[R03] Testbed Client contains one physical Trial robot, one physical Trial operator tablet and one physical Trial wireless access point. The trial uses its own WPA3-Enterprise wireless network. It does not bridge to the production client LAN. Authentication server details, radio survey and RF coverage remain undecided; an access-point icon does not prove those controls exist.",
+      "target_id": "deployment-trial-ap",
+      "field": "record",
+      "value": {
+        "id": "deployment-trial-ap",
+        "component_id": "trial-ap",
+        "zone_id": "test-client",
+        "quantity": 1,
+        "redundancy_mode": "unknown",
+        "host_component_id": null
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-deployment-trial-host",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/9",
+      "excerpt": "[R04] Testbed Z1 contains one physical Trial compute host. It runs three single-instance virtual components: Robot controller, Trial integration gateway and Trial virtual firewall. Testbed Z2 contains one virtual Trial data store; its host is not specified. No resilience claim is made for these single-instance trial services.",
+      "target_id": "deployment-trial-host",
+      "field": "record",
+      "value": {
+        "id": "deployment-trial-host",
+        "component_id": "trial-host",
+        "zone_id": "test-z1",
+        "quantity": 1,
+        "redundancy_mode": "unknown",
+        "host_component_id": null
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-deployment-robot-controller",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/9",
+      "excerpt": "[R04] Testbed Z1 contains one physical Trial compute host. It runs three single-instance virtual components: Robot controller, Trial integration gateway and Trial virtual firewall. Testbed Z2 contains one virtual Trial data store; its host is not specified. No resilience claim is made for these single-instance trial services.",
+      "target_id": "deployment-robot-controller",
+      "field": "record",
+      "value": {
+        "id": "deployment-robot-controller",
+        "component_id": "robot-controller",
+        "zone_id": "test-z1",
+        "quantity": 1,
+        "redundancy_mode": "unknown",
+        "host_component_id": "trial-host"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-deployment-trial-gateway",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/9",
+      "excerpt": "[R04] Testbed Z1 contains one physical Trial compute host. It runs three single-instance virtual components: Robot controller, Trial integration gateway and Trial virtual firewall. Testbed Z2 contains one virtual Trial data store; its host is not specified. No resilience claim is made for these single-instance trial services.",
+      "target_id": "deployment-trial-gateway",
+      "field": "record",
+      "value": {
+        "id": "deployment-trial-gateway",
+        "component_id": "trial-gateway",
+        "zone_id": "test-z1",
+        "quantity": 1,
+        "redundancy_mode": "unknown",
+        "host_component_id": "trial-host"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-deployment-trial-firewall",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/9",
+      "excerpt": "[R04] Testbed Z1 contains one physical Trial compute host. It runs three single-instance virtual components: Robot controller, Trial integration gateway and Trial virtual firewall. Testbed Z2 contains one virtual Trial data store; its host is not specified. No resilience claim is made for these single-instance trial services.",
+      "target_id": "deployment-trial-firewall",
+      "field": "record",
+      "value": {
+        "id": "deployment-trial-firewall",
+        "component_id": "trial-firewall",
+        "zone_id": "test-z1",
+        "quantity": 1,
+        "redundancy_mode": "unknown",
+        "host_component_id": "trial-host"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-deployment-trial-data",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/9",
+      "excerpt": "[R04] Testbed Z1 contains one physical Trial compute host. It runs three single-instance virtual components: Robot controller, Trial integration gateway and Trial virtual firewall. Testbed Z2 contains one virtual Trial data store; its host is not specified. No resilience claim is made for these single-instance trial services.",
+      "target_id": "deployment-trial-data",
+      "field": "record",
+      "value": {
+        "id": "deployment-trial-data",
+        "component_id": "trial-data",
+        "zone_id": "test-z2",
+        "quantity": 1,
+        "redundancy_mode": "unknown",
+        "host_component_id": null
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-deployment-aws-api",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/11",
+      "excerpt": "[R05] AWS telemetry is a separate external managed-service system with AWS · Z1 · telemetry ingestion and AWS · Z2 · protected telemetry. One Amazon API Gateway endpoint and one AWS Lambda telemetry function belong to its ingestion tier; one Amazon S3 telemetry bucket belongs to its protected-data tier. These labels are logical trust tiers, not assertions that the regional managed services reside in a private subnet or VPC.",
+      "target_id": "deployment-aws-api",
+      "field": "record",
+      "value": {
+        "id": "deployment-aws-api",
+        "component_id": "aws-api",
+        "zone_id": "aws-z1",
+        "quantity": 1,
+        "redundancy_mode": "unknown",
+        "host_component_id": null
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-deployment-aws-function",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/11",
+      "excerpt": "[R05] AWS telemetry is a separate external managed-service system with AWS · Z1 · telemetry ingestion and AWS · Z2 · protected telemetry. One Amazon API Gateway endpoint and one AWS Lambda telemetry function belong to its ingestion tier; one Amazon S3 telemetry bucket belongs to its protected-data tier. These labels are logical trust tiers, not assertions that the regional managed services reside in a private subnet or VPC.",
+      "target_id": "deployment-aws-function",
+      "field": "record",
+      "value": {
+        "id": "deployment-aws-function",
+        "component_id": "aws-function",
+        "zone_id": "aws-z1",
+        "quantity": 1,
+        "redundancy_mode": "unknown",
+        "host_component_id": null
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-deployment-aws-telemetry",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/11",
+      "excerpt": "[R05] AWS telemetry is a separate external managed-service system with AWS · Z1 · telemetry ingestion and AWS · Z2 · protected telemetry. One Amazon API Gateway endpoint and one AWS Lambda telemetry function belong to its ingestion tier; one Amazon S3 telemetry bucket belongs to its protected-data tier. These labels are logical trust tiers, not assertions that the regional managed services reside in a private subnet or VPC.",
+      "target_id": "deployment-aws-telemetry",
+      "field": "record",
+      "value": {
+        "id": "deployment-aws-telemetry",
+        "component_id": "aws-telemetry",
+        "zone_id": "aws-z2",
+        "quantity": 1,
+        "redundancy_mode": "unknown",
+        "host_component_id": null
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-production-access",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/14",
+      "excerpt": "[R06] Production operator workstation initiates HTTPS on TCP 443 to Production integration API. That API initiates PostgreSQL on TCP 5432 to Production job database. There is no Testbed-to-production-database interface, no cloud-to-robot command interface and no unrestricted lateral production access.",
+      "target_id": "production-access",
+      "field": "record",
+      "value": {
+        "id": "production-access",
+        "source": "prod-operator",
+        "target": "prod-api",
+        "purpose": "production operations",
+        "protocol": "HTTPS",
+        "port": 443,
+        "initiator": "prod-operator",
+        "data_direction": "bidirectional",
+        "enforcement": [],
+        "delivery": null
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-production-database",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/14",
+      "excerpt": "[R06] Production operator workstation initiates HTTPS on TCP 443 to Production integration API. That API initiates PostgreSQL on TCP 5432 to Production job database. There is no Testbed-to-production-database interface, no cloud-to-robot command interface and no unrestricted lateral production access.",
+      "target_id": "production-database",
+      "field": "record",
+      "value": {
+        "id": "production-database",
+        "source": "prod-api",
+        "target": "prod-db",
+        "purpose": "production database access",
+        "protocol": "PostgreSQL",
+        "port": 5432,
+        "initiator": "prod-api",
+        "data_direction": "bidirectional",
+        "enforcement": [],
+        "delivery": null
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-trial-wireless",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/15",
+      "excerpt": "[R07] Trial robot associates with Trial wireless access point using WPA3-Enterprise over IEEE 802.11. Its separate application session initiates MQTT over TLS on TCP 8883 to Robot controller; Trial virtual firewall is the enforcement reference. Trial operator tablet initiates HTTPS on TCP 443 to Robot controller through the same enforcement control. Radio association is not evidence of application session initiation.",
+      "target_id": "trial-wireless",
+      "field": "record",
+      "value": {
+        "id": "trial-wireless",
+        "source": "trial-robot",
+        "target": "trial-ap",
+        "purpose": "wireless association",
+        "protocol": "IEEE 802.11 / WPA3-Enterprise",
+        "port": null,
+        "initiator": "trial-robot",
+        "data_direction": "bidirectional",
+        "enforcement": [],
+        "delivery": null
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-robot-telemetry",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/15",
+      "excerpt": "[R07] Trial robot associates with Trial wireless access point using WPA3-Enterprise over IEEE 802.11. Its separate application session initiates MQTT over TLS on TCP 8883 to Robot controller; Trial virtual firewall is the enforcement reference. Trial operator tablet initiates HTTPS on TCP 443 to Robot controller through the same enforcement control. Radio association is not evidence of application session initiation.",
+      "target_id": "robot-telemetry",
+      "field": "record",
+      "value": {
+        "id": "robot-telemetry",
+        "source": "trial-robot",
+        "target": "robot-controller",
+        "purpose": "robot telemetry",
+        "protocol": "MQTT/TLS",
+        "port": 8883,
+        "initiator": "trial-robot",
+        "data_direction": "bidirectional",
+        "enforcement": [
+          "trial-firewall"
+        ],
+        "delivery": "publish"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-trial-operator-access",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/15",
+      "excerpt": "[R07] Trial robot associates with Trial wireless access point using WPA3-Enterprise over IEEE 802.11. Its separate application session initiates MQTT over TLS on TCP 8883 to Robot controller; Trial virtual firewall is the enforcement reference. Trial operator tablet initiates HTTPS on TCP 443 to Robot controller through the same enforcement control. Radio association is not evidence of application session initiation.",
+      "target_id": "trial-operator-access",
+      "field": "record",
+      "value": {
+        "id": "trial-operator-access",
+        "source": "trial-tablet",
+        "target": "robot-controller",
+        "purpose": "trial operator application",
+        "protocol": "HTTPS",
+        "port": 443,
+        "initiator": "trial-tablet",
+        "data_direction": "bidirectional",
+        "enforcement": [
+          "trial-firewall"
+        ],
+        "delivery": null
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-trial-database",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/16",
+      "excerpt": "[R08] Robot controller initiates PostgreSQL on TCP 5432 to Trial data store through Trial virtual firewall. Trial integration gateway polls Robot controller using HTTPS on TCP 443 to read a bounded status snapshot. Telemetry delivery retries, queueing limits and failure handling are not yet specified.",
+      "target_id": "trial-database",
+      "field": "record",
+      "value": {
+        "id": "trial-database",
+        "source": "robot-controller",
+        "target": "trial-data",
+        "purpose": "trial database access",
+        "protocol": "PostgreSQL",
+        "port": 5432,
+        "initiator": "robot-controller",
+        "data_direction": "bidirectional",
+        "enforcement": [
+          "trial-firewall"
+        ],
+        "delivery": null
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-trial-snapshot",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/16",
+      "excerpt": "[R08] Robot controller initiates PostgreSQL on TCP 5432 to Trial data store through Trial virtual firewall. Trial integration gateway polls Robot controller using HTTPS on TCP 443 to read a bounded status snapshot. Telemetry delivery retries, queueing limits and failure handling are not yet specified.",
+      "target_id": "trial-snapshot",
+      "field": "record",
+      "value": {
+        "id": "trial-snapshot",
+        "source": "trial-gateway",
+        "target": "robot-controller",
+        "purpose": "bounded status snapshot",
+        "protocol": "HTTPS",
+        "port": 443,
+        "initiator": "trial-gateway",
+        "data_direction": "bidirectional",
+        "enforcement": [],
+        "delivery": "pull"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-production-handoff",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/17",
+      "excerpt": "[R09] The only proposed Testbed-to-Production handoff is Trial integration gateway initiating HTTPS on TCP 443 to Production integration API, through Trial virtual firewall. It pushes only trial ID, job ID, readiness state and timestamp; robot control commands and personal data are excluded. The gateway uses a dedicated trial service identity. Production must validate that identity and schema and may reject the request. This synthetic intended rule is not organisational approval.",
+      "target_id": "production-handoff",
+      "field": "record",
+      "value": {
+        "id": "production-handoff",
+        "source": "trial-gateway",
+        "target": "prod-api",
+        "purpose": "bounded trial status handoff",
+        "protocol": "HTTPS",
+        "port": 443,
+        "initiator": "trial-gateway",
+        "data_direction": "source_to_target",
+        "enforcement": [
+          "trial-firewall"
+        ],
+        "delivery": "push"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-cloud-telemetry",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/18",
+      "excerpt": "[R10] Trial integration gateway initiates HTTPS on TCP 443 to Amazon API Gateway for outbound operational telemetry, through Trial virtual firewall. The telemetry excludes production records and personal data. A dedicated IAM principal signs the requests; key provisioning and rotation remain to be designed. API Gateway invokes the AWS Lambda telemetry function using the AWS-managed Lambda integration, and Lambda writes telemetry objects to Amazon S3 using HTTPS on TCP 443. No reverse command path is defined.",
+      "target_id": "cloud-telemetry",
+      "field": "record",
+      "value": {
+        "id": "cloud-telemetry",
+        "source": "trial-gateway",
+        "target": "aws-api",
+        "purpose": "outbound trial telemetry",
+        "protocol": "HTTPS",
+        "port": 443,
+        "initiator": "trial-gateway",
+        "data_direction": "source_to_target",
+        "enforcement": [
+          "trial-firewall"
+        ],
+        "delivery": "push"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-telemetry-transform",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/18",
+      "excerpt": "[R10] Trial integration gateway initiates HTTPS on TCP 443 to Amazon API Gateway for outbound operational telemetry, through Trial virtual firewall. The telemetry excludes production records and personal data. A dedicated IAM principal signs the requests; key provisioning and rotation remain to be designed. API Gateway invokes the AWS Lambda telemetry function using the AWS-managed Lambda integration, and Lambda writes telemetry objects to Amazon S3 using HTTPS on TCP 443. No reverse command path is defined.",
+      "target_id": "telemetry-transform",
+      "field": "record",
+      "value": {
+        "id": "telemetry-transform",
+        "source": "aws-api",
+        "target": "aws-function",
+        "purpose": "telemetry transformation",
+        "protocol": "AWS-managed Lambda integration",
+        "port": null,
+        "initiator": "aws-api",
+        "data_direction": "source_to_target",
+        "enforcement": [],
+        "delivery": null
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-telemetry-store",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/18",
+      "excerpt": "[R10] Trial integration gateway initiates HTTPS on TCP 443 to Amazon API Gateway for outbound operational telemetry, through Trial virtual firewall. The telemetry excludes production records and personal data. A dedicated IAM principal signs the requests; key provisioning and rotation remain to be designed. API Gateway invokes the AWS Lambda telemetry function using the AWS-managed Lambda integration, and Lambda writes telemetry objects to Amazon S3 using HTTPS on TCP 443. No reverse command path is defined.",
+      "target_id": "telemetry-store",
+      "field": "record",
+      "value": {
+        "id": "telemetry-store",
+        "source": "aws-function",
+        "target": "aws-telemetry",
+        "purpose": "telemetry object writes",
+        "protocol": "HTTPS",
+        "port": 443,
+        "initiator": "aws-function",
+        "data_direction": "source_to_target",
+        "enforcement": [],
+        "delivery": null
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-trial-isolation",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/17",
+      "excerpt": "[R09] The only proposed Testbed-to-Production handoff is Trial integration gateway initiating HTTPS on TCP 443 to Production integration API, through Trial virtual firewall. It pushes only trial ID, job ID, readiness state and timestamp; robot control commands and personal data are excluded. The gateway uses a dedicated trial service identity. Production must validate that identity and schema and may reject the request. This synthetic intended rule is not organisational approval.",
+      "target_id": "trial-isolation",
+      "field": "record",
+      "value": {
+        "id": "trial-isolation",
+        "key": "testbed_production_isolation",
+        "value": "deny all except the named production-handoff interface and bounded schema"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-telemetry-content",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/18",
+      "excerpt": "[R10] Trial integration gateway initiates HTTPS on TCP 443 to Amazon API Gateway for outbound operational telemetry, through Trial virtual firewall. The telemetry excludes production records and personal data. A dedicated IAM principal signs the requests; key provisioning and rotation remain to be designed. API Gateway invokes the AWS Lambda telemetry function using the AWS-managed Lambda integration, and Lambda writes telemetry objects to Amazon S3 using HTTPS on TCP 443. No reverse command path is defined.",
+      "target_id": "telemetry-content",
+      "field": "record",
+      "value": {
+        "id": "telemetry-content",
+        "key": "cloud_payload",
+        "value": "trial operational telemetry only; exclude production records and personal data"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-cloud-connectivity",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/20",
+      "excerpt": "[R11] AWS region, data residency approval, private connectivity versus public TLS, telemetry retention, permitted telemetry schema, credential lifecycle and the trial decommissioning date remain undecided. A routed network path or a cloud icon must not be treated as approval. Production database and trial raw data stay on premises; only the explicitly bounded status/telemetry payloads may cross the stated interfaces.",
+      "target_id": "cloud-connectivity",
+      "field": "record",
+      "value": {
+        "id": "cloud-connectivity",
+        "key": "cloud_connectivity_approval",
+        "value": null
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-cloud-residency",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/20",
+      "excerpt": "[R11] AWS region, data residency approval, private connectivity versus public TLS, telemetry retention, permitted telemetry schema, credential lifecycle and the trial decommissioning date remain undecided. A routed network path or a cloud icon must not be treated as approval. Production database and trial raw data stay on premises; only the explicitly bounded status/telemetry payloads may cross the stated interfaces.",
+      "target_id": "cloud-residency",
+      "field": "record",
+      "value": {
+        "id": "cloud-residency",
+        "key": "cloud_region_and_residency",
+        "value": null
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-trial-retention",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/20",
+      "excerpt": "[R11] AWS region, data residency approval, private connectivity versus public TLS, telemetry retention, permitted telemetry schema, credential lifecycle and the trial decommissioning date remain undecided. A routed network path or a cloud icon must not be treated as approval. Production database and trial raw data stay on premises; only the explicitly bounded status/telemetry payloads may cross the stated interfaces.",
+      "target_id": "trial-retention",
+      "field": "record",
+      "value": {
+        "id": "trial-retention",
+        "key": "telemetry_retention",
+        "value": null
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-hybrid-availability",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/21",
+      "excerpt": "[R12] Production has the stated API and database redundancy. Testbed recovery is manual restart and does not have a production availability commitment. End-to-end resilience, recovery times and evidence of firewall configuration are unverified. Do not describe this source as proof of compliance or operational readiness.",
+      "target_id": "hybrid-availability",
+      "field": "record",
+      "value": {
+        "id": "hybrid-availability",
+        "key": "availability_strategy",
+        "value": "Production API active-active and database active-passive; Testbed manual restart; end-to-end recovery unverified"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-cloud-connectivity-question",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/20",
+      "excerpt": "[R11] AWS region, data residency approval, private connectivity versus public TLS, telemetry retention, permitted telemetry schema, credential lifecycle and the trial decommissioning date remain undecided. A routed network path or a cloud icon must not be treated as approval. Production database and trial raw data stay on premises; only the explicitly bounded status/telemetry payloads may cross the stated interfaces.",
+      "target_id": "cloud-connectivity-question",
+      "field": "record",
+      "value": {
+        "id": "cloud-connectivity-question",
+        "question": "Which AWS connectivity approach should be reviewed for this trial?",
+        "target_id": "cloud-connectivity",
+        "field": "value",
+        "options": [
+          "Private connectivity design review",
+          "Public TLS with signed requests and strict egress review",
+          "Not decided"
+        ]
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-cloud-retention-question",
+      "source_id": "demo-robotics-source",
+      "source_version": "1.0",
+      "locator": "paragraph/20",
+      "excerpt": "[R11] AWS region, data residency approval, private connectivity versus public TLS, telemetry retention, permitted telemetry schema, credential lifecycle and the trial decommissioning date remain undecided. A routed network path or a cloud icon must not be treated as approval. Production database and trial raw data stay on premises; only the explicitly bounded status/telemetry payloads may cross the stated interfaces.",
+      "target_id": "cloud-retention-question",
+      "field": "record",
+      "value": {
+        "id": "cloud-retention-question",
+        "question": "How long should trial telemetry be retained in AWS?",
+        "target_id": "trial-retention",
+        "field": "value",
+        "options": [
+          "7 days for the trial",
+          "30 days for trial analysis",
+          "Not decided"
+        ]
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    }
+  ],
+  "constraints": [
+    {
+      "id": "trial-isolation",
+      "scope": "project",
+      "key": "testbed_production_isolation",
+      "value": "deny all except the named production-handoff interface and bounded schema",
+      "evidence": [
+        "claim-trial-isolation"
+      ]
+    },
+    {
+      "id": "telemetry-content",
+      "scope": "project",
+      "key": "cloud_payload",
+      "value": "trial operational telemetry only; exclude production records and personal data",
+      "evidence": [
+        "claim-telemetry-content"
+      ]
+    },
+    {
+      "id": "cloud-connectivity",
+      "scope": "project",
+      "key": "cloud_connectivity_approval",
+      "value": null,
+      "evidence": [
+        "claim-cloud-connectivity"
+      ]
+    },
+    {
+      "id": "cloud-residency",
+      "scope": "project",
+      "key": "cloud_region_and_residency",
+      "value": null,
+      "evidence": [
+        "claim-cloud-residency"
+      ]
+    },
+    {
+      "id": "trial-retention",
+      "scope": "project",
+      "key": "telemetry_retention",
+      "value": null,
+      "evidence": [
+        "claim-trial-retention"
+      ]
+    },
+    {
+      "id": "hybrid-availability",
+      "scope": "project",
+      "key": "availability_strategy",
+      "value": "Production API active-active and database active-passive; Testbed manual restart; end-to-end recovery unverified",
+      "evidence": [
+        "claim-hybrid-availability"
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "id": "cloud-connectivity-question",
+      "question": "Which AWS connectivity approach should be reviewed for this trial?",
+      "target_id": "cloud-connectivity",
+      "field": "value",
+      "options": [
+        "Private connectivity design review",
+        "Public TLS with signed requests and strict egress review",
+        "Not decided"
+      ],
+      "answer": null,
+      "state": "unknown",
+      "evidence": [
+        "claim-cloud-connectivity-question"
+      ]
+    },
+    {
+      "id": "cloud-retention-question",
+      "question": "How long should trial telemetry be retained in AWS?",
+      "target_id": "trial-retention",
+      "field": "value",
+      "options": [
+        "7 days for the trial",
+        "30 days for trial analysis",
+        "Not decided"
+      ],
+      "answer": null,
+      "state": "unknown",
+      "evidence": [
+        "claim-cloud-retention-question"
+      ]
+    }
+  ],
+  "views": {
+    "logical": {
+      "type": "logical",
+      "revision": 0,
+      "placements": {
+        "prod-client": {
+          "x": 20.0,
+          "y": 30.0,
+          "width": 235.0,
+          "height": 200.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "prod-z1": {
+          "x": 275.0,
+          "y": 30.0,
+          "width": 480.0,
+          "height": 200.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "prod-z2": {
+          "x": 775.0,
+          "y": 30.0,
+          "width": 235.0,
+          "height": 200.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "test-client": {
+          "x": 20.0,
+          "y": 260.0,
+          "width": 235.0,
+          "height": 440.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "test-z1": {
+          "x": 275.0,
+          "y": 260.0,
+          "width": 480.0,
+          "height": 440.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "test-z2": {
+          "x": 775.0,
+          "y": 260.0,
+          "width": 235.0,
+          "height": 440.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "aws-z1": {
+          "x": 275.0,
+          "y": 740.0,
+          "width": 480.0,
+          "height": 225.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "aws-z2": {
+          "x": 775.0,
+          "y": 740.0,
+          "width": 235.0,
+          "height": 225.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "prod-operator": {
+          "x": 25.0,
+          "y": 70.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "prod-api": {
+          "x": 145.0,
+          "y": 70.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "prod-db": {
+          "x": 25.0,
+          "y": 70.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "trial-robot": {
+          "x": 25.0,
+          "y": 70.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "trial-tablet": {
+          "x": 25.0,
+          "y": 195.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "trial-ap": {
+          "x": 25.0,
+          "y": 320.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "robot-controller": {
+          "x": 15.0,
+          "y": 70.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "trial-gateway": {
+          "x": 280.0,
+          "y": 195.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "trial-host": {
+          "x": 15.0,
+          "y": 320.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "trial-firewall": {
+          "x": 280.0,
+          "y": 320.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "trial-data": {
+          "x": 25.0,
+          "y": 70.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "aws-api": {
+          "x": 15.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "aws-function": {
+          "x": 280.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "aws-telemetry": {
+          "x": 25.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        }
+      },
+      "routes": {
+        "production-access": {
+          "style": "orthogonal",
+          "points": [],
+          "source_handle": "right",
+          "target_handle": "left",
+          "locked": false
+        },
+        "production-database": {
+          "style": "orthogonal",
+          "points": [],
+          "source_handle": "right",
+          "target_handle": "left",
+          "locked": false
+        },
+        "trial-wireless": {
+          "style": "orthogonal",
+          "points": [
+            {
+              "x": 30.0,
+              "y": 357.0
+            },
+            {
+              "x": 30.0,
+              "y": 607.0
+            }
+          ],
+          "source_handle": "left",
+          "target_handle": "left",
+          "locked": true
+        },
+        "robot-telemetry": {
+          "style": "orthogonal",
+          "points": [
+            {
+              "x": 10.0,
+              "y": 357.0
+            },
+            {
+              "x": 10.0,
+              "y": 240.0
+            },
+            {
+              "x": 265.0,
+              "y": 240.0
+            },
+            {
+              "x": 265.0,
+              "y": 357.0
+            }
+          ],
+          "source_handle": "left",
+          "target_handle": "left",
+          "locked": true
+        },
+        "trial-operator-access": {
+          "style": "orthogonal",
+          "points": [
+            {
+              "x": 382.5,
+              "y": 482.0
+            }
+          ],
+          "source_handle": "right",
+          "target_handle": "bottom",
+          "locked": true
+        },
+        "trial-database": {
+          "style": "orthogonal",
+          "points": [],
+          "source_handle": "right",
+          "target_handle": "left",
+          "locked": false
+        },
+        "trial-snapshot": {
+          "style": "orthogonal",
+          "points": [
+            {
+              "x": 647.5,
+              "y": 415.0
+            },
+            {
+              "x": 505.0,
+              "y": 415.0
+            },
+            {
+              "x": 505.0,
+              "y": 357.0
+            }
+          ],
+          "source_handle": "top",
+          "target_handle": "right",
+          "locked": true
+        },
+        "production-handoff": {
+          "style": "orthogonal",
+          "points": [
+            {
+              "x": 765.0,
+              "y": 482.0
+            },
+            {
+              "x": 765.0,
+              "y": 245.0
+            },
+            {
+              "x": 512.5,
+              "y": 245.0
+            }
+          ],
+          "source_handle": "right",
+          "target_handle": "bottom",
+          "locked": true
+        },
+        "cloud-telemetry": {
+          "style": "orthogonal",
+          "points": [
+            {
+              "x": 647.5,
+              "y": 570.0
+            },
+            {
+              "x": 765.0,
+              "y": 570.0
+            },
+            {
+              "x": 765.0,
+              "y": 720.0
+            },
+            {
+              "x": 265.0,
+              "y": 720.0
+            },
+            {
+              "x": 265.0,
+              "y": 832.0
+            }
+          ],
+          "source_handle": "bottom",
+          "target_handle": "left",
+          "locked": true
+        },
+        "telemetry-transform": {
+          "style": "orthogonal",
+          "points": [
+            {
+              "x": 382.5,
+              "y": 940.0
+            },
+            {
+              "x": 647.5,
+              "y": 940.0
+            }
+          ],
+          "source_handle": "bottom",
+          "target_handle": "bottom",
+          "locked": true
+        },
+        "telemetry-store": {
+          "style": "orthogonal",
+          "points": [
+            {
+              "x": 647.5,
+              "y": 940.0
+            },
+            {
+              "x": 892.5,
+              "y": 940.0
+            }
+          ],
+          "source_handle": "bottom",
+          "target_handle": "bottom",
+          "locked": true
+        }
+      },
+      "mappings": {
+        "prod-client": [
+          "prod-client"
+        ],
+        "prod-z1": [
+          "prod-z1"
+        ],
+        "prod-z2": [
+          "prod-z2"
+        ],
+        "test-client": [
+          "test-client"
+        ],
+        "test-z1": [
+          "test-z1"
+        ],
+        "test-z2": [
+          "test-z2"
+        ],
+        "aws-z1": [
+          "aws-z1"
+        ],
+        "aws-z2": [
+          "aws-z2"
+        ],
+        "prod-operator": [
+          "prod-operator"
+        ],
+        "prod-api": [
+          "prod-api"
+        ],
+        "prod-db": [
+          "prod-db"
+        ],
+        "trial-robot": [
+          "trial-robot"
+        ],
+        "trial-tablet": [
+          "trial-tablet"
+        ],
+        "trial-ap": [
+          "trial-ap"
+        ],
+        "trial-host": [
+          "trial-host"
+        ],
+        "robot-controller": [
+          "robot-controller"
+        ],
+        "trial-gateway": [
+          "trial-gateway"
+        ],
+        "trial-firewall": [
+          "trial-firewall"
+        ],
+        "trial-data": [
+          "trial-data"
+        ],
+        "aws-api": [
+          "aws-api"
+        ],
+        "aws-function": [
+          "aws-function"
+        ],
+        "aws-telemetry": [
+          "aws-telemetry"
+        ],
+        "production-access": [
+          "production-access"
+        ],
+        "production-database": [
+          "production-database"
+        ],
+        "trial-wireless": [
+          "trial-wireless"
+        ],
+        "robot-telemetry": [
+          "robot-telemetry"
+        ],
+        "trial-operator-access": [
+          "trial-operator-access"
+        ],
+        "trial-database": [
+          "trial-database"
+        ],
+        "trial-snapshot": [
+          "trial-snapshot"
+        ],
+        "production-handoff": [
+          "production-handoff"
+        ],
+        "cloud-telemetry": [
+          "cloud-telemetry"
+        ],
+        "telemetry-transform": [
+          "telemetry-transform"
+        ],
+        "telemetry-store": [
+          "telemetry-store"
+        ]
+      }
+    },
+    "sv1": {
+      "type": "sv1",
+      "revision": 0,
+      "placements": {
+        "production-system": {
+          "x": 25.0,
+          "y": 50.0,
+          "width": 320.0,
+          "height": 190.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "testbed-system": {
+          "x": 375.0,
+          "y": 50.0,
+          "width": 320.0,
+          "height": 190.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "telemetry-system": {
+          "x": 725.0,
+          "y": 50.0,
+          "width": 320.0,
+          "height": 190.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        }
+      },
+      "routes": {
+        "aggregate:testbed-system:production-system": {
+          "style": "orthogonal",
+          "points": [
+            {
+              "x": 535.0,
+              "y": 280.0
+            },
+            {
+              "x": 185.0,
+              "y": 280.0
+            }
+          ],
+          "source_handle": "bottom",
+          "target_handle": "bottom",
+          "locked": true
+        },
+        "aggregate:testbed-system:telemetry-system": {
+          "style": "orthogonal",
+          "points": [
+            {
+              "x": 535.0,
+              "y": 330.0
+            },
+            {
+              "x": 885.0,
+              "y": 330.0
+            }
+          ],
+          "source_handle": "bottom",
+          "target_handle": "bottom",
+          "locked": true
+        }
+      },
+      "mappings": {
+        "production-system": [
+          "prod-operator",
+          "prod-api",
+          "prod-db"
+        ],
+        "testbed-system": [
+          "trial-robot",
+          "trial-tablet",
+          "trial-ap",
+          "trial-host",
+          "robot-controller",
+          "trial-gateway",
+          "trial-firewall",
+          "trial-data"
+        ],
+        "telemetry-system": [
+          "aws-api",
+          "aws-function",
+          "aws-telemetry"
+        ],
+        "aggregate:testbed-system:production-system": [
+          "production-handoff"
+        ],
+        "aggregate:testbed-system:telemetry-system": [
+          "cloud-telemetry"
+        ]
+      }
+    },
+    "sv2": {
+      "type": "sv2",
+      "revision": 0,
+      "placements": {
+        "prod-client": {
+          "x": 20.0,
+          "y": 30.0,
+          "width": 235.0,
+          "height": 200.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "prod-z1": {
+          "x": 275.0,
+          "y": 30.0,
+          "width": 480.0,
+          "height": 200.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "prod-z2": {
+          "x": 775.0,
+          "y": 30.0,
+          "width": 235.0,
+          "height": 200.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "test-client": {
+          "x": 20.0,
+          "y": 260.0,
+          "width": 235.0,
+          "height": 440.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "test-z1": {
+          "x": 275.0,
+          "y": 260.0,
+          "width": 480.0,
+          "height": 440.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "test-z2": {
+          "x": 775.0,
+          "y": 260.0,
+          "width": 235.0,
+          "height": 440.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "aws-z1": {
+          "x": 275.0,
+          "y": 740.0,
+          "width": 480.0,
+          "height": 225.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "aws-z2": {
+          "x": 775.0,
+          "y": 740.0,
+          "width": 235.0,
+          "height": 225.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "prod-operator": {
+          "x": 25.0,
+          "y": 70.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "prod-api": {
+          "x": 145.0,
+          "y": 70.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "prod-db": {
+          "x": 25.0,
+          "y": 70.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "trial-robot": {
+          "x": 25.0,
+          "y": 70.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "trial-tablet": {
+          "x": 25.0,
+          "y": 195.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "trial-ap": {
+          "x": 25.0,
+          "y": 320.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "robot-controller": {
+          "x": 15.0,
+          "y": 70.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "trial-gateway": {
+          "x": 280.0,
+          "y": 195.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "trial-host": {
+          "x": 15.0,
+          "y": 320.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "trial-firewall": {
+          "x": 280.0,
+          "y": 320.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "trial-data": {
+          "x": 25.0,
+          "y": 70.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "aws-api": {
+          "x": 15.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "aws-function": {
+          "x": 280.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "aws-telemetry": {
+          "x": 25.0,
+          "y": 65.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        }
+      },
+      "routes": {
+        "production-access": {
+          "style": "orthogonal",
+          "points": [],
+          "source_handle": "right",
+          "target_handle": "left",
+          "locked": false
+        },
+        "production-database": {
+          "style": "orthogonal",
+          "points": [],
+          "source_handle": "right",
+          "target_handle": "left",
+          "locked": false
+        },
+        "trial-wireless": {
+          "style": "orthogonal",
+          "points": [
+            {
+              "x": 30.0,
+              "y": 357.0
+            },
+            {
+              "x": 30.0,
+              "y": 607.0
+            }
+          ],
+          "source_handle": "left",
+          "target_handle": "left",
+          "locked": true
+        },
+        "robot-telemetry": {
+          "style": "orthogonal",
+          "points": [
+            {
+              "x": 10.0,
+              "y": 357.0
+            },
+            {
+              "x": 10.0,
+              "y": 240.0
+            },
+            {
+              "x": 265.0,
+              "y": 240.0
+            },
+            {
+              "x": 265.0,
+              "y": 357.0
+            }
+          ],
+          "source_handle": "left",
+          "target_handle": "left",
+          "locked": true
+        },
+        "trial-operator-access": {
+          "style": "orthogonal",
+          "points": [
+            {
+              "x": 382.5,
+              "y": 482.0
+            }
+          ],
+          "source_handle": "right",
+          "target_handle": "bottom",
+          "locked": true
+        },
+        "trial-database": {
+          "style": "orthogonal",
+          "points": [],
+          "source_handle": "right",
+          "target_handle": "left",
+          "locked": false
+        },
+        "trial-snapshot": {
+          "style": "orthogonal",
+          "points": [
+            {
+              "x": 647.5,
+              "y": 415.0
+            },
+            {
+              "x": 505.0,
+              "y": 415.0
+            },
+            {
+              "x": 505.0,
+              "y": 357.0
+            }
+          ],
+          "source_handle": "top",
+          "target_handle": "right",
+          "locked": true
+        },
+        "production-handoff": {
+          "style": "orthogonal",
+          "points": [
+            {
+              "x": 765.0,
+              "y": 482.0
+            },
+            {
+              "x": 765.0,
+              "y": 245.0
+            },
+            {
+              "x": 512.5,
+              "y": 245.0
+            }
+          ],
+          "source_handle": "right",
+          "target_handle": "bottom",
+          "locked": true
+        },
+        "cloud-telemetry": {
+          "style": "orthogonal",
+          "points": [
+            {
+              "x": 647.5,
+              "y": 570.0
+            },
+            {
+              "x": 765.0,
+              "y": 570.0
+            },
+            {
+              "x": 765.0,
+              "y": 720.0
+            },
+            {
+              "x": 265.0,
+              "y": 720.0
+            },
+            {
+              "x": 265.0,
+              "y": 832.0
+            }
+          ],
+          "source_handle": "bottom",
+          "target_handle": "left",
+          "locked": true
+        },
+        "telemetry-transform": {
+          "style": "orthogonal",
+          "points": [
+            {
+              "x": 382.5,
+              "y": 940.0
+            },
+            {
+              "x": 647.5,
+              "y": 940.0
+            }
+          ],
+          "source_handle": "bottom",
+          "target_handle": "bottom",
+          "locked": true
+        },
+        "telemetry-store": {
+          "style": "orthogonal",
+          "points": [
+            {
+              "x": 647.5,
+              "y": 940.0
+            },
+            {
+              "x": 892.5,
+              "y": 940.0
+            }
+          ],
+          "source_handle": "bottom",
+          "target_handle": "bottom",
+          "locked": true
+        }
+      },
+      "mappings": {
+        "prod-client": [
+          "prod-client"
+        ],
+        "prod-z1": [
+          "prod-z1"
+        ],
+        "prod-z2": [
+          "prod-z2"
+        ],
+        "test-client": [
+          "test-client"
+        ],
+        "test-z1": [
+          "test-z1"
+        ],
+        "test-z2": [
+          "test-z2"
+        ],
+        "aws-z1": [
+          "aws-z1"
+        ],
+        "aws-z2": [
+          "aws-z2"
+        ],
+        "prod-operator": [
+          "prod-operator"
+        ],
+        "prod-api": [
+          "prod-api"
+        ],
+        "prod-db": [
+          "prod-db"
+        ],
+        "trial-robot": [
+          "trial-robot"
+        ],
+        "trial-tablet": [
+          "trial-tablet"
+        ],
+        "trial-ap": [
+          "trial-ap"
+        ],
+        "trial-host": [
+          "trial-host"
+        ],
+        "robot-controller": [
+          "robot-controller"
+        ],
+        "trial-gateway": [
+          "trial-gateway"
+        ],
+        "trial-firewall": [
+          "trial-firewall"
+        ],
+        "trial-data": [
+          "trial-data"
+        ],
+        "aws-api": [
+          "aws-api"
+        ],
+        "aws-function": [
+          "aws-function"
+        ],
+        "aws-telemetry": [
+          "aws-telemetry"
+        ],
+        "production-access": [
+          "production-access"
+        ],
+        "production-database": [
+          "production-database"
+        ],
+        "trial-wireless": [
+          "trial-wireless"
+        ],
+        "robot-telemetry": [
+          "robot-telemetry"
+        ],
+        "trial-operator-access": [
+          "trial-operator-access"
+        ],
+        "trial-database": [
+          "trial-database"
+        ],
+        "trial-snapshot": [
+          "trial-snapshot"
+        ],
+        "production-handoff": [
+          "production-handoff"
+        ],
+        "cloud-telemetry": [
+          "cloud-telemetry"
+        ],
+        "telemetry-transform": [
+          "telemetry-transform"
+        ],
+        "telemetry-store": [
+          "telemetry-store"
+        ]
+      }
+    }
+  },
+  "notes": "Synthetic authored example. Confirmed claims mean confirmed within this fictional reference; they are not organisational approval. See Sources for the complete specification and open decisions."
+}

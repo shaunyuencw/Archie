@@ -1,11 +1,18 @@
 import {test,expect} from '@playwright/test';
 const mod=process.platform==='darwin'?'Meta':'Control';
+test.afterEach(async({page},info)=>{
+ if(info.status===info.expectedStatus)return;
+ const pid=await page.getByLabel('Open project').inputValue();
+ const graph=pid?await(await page.request.get(`/api/projects/${pid}/views/logical`)).json():null;
+ const dom=await page.locator('.react-flow__node').evaluateAll(elements=>elements.map(element=>({id:element.getAttribute('data-id'),style:element.getAttribute('style'),visibility:getComputedStyle(element).visibility,rect:{width:element.getBoundingClientRect().width,height:element.getBoundingClientRect().height}})));
+ await info.attach('rendered-graph-diagnostics',{body:JSON.stringify({pid,busy:await page.getByRole('status').count(),graph,dom},null,2),contentType:'application/json'});
+});
 
 test('canvas shortcuts, groups, clipboard, delete and history preserve references without AI',async({page})=>{
  const calls:string[]=[];page.on('request',r=>{if(/\/(runs|sources)(\/|$)/.test(new URL(r.url()).pathname))calls.push(r.url())});
- await page.goto('/');await page.getByRole('button',{name:'Load demo A',exact:true}).click();
+ await page.goto('/');await page.getByText('Legacy examples',{exact:true}).click();await page.getByRole('button',{name:'Load demo A',exact:true}).click();
  const node=(id:string)=>page.locator(`.react-flow__node[data-id="${id}"]`);
- await expect(node('vms')).toBeVisible();const pid=await page.getByLabel('Open project').inputValue();
+ await expect(node('vms')).toBeVisible();await expect(page.getByLabel('Open project')).not.toHaveValue('');const pid=await page.getByLabel('Open project').inputValue();
  const snapshot=async()=>await (await page.request.get('/api/projects/'+pid)).json();
  const initial=await snapshot(),canvas=page.getByRole('region',{name:'Architecture canvas'});
  await node('vms').click();await page.keyboard.press('ArrowRight');
@@ -20,6 +27,7 @@ test('canvas shortcuts, groups, clipboard, delete and history preserve reference
  page.once('dialog',d=>d.accept());await page.keyboard.press('Backspace');await expect.poll(async()=>(await snapshot()).components.length).toBe(9);
  await page.keyboard.press(`${mod}+z`);await expect.poll(async()=>(await snapshot()).components.length).toBe(10);
  await page.keyboard.press('Escape');await expect(page.locator('.react-flow__node.selected')).toHaveCount(0);
+ await expect(node('vms')).toBeVisible();
  await node('vms').click({position:{x:10,y:10}});await node('analytics').click({modifiers:[mod]});await expect(page.locator('.react-flow__node.selected')).toHaveCount(2);
  const before=await snapshot();await page.keyboard.press('Shift+ArrowDown');await expect.poll(async()=>(await snapshot()).views.logical.placements.analytics.y).toBe(before.views.logical.placements.analytics.y+10);
  expect((await snapshot()).views.logical.placements.vms.y).toBe(before.views.logical.placements.vms.y+10);
@@ -28,12 +36,16 @@ test('canvas shortcuts, groups, clipboard, delete and history preserve reference
 });
 
 test('panels collapse, resize and persist on laptop; component library filters',async({page})=>{
- await page.setViewportSize({width:1440,height:900});await page.goto('/');await page.getByRole('button',{name:'Load demo A',exact:true}).click();
+ await page.setViewportSize({width:1440,height:900});await page.goto('/');await page.getByText('Legacy examples',{exact:true}).click();await page.getByRole('button',{name:'Load demo A',exact:true}).click();
  await expect(page.locator('.react-flow__node[data-id="vms"]')).toBeVisible();
  await page.getByLabel('Search component library').fill('workstation');await expect(page.locator('.palette button')).toHaveCount(1);
  const canvas=page.getByRole('region',{name:'Architecture canvas'}),initial=(await canvas.boundingBox())!.width;
  await page.getByLabel('Collapse Archie panel',{exact:true}).click();await expect(page.locator('.assistant')).toBeHidden();
+ await expect(page.getByLabel('Toggle Archie panel',{exact:true})).toHaveAttribute('aria-expanded','false');
+ await expect(page.getByLabel('Toggle Archie panel',{exact:true}).locator('.lucide-panel-left-open')).toBeVisible();
  await page.getByLabel('Collapse Inspector panel',{exact:true}).click();await expect(page.locator('.inspector-panel')).toBeHidden();expect((await canvas.boundingBox())!.width).toBeGreaterThan(initial+450);
+ await expect(page.getByLabel('Toggle Inspector panel',{exact:true})).toHaveAttribute('aria-expanded','false');
+ await expect(page.getByLabel('Toggle Inspector panel',{exact:true}).locator('.lucide-panel-right-open')).toBeVisible();
  await page.reload();await expect(page.locator('.assistant')).toBeHidden();await expect(page.locator('.inspector-panel')).toBeHidden();
  await page.getByLabel('Toggle Archie panel',{exact:true}).click();await page.getByLabel('Toggle Inspector panel',{exact:true}).click();
  const resizer=page.getByRole('separator',{name:'Resize left panel'});await resizer.focus();await page.keyboard.press('ArrowRight');await expect.poll(async()=>(await page.locator('.assistant').boundingBox())!.width).toBe(282);
@@ -43,18 +55,18 @@ test('panels collapse, resize and persist on laptop; component library filters',
 });
 
 test('late view responses cannot replace the selected view',async({page})=>{
- await page.goto('/');await page.getByRole('button',{name:'Load demo A',exact:true}).click();await expect(page.locator('.react-flow__node[data-id="vms"]')).toBeVisible();
+ await page.goto('/');await page.getByText('Legacy examples',{exact:true}).click();await page.getByRole('button',{name:'Load demo A',exact:true}).click();await expect(page.locator('.react-flow__node[data-id="vms"]')).toBeVisible();
  await page.route('**/views/logical',async route=>{const response=await route.fetch();await new Promise(resolve=>setTimeout(resolve,400));await route.fulfill({response})});
- await page.getByRole('button',{name:'SV-2-style',exact:true}).click();await expect(page.locator('.edge-label').first()).toContainText('initiator');
- await page.getByRole('button',{name:'Logical',exact:true}).click();await page.getByRole('button',{name:'SV-1-style',exact:true}).click();
+ await page.getByRole('button',{name:'Connection details',exact:true}).click();await expect(page.locator('.edge-label').first()).toContainText('initiator');
+ await page.getByRole('button',{name:'Architecture',exact:true}).click();await page.getByRole('button',{name:'System overview',exact:true}).click();
  await expect(page.locator('.react-flow__node[data-id="vms-system"]')).toBeVisible();await page.waitForTimeout(600);await expect(page.locator('.react-flow__node[data-id="vms-system"]')).toBeVisible();
 });
 
 test('group pointer movement and Option snapping preserve architectural deployment zones',async({page})=>{
  const calls:string[]=[];page.on('request',r=>{if(/\/(runs|sources)(\/|$)/.test(new URL(r.url()).pathname))calls.push(r.url())});
- await page.goto('/');await page.getByRole('button',{name:'Load demo A',exact:true}).click();
+ await page.goto('/');await page.getByText('Legacy examples',{exact:true}).click();await page.getByRole('button',{name:'Load demo A',exact:true}).click();
  const node=(id:string)=>page.locator(`.react-flow__node[data-id="${id}"]`);await expect(node('vms')).toBeVisible();
- const pid=await page.getByLabel('Open project').inputValue(),snapshot=async()=>await(await page.request.get('/api/projects/'+pid)).json();
+ await expect(page.getByLabel('Open project')).not.toHaveValue('');const pid=await page.getByLabel('Open project').inputValue(),snapshot=async()=>await(await page.request.get('/api/projects/'+pid)).json();
  await node('vms').click({position:{x:10,y:10}});await node('analytics').click({modifiers:[mod]});await expect(page.locator('.react-flow__node.selected')).toHaveCount(2);
  const before=await snapshot();let box=(await node('vms').boundingBox())!;
  await page.mouse.move(box.x+box.width/2,box.y+box.height-10);await page.mouse.down();await page.mouse.move(box.x+box.width/2+26,box.y+box.height+14,{steps:10});await page.mouse.up();

@@ -1,18 +1,20 @@
 from ..domain.models import Operation,Decision,uid
+from ..domain.naming import name_operation
+import re
 from ..domain.commands import command,apply,DomainError
 from ..ingest.parser import parse,batch
 from .mock import extract,edit
 
 def question_ops(p):
-    existing={d.id for d in p.decisions}; candidates=[]
+    existing={d.id for d in p.decisions}; candidates=[]; names={c.id:c.name for c in p.components}
     if any(c.key=='no_internet' and c.value is True for c in p.constraints) and any(c.internet_hosted for c in p.components):
         candidates.append(Decision(id='question-internet-conflict',question='Resolve the no-internet requirement and external dependency conflict?',field='resolution',options=['Retain offline requirement and redesign','Request an explicit exception'],evidence=[c.id for c in p.claims if c.target_id in {'offline','cloud'}]))
     if any(c.key=='resilience_required' and c.value is True for c in p.constraints) and any(c.key=='availability_strategy' and 'single_instance' in str(c.value) for c in p.constraints):
         candidates.append(Decision(id='question-resilience-conflict',question='Resolve resilience versus single-instance design?',field='resolution',options=['Define recovery or redundancy','Revisit resilience requirement'],evidence=[c.id for c in p.claims if c.target_id in {'resilience','availability'}]))
     for i in p.interfaces:
-        if i.purpose=='events' and i.delivery is None: candidates.append(Decision(id='question-delivery-'+i.id,question='How are events delivered?',target_id=i.id,field='delivery',options=['push','pull'],evidence=i.evidence))
-        if i.initiator is None: candidates.append(Decision(id='question-initiator-'+i.id,question=f'Who initiates {i.id}?',target_id=i.id,field='initiator',options=[i.source,i.target],evidence=i.evidence))
-        if i.purpose is None: candidates.insert(0,Decision(id='question-purpose-'+i.id,question=f'What is the administration route purpose for {i.id}?',target_id=i.id,field='purpose',options=['management','integration','video'],evidence=i.evidence))
+        if i.purpose=='events' and i.delivery is None: candidates.append(Decision(id='question-delivery-'+i.id,question=f'How should events be delivered between {names[i.source]} and {names[i.target]}?',target_id=i.id,field='delivery',options=['push','pull'],evidence=i.evidence))
+        if i.initiator is None: candidates.append(Decision(id='question-initiator-'+i.id,question=f'Which component starts the connection between {names[i.source]} and {names[i.target]}?',target_id=i.id,field='initiator',options=[i.source,i.target],evidence=i.evidence))
+        if i.purpose is None: candidates.insert(0,Decision(id='question-purpose-'+i.id,question=f'What is the connection between {names[i.source]} and {names[i.target]} used for?',target_id=i.id,field='purpose',options=['management','integration','video'],evidence=i.evidence))
     for c in p.constraints:
         if c.key=='availability_strategy' and c.value is None: candidates.append(Decision(id='question-availability',question='What availability strategy is intended?',target_id=c.id,field='value',options=['active_passive','recovery_plan','single_instance'],evidence=c.evidence))
     capacity=max(0,3-sum(d.state=='unknown' for d in p.decisions))
@@ -33,6 +35,14 @@ def ingest(store,pid,data,name,kind='document',source_id=None):
     passages=batch(source)
     claims,ops=(edit(data.decode('utf-8'),p,source) if kind=='prompt' and p.components else ([],[]))
     if not ops: claims,ops=extract(source,passages,p)
+    # Mock uses a small deterministic naming heuristic; live providers supply their own title.
+    explicit=re.search(r'\b(?:rename|name|call)\s+(?:(?:this|the)\s+)?project\s+(?:to\s+)?["“]?(.+?)["”]?[.!]?$',data.decode('utf-8',errors='ignore'),re.I) if kind=='prompt' else None
+    suggestion=explicit.group(1).strip('"“”') if explicit else None
+    if suggestion is None and not p.components:
+        primary=next((o.value.get('name') for o in ops if o.entity=='components' and o.op=='add' and o.value.get('asset_id') in {'application','web-server','application-server','api-service','analytics-engine','event-broker'}),None)
+        if primary:suggestion=f'{primary} architecture'
+    naming=name_operation(p,source,suggestion)
+    if naming:ops=[naming]+ops
     processed=source.processed+[s.locator for s in passages]; remaining=[s for s in source.unprocessed if s not in processed]
     source.processed=processed;source.unprocessed=remaining
     source_op=Operation(op='update' if source_id else 'add',entity='sources',id=source.id,value=source.model_dump(exclude={'id'}))

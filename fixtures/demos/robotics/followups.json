@@ -1,0 +1,32 @@
+{
+  "synthetic": true,
+  "scenario": "Hybrid robotics trial",
+  "provider_notes": "Mock supports authored key-value fixtures and narrow add-workstation/rename prompts only. Natural-language technical specs and all broader follow-ups require an explicitly selected live provider. Review every change set before accepting. Ordinary edits and exports use no model calls.",
+  "prompts": [
+    {
+      "prompt": "Rename Trial integration gateway to Trial telemetry gateway",
+      "provider": "mock or live",
+      "expected": "Preview a rename only. Keep production-handoff and cloud-telemetry interface IDs and routes."
+    },
+    {
+      "prompt": "Add a second Trial robot in Testbed Client with its own MQTT over TLS TCP 8883 session to Robot controller through Trial virtual firewall. Keep production and AWS unchanged.",
+      "provider": "live",
+      "expected": "New physical robot, Testbed Client deployment and bounded interface only; no production-zone reassignment."
+    },
+    {
+      "prompt": "Set telemetry retention to 7 days for this trial. Do not change which payloads may leave the testbed.",
+      "provider": "live",
+      "expected": "Update the named retention constraint/decision; keep the production-data and personal-data exclusions."
+    },
+    {
+      "prompt": "Make Trial virtual firewall a pair of active-passive instances, hosted on Trial compute host. Keep all placements and routes.",
+      "provider": "live",
+      "expected": "Review explicit quantity 2 and active_passive deployment metadata. A shared host is still a common failure point; do not claim full resilience."
+    },
+    {
+      "prompt": "Remove the proposed production status handoff for the trial, leaving the AWS telemetry path unchanged.",
+      "provider": "live",
+      "expected": "Preview removal of production-handoff only and review before accepting; no component or cloud interface deletion."
+    }
+  ]
+}

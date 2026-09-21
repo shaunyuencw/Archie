@@ -48,6 +48,7 @@ def ingest_live(store,pid,data,name,provider,settings=None,adapter=None,source_i
         prompt=json.dumps({'task':'Extract source facts into proposed architecture records. Reuse IDs already listed; do not repeat an existing add operation.','source':{'id':'S1','passages':[{'locator':x.locator,'text':x.text} for x in group]},'context':context(p,''),'previous_proposed_ids':sorted(known)},separators=(',',':'))
         output=budget.call(prompt,pid,action,task='document',live_run=live_run,deadline=deadline)
         if output.content.tool:raise DomainError('insufficient_context','Document extraction requested more context; narrow the document selection.')
+        if combined.project_name is None:combined.project_name=output.content.project_name
         for op in output.content.operations:
             if op.op=='add' and op.id in known:raise DomainError('provider_output','Repeated proposed ID; no document changes were committed.')
             known.add(op.id);combined.operations.append(op)

@@ -16,7 +16,7 @@ export function deleteOperations(project:Project,ids:string[]):Operation[]{
 export function pasteOperations(clipboard:Clipboard,current:Project,view:string,offset=32):{operations:Operation[];ids:string[]}{
  const p=clipboard.project;
  if(p.id!==current.id)throw new Error('Copy and paste stays within the current project to preserve references.');
- if(view==='sv1'||clipboard.view==='sv1')throw new Error('Use Logical or SV-2 to duplicate individual components.');
+ if(view==='sv1'||clipboard.view==='sv1')throw new Error('Use Architecture or Connection details to duplicate individual components.');
  const selected=new Set(clipboard.ids);
  const zones=p.zones.filter(z=>selected.has(z.id));
  const zoneIds=new Set(zones.map(z=>z.id));
@@ -32,7 +32,7 @@ export function pasteOperations(clipboard:Clipboard,current:Project,view:string,
   const {id,...value}=c;
   operations.push({op:'add',entity:'components',id:ids.get(id)!,value:{...value,name:c.name+' copy',status:'proposed',evidence:[],audit_destination:remap(c.audit_destination),storage_destination:remap(c.storage_destination)}});
   const d=p.deployments.find(d=>d.component_id===c.id);
-  operations.push({op:'add',entity:'deployments',id:'tmp:'+crypto.randomUUID(),value:{component_id:ids.get(id),zone_id:remap(d?.zone_id||null),quantity:null}});
+  operations.push({op:'add',entity:'deployments',id:'tmp:'+crypto.randomUUID(),value:{component_id:ids.get(id),zone_id:remap(d?.zone_id||null),host_component_id:remap(d?.host_component_id||null),quantity:null}});
  }
  for(const e of interfaces){const {id,...value}=e;operations.push({op:'add',entity:'interfaces',id:ids.get(id)!,value:{...value,source:remap(e.source),target:remap(e.target),initiator:remap(e.initiator),enforcement:e.enforcement.map(remap),evidence:[]}});}
  for(const object of [...zones,...components]){

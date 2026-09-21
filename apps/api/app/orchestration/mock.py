@@ -57,8 +57,8 @@ def extract(source,passages,project):
         if ident in existing: continue # Preserve both claims; never silently replace source facts.
         clean=dict(values)
         if entity=='components':
-            zone=clean.pop('zone_id',None); quantity=clean.pop('quantity',None)
-            operations.append(Operation(op='add',entity='deployments',id='deployment-'+ident,value={'component_id':ident,'zone_id':zone,'quantity':quantity}))
+            deployment={key:clean.pop(key) for key in ('zone_id','quantity','redundancy_mode','host_component_id') if key in clean}
+            operations.append(Operation(op='add',entity='deployments',id='deployment-'+ident,value={'component_id':ident,**deployment}))
         if entity in ('components','interfaces','constraints'): clean['evidence']=[claim.id]
         operations.append(Operation(op='add',entity=entity,id=ident,value=clean))
     return claims,operations

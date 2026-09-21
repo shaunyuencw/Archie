@@ -1,0 +1,366 @@
+{
+  "version": "1.0",
+  "label": "SYNTHETIC \u2014 DEMONSTRATION ONLY",
+  "clauses": [
+    {
+      "id": "ARCH-SEG-01",
+      "title": "Keep protected services out of Client reach",
+      "text": "A Client deployment must not have a direct interface to a Z2 deployment. Model user access through the relevant Z1 application entry point. A listed interface is treated as a possible path regardless of its data-flow arrow.",
+      "applicability": [
+        "Client, Z1 and Z2 architectures."
+      ],
+      "implementation": "implemented",
+      "tags": [
+        "segmentation",
+        "client",
+        "z2"
+      ],
+      "version": "1.0",
+      "exceptions": "Any exception requires a recorded design decision and human review; this demonstration does not approve exceptions."
+    },
+    {
+      "id": "ARCH-DAT-01",
+      "title": "Place databases in the protected tier",
+      "text": "Database deployments belong in Z2, away from direct Client access. This check recognises the database, aws-rds and aws-dynamodb assets; other data services require human review.",
+      "applicability": [
+        "Three-tier architectures containing database assets."
+      ],
+      "implementation": "implemented",
+      "tags": [
+        "database",
+        "z2",
+        "storage"
+      ],
+      "version": "1.0",
+      "exceptions": "Any exception requires a recorded design decision and human review; this demonstration does not approve exceptions."
+    },
+    {
+      "id": "ARCH-FLW-01",
+      "title": "Name the control for cross-zone sessions",
+      "text": "Every cross-zone session must name its enforcement component on the interface. A firewall drawn near a line does not establish which traffic it controls. A reference records design intent; it does not prove a deployed rule works.",
+      "applicability": [
+        "Interfaces connecting deployments in different declared zones."
+      ],
+      "implementation": "implemented",
+      "tags": [
+        "enforcement",
+        "firewall",
+        "network"
+      ],
+      "version": "1.0",
+      "exceptions": "Any exception requires a recorded design decision and human review; this demonstration does not approve exceptions."
+    },
+    {
+      "id": "ARCH-TLS-01",
+      "title": "Protect connections in transit",
+      "text": "Document which client, service and database connections require encryption; identify protocol, certificate ownership, trust validation and renewal. Review exceptions with the design owner. A protocol label alone does not verify encryption.",
+      "applicability": [
+        "Connections carrying credentials, sensitive records or administration."
+      ],
+      "implementation": "manual_review",
+      "tags": [
+        "tls",
+        "encryption",
+        "certificate"
+      ],
+      "version": "1.0",
+      "exceptions": "Any exception requires a recorded design decision and human review; this demonstration does not approve exceptions."
+    },
+    {
+      "id": "ARCH-IAM-01",
+      "title": "Separate user and administrator access",
+      "text": "Identify the user identity service and privileged administration route. Record how administrators authenticate, whether multi-factor authentication applies, and who grants, reviews and revokes access.",
+      "applicability": [
+        "Systems with users or administrative functions."
+      ],
+      "implementation": "manual_review",
+      "tags": [
+        "identity",
+        "management",
+        "mfa"
+      ],
+      "version": "1.0",
+      "exceptions": "Any exception requires a recorded design decision and human review; this demonstration does not approve exceptions."
+    },
+    {
+      "id": "ARCH-SEC-01",
+      "title": "Keep credentials out of application files",
+      "text": "Identify a managed secret store or equivalent controlled mechanism, its owner and rotation process. Record how each workload obtains only its required secrets. Demonstration documents must use placeholders, never live credentials.",
+      "applicability": [
+        "Applications, integrations and automation using credentials or keys."
+      ],
+      "implementation": "manual_review",
+      "tags": [
+        "secrets",
+        "credentials",
+        "rotation"
+      ],
+      "version": "1.0",
+      "exceptions": "Any exception requires a recorded design decision and human review; this demonstration does not approve exceptions."
+    },
+    {
+      "id": "ARCH-LPR-01",
+      "title": "Give each workload only its required access",
+      "text": "Record a distinct workload identity and its permitted actions and resources. Review database permissions, service accounts and cloud roles; explain broad permissions and their expiry.",
+      "applicability": [
+        "Service-to-service calls and privileged data access."
+      ],
+      "implementation": "manual_review",
+      "tags": [
+        "identity",
+        "least privilege",
+        "cloud"
+      ],
+      "version": "1.0",
+      "exceptions": "Any exception requires a recorded design decision and human review; this demonstration does not approve exceptions."
+    },
+    {
+      "id": "ARCH-BAK-01",
+      "title": "Design backups that can be restored",
+      "text": "Identify the data to back up, retention, storage location, encryption, ownership and access separation. Define recovery-point and recovery-time targets, and record a restore-test plan and evidence when available.",
+      "applicability": [
+        "Systems storing records that must survive data loss."
+      ],
+      "implementation": "manual_review",
+      "tags": [
+        "backup",
+        "restore",
+        "recovery"
+      ],
+      "version": "1.0",
+      "exceptions": "Any exception requires a recorded design decision and human review; this demonstration does not approve exceptions."
+    },
+    {
+      "id": "ARCH-AVL-01",
+      "title": "Explain how redundant instances fail over",
+      "text": "For an availability requirement, document instance count, failure domains, traffic distribution, health checks, state replication and failover testing. Stacked symbols only show quantity; they do not establish resilience.",
+      "applicability": [
+        "Systems with an availability or resilience requirement."
+      ],
+      "implementation": "manual_review",
+      "tags": [
+        "availability",
+        "redundancy",
+        "failover"
+      ],
+      "version": "1.0",
+      "exceptions": "Any exception requires a recorded design decision and human review; this demonstration does not approve exceptions."
+    },
+    {
+      "id": "ARCH-LOG-01",
+      "title": "Send useful events to an owned destination",
+      "text": "Identify the destination for application, authentication, administration and security events. Agree retention, time synchronisation, alert ownership and sensitive-data handling. Show the required log delivery interfaces.",
+      "applicability": [
+        "Services whose failures or security events need investigation."
+      ],
+      "implementation": "manual_review",
+      "tags": [
+        "audit",
+        "logging",
+        "monitoring"
+      ],
+      "version": "1.0",
+      "exceptions": "Any exception requires a recorded design decision and human review; this demonstration does not approve exceptions."
+    },
+    {
+      "id": "ARCH-CLD-01",
+      "title": "Keep cloud data services private by design",
+      "text": "Document public and private network boundaries, private access paths, inbound controls, workload identities and egress. Justify any publicly reachable data service. A VPC or security-group icon is not proof of private access.",
+      "applicability": [
+        "Architectures using cloud network or managed data services."
+      ],
+      "implementation": "manual_review",
+      "tags": [
+        "cloud",
+        "private networking",
+        "database"
+      ],
+      "version": "1.0",
+      "exceptions": "Any exception requires a recorded design decision and human review; this demonstration does not approve exceptions."
+    },
+    {
+      "id": "ARCH-EGR-01",
+      "title": "Declare outbound dependencies",
+      "text": "List outbound destinations and why they are required, including update, identity, monitoring and third-party API paths. Record whether the system must operate during external-service loss and who reviews allowed egress.",
+      "applicability": [
+        "Systems with outbound connectivity or a no-internet requirement."
+      ],
+      "implementation": "manual_review",
+      "tags": [
+        "internet",
+        "egress",
+        "dependency"
+      ],
+      "version": "1.0",
+      "exceptions": "Any exception requires a recorded design decision and human review; this demonstration does not approve exceptions."
+    },
+    {
+      "id": "ARCH-PAT-01",
+      "title": "Assign patch and support ownership",
+      "text": "Record the owner, supported software or image source, maintenance window, vulnerability triage process and rollback approach for each managed or self-hosted service.",
+      "applicability": [
+        "Deployed software, appliances and cloud services."
+      ],
+      "implementation": "manual_review",
+      "tags": [
+        "patch",
+        "support",
+        "operations"
+      ],
+      "version": "1.0",
+      "exceptions": "Any exception requires a recorded design decision and human review; this demonstration does not approve exceptions."
+    },
+    {
+      "id": "ARCH-DATA-01",
+      "title": "State what data is retained and where",
+      "text": "Identify data categories, allowed locations, retention and deletion requirements, and who may access the data. Include backups, logs and exports in the review; leave undecided requirements visible.",
+      "applicability": [
+        "Systems storing personal, operational or business records."
+      ],
+      "implementation": "manual_review",
+      "tags": [
+        "data",
+        "retention",
+        "privacy"
+      ],
+      "version": "1.0",
+      "exceptions": "Any exception requires a recorded design decision and human review; this demonstration does not approve exceptions."
+    },
+    {
+      "id": "ARCH-OWN-01",
+      "title": "Make support responsibilities explicit",
+      "text": "Name the service owner and the owners of network, identity, backup and monitoring functions. Document support handovers, supplier boundaries and what happens during an incident.",
+      "applicability": [
+        "Architectures that will be handed over to an operations team."
+      ],
+      "implementation": "manual_review",
+      "tags": [
+        "ownership",
+        "incident",
+        "support"
+      ],
+      "version": "1.0",
+      "exceptions": "Any exception requires a recorded design decision and human review; this demonstration does not approve exceptions."
+    },
+    {
+      "id": "ARCH-BOUND-01",
+      "title": "Explain the three tiers",
+      "text": "Client contains devices people physically use. Z1 contains the application entry points Client is allowed to use. Z2 contains protected services such as databases and internal processing. Document justified exceptions and administrative paths rather than relying on the drawing position.",
+      "applicability": [
+        "Projects that adopt the Client / Z1 / Z2 model."
+      ],
+      "implementation": "manual_review",
+      "tags": [
+        "client",
+        "z1",
+        "z2",
+        "architecture"
+      ],
+      "version": "1.0",
+      "exceptions": "Any exception requires a recorded design decision and human review; this demonstration does not approve exceptions."
+    },
+    {
+      "id": "ARCH-HYB-01",
+      "title": "Document the on-premises to AWS connection",
+      "text": "Document the intended on-premises and AWS networks, an approved private connectivity or VPN design, route ownership, encryption in transit and identity boundaries. Record exactly which services cross the link and their enforcement references. Keep cloud credentials in controlled secret storage; never place them in a diagram, prompt or trial script.",
+      "applicability": [
+        "Architectures connecting on-premises services to AWS."
+      ],
+      "implementation": "manual_review",
+      "tags": [
+        "hybrid",
+        "aws",
+        "vpn",
+        "tls",
+        "identity"
+      ],
+      "version": "1.0",
+      "exceptions": "Any exception requires a recorded design decision and human review; this demonstration does not approve exceptions."
+    },
+    {
+      "id": "ARCH-TST-01",
+      "title": "Isolate the trial testbed from production",
+      "text": "Treat production and the wireless robotics testbed as separate trust boundaries. Document the network and identity separation, allowed directions and enforcement. Testbed devices must not directly access production databases or administration services; any exception remains an unresolved decision for the responsible owners.",
+      "applicability": [
+        "Production systems used alongside a trial or testbed."
+      ],
+      "implementation": "manual_review",
+      "tags": [
+        "production",
+        "testbed",
+        "wireless",
+        "isolation"
+      ],
+      "version": "1.0",
+      "exceptions": "Any exception requires a recorded design decision and human review; this demonstration does not approve exceptions."
+    },
+    {
+      "id": "ARCH-HND-01",
+      "title": "Use a narrow, reviewed production handoff",
+      "text": "Route trial integration through a specifically approved API, broker or controlled data transfer. Record the allowed payloads, initiator, protocol, identity, rate limits, sanitisation and owner. Prefer synthetic or approved reduced datasets and a reversible handoff; do not infer permission from a drawn connection.",
+      "applicability": [
+        "Data or command exchange between production and a trial environment."
+      ],
+      "implementation": "manual_review",
+      "tags": [
+        "production",
+        "testbed",
+        "api",
+        "handoff"
+      ],
+      "version": "1.0",
+      "exceptions": "Any exception requires a recorded design decision and human review; this demonstration does not approve exceptions."
+    },
+    {
+      "id": "ARCH-WLS-01",
+      "title": "Authenticate and manage wireless trial devices",
+      "text": "Document device identity, wireless onboarding and revocation, trial network access, firmware ownership and what happens when connectivity is lost. Separate operator access from robot credentials and record the authorised command path. A wireless access-point icon does not establish device authentication.",
+      "applicability": [
+        "Wireless robots, trial devices and their access network."
+      ],
+      "implementation": "manual_review",
+      "tags": [
+        "wireless",
+        "robotics",
+        "identity",
+        "onboarding"
+      ],
+      "version": "1.0",
+      "exceptions": "Any exception requires a recorded design decision and human review; this demonstration does not approve exceptions."
+    },
+    {
+      "id": "ARCH-ROB-01",
+      "title": "Require a human safety review of robot commands",
+      "text": "Identify the accountable safety reviewer and document command authorisation, operating boundaries, emergency-stop arrangements and safe behaviour on link or power loss. Review the physical trial before use. This architecture checklist neither designs a safety control nor validates that a robot is safe to operate.",
+      "applicability": [
+        "Trials that can command physical robots or machinery."
+      ],
+      "implementation": "manual_review",
+      "tags": [
+        "robotics",
+        "safety",
+        "commands",
+        "trial"
+      ],
+      "version": "1.0",
+      "exceptions": "Any exception requires a recorded design decision and human review; this demonstration does not approve exceptions."
+    },
+    {
+      "id": "ARCH-TRL-01",
+      "title": "Bound trial data and cloud egress",
+      "text": "Record the trial data owner, approved AWS or other cloud destinations, allowed outbound paths, retention and deletion dates, spending owner and exit plan. Keep production secrets and unapproved operational records out of the trial. Review what remains if the cloud link or trial account is disabled.",
+      "applicability": [
+        "Testbeds sending telemetry, records or artefacts to cloud services."
+      ],
+      "implementation": "manual_review",
+      "tags": [
+        "trial",
+        "cloud",
+        "egress",
+        "retention"
+      ],
+      "version": "1.0",
+      "exceptions": "Any exception requires a recorded design decision and human review; this demonstration does not approve exceptions."
+    }
+  ]
+}

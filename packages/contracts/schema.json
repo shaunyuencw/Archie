@@ -214,6 +214,17 @@
           "title": "Scope",
           "type": "string"
         },
+        "form_factor": {
+          "default": "unknown",
+          "enum": [
+            "unknown",
+            "physical",
+            "virtual",
+            "managed"
+          ],
+          "title": "Form Factor",
+          "type": "string"
+        },
         "audit_destination": {
           "anyOf": [
             {
@@ -278,6 +289,7 @@
         "status",
         "asset_id",
         "scope",
+        "form_factor",
         "audit_destination",
         "storage_destination",
         "local_only",
@@ -460,6 +472,28 @@
           ],
           "default": null,
           "title": "Quantity"
+        },
+        "redundancy_mode": {
+          "default": "unknown",
+          "enum": [
+            "unknown",
+            "active_passive",
+            "active_active"
+          ],
+          "title": "Redundancy Mode",
+          "type": "string"
+        },
+        "host_component_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Host Component Id"
         }
       },
       "required": [
@@ -468,7 +502,9 @@
         "zone_id",
         "host",
         "site",
-        "quantity"
+        "quantity",
+        "redundancy_mode",
+        "host_component_id"
       ],
       "title": "Deployment",
       "type": "object"
@@ -604,7 +640,9 @@
             "remove",
             "placement",
             "route",
-            "notes"
+            "notes",
+            "policy_selection",
+            "project_name"
           ],
           "title": "Op",
           "type": "string"
@@ -824,6 +862,22 @@
           "title": "Policy Version",
           "type": "string"
         },
+        "policy_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Policy Ids"
+        },
         "template_version": {
           "default": "1.0",
           "title": "Template Version",
@@ -918,6 +972,7 @@
         "updated_at",
         "synthetic",
         "policy_version",
+        "policy_ids",
         "template_version",
         "systems",
         "zones",
@@ -1016,6 +1071,17 @@
           "title": "Kind",
           "type": "string"
         },
+        "origin": {
+          "default": "unknown",
+          "enum": [
+            "prompt",
+            "upload",
+            "bundled_demo",
+            "unknown"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
         "sha256": {
           "title": "Sha256",
           "type": "string"
@@ -1065,6 +1131,7 @@
         "name",
         "version",
         "kind",
+        "origin",
         "sha256",
         "canonical_id",
         "variants",

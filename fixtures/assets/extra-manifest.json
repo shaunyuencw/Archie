@@ -1,0 +1,458 @@
+[
+  {
+    "id": "web-server",
+    "type": "web-server",
+    "label": "Web server",
+    "category": "Compute",
+    "icon": "web-server.svg",
+    "tags": [
+      "web",
+      "server",
+      "compute"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 185,
+      "height": 100
+    },
+    "licence": "ISC / Lucide 0.468.0",
+    "symbol_note": ""
+  },
+  {
+    "id": "application-server",
+    "type": "application-server",
+    "label": "Application server",
+    "category": "Compute",
+    "icon": "application-server.svg",
+    "tags": [
+      "application",
+      "server",
+      "compute"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 185,
+      "height": 100
+    },
+    "licence": "ISC / Lucide 0.468.0",
+    "symbol_note": ""
+  },
+  {
+    "id": "virtual-firewall",
+    "type": "virtual-firewall",
+    "label": "Virtual firewall",
+    "category": "Security",
+    "icon": "virtual-firewall.svg",
+    "tags": [
+      "virtual",
+      "firewall",
+      "security"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 185,
+      "height": 100
+    },
+    "licence": "ISC / Lucide 0.468.0",
+    "symbol_note": ""
+  },
+  {
+    "id": "vpn-gateway",
+    "type": "vpn-gateway",
+    "label": "VPN gateway",
+    "category": "Networking",
+    "icon": "vpn-gateway.svg",
+    "tags": [
+      "vpn",
+      "gateway",
+      "networking"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 185,
+      "height": 100
+    },
+    "licence": "ISC / Lucide 0.468.0",
+    "symbol_note": ""
+  },
+  {
+    "id": "robot",
+    "type": "robot",
+    "label": "Mobile robot",
+    "category": "Devices & robotics",
+    "icon": "robot.svg",
+    "tags": [
+      "robot",
+      "devices & robotics"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 185,
+      "height": 100
+    },
+    "licence": "ISC / Lucide 0.468.0",
+    "symbol_note": ""
+  },
+  {
+    "id": "wireless-access-point",
+    "type": "wireless-access-point",
+    "label": "Wireless access point",
+    "category": "Networking",
+    "icon": "wireless-access-point.svg",
+    "tags": [
+      "wireless",
+      "access",
+      "point",
+      "networking"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 185,
+      "height": 100
+    },
+    "licence": "ISC / Lucide 0.468.0",
+    "symbol_note": ""
+  },
+  {
+    "id": "sensor",
+    "type": "sensor",
+    "label": "Sensor",
+    "category": "Devices & robotics",
+    "icon": "sensor.svg",
+    "tags": [
+      "sensor",
+      "devices & robotics"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 185,
+      "height": 100
+    },
+    "licence": "ISC / Lucide 0.468.0",
+    "symbol_note": ""
+  },
+  {
+    "id": "edge-gateway",
+    "type": "edge-gateway",
+    "label": "Edge gateway",
+    "category": "Devices & robotics",
+    "icon": "edge-gateway.svg",
+    "tags": [
+      "edge",
+      "gateway",
+      "devices & robotics"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 185,
+      "height": 100
+    },
+    "licence": "ISC / Lucide 0.468.0",
+    "symbol_note": ""
+  },
+  {
+    "id": "operator-tablet",
+    "type": "operator-tablet",
+    "label": "Operator tablet",
+    "category": "Devices & robotics",
+    "icon": "operator-tablet.svg",
+    "tags": [
+      "operator",
+      "tablet",
+      "devices & robotics"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 185,
+      "height": 100
+    },
+    "licence": "ISC / Lucide 0.468.0",
+    "symbol_note": ""
+  },
+  {
+    "id": "aws-vpc",
+    "type": "aws-vpc",
+    "label": "AWS VPC",
+    "category": "AWS",
+    "icon": "aws-vpc.svg",
+    "tags": [
+      "aws",
+      "vpc",
+      "aws"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 185,
+      "height": 100
+    },
+    "licence": "ISC / Lucide 0.468.0",
+    "symbol_note": "Generic service symbol, not an official AWS architecture icon"
+  },
+  {
+    "id": "aws-alb",
+    "type": "aws-alb",
+    "label": "AWS Load Balancer",
+    "category": "AWS",
+    "icon": "aws-alb.svg",
+    "tags": [
+      "aws",
+      "alb",
+      "aws"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 185,
+      "height": 100
+    },
+    "licence": "ISC / Lucide 0.468.0",
+    "symbol_note": "Generic service symbol, not an official AWS architecture icon"
+  },
+  {
+    "id": "aws-ec2",
+    "type": "aws-ec2",
+    "label": "AWS EC2",
+    "category": "AWS",
+    "icon": "aws-ec2.svg",
+    "tags": [
+      "aws",
+      "ec2",
+      "aws"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 185,
+      "height": 100
+    },
+    "licence": "ISC / Lucide 0.468.0",
+    "symbol_note": "Generic service symbol, not an official AWS architecture icon"
+  },
+  {
+    "id": "aws-rds",
+    "type": "aws-rds",
+    "label": "AWS RDS",
+    "category": "AWS",
+    "icon": "aws-rds.svg",
+    "tags": [
+      "aws",
+      "rds",
+      "aws"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 185,
+      "height": 100
+    },
+    "licence": "ISC / Lucide 0.468.0",
+    "symbol_note": "Generic service symbol, not an official AWS architecture icon"
+  },
+  {
+    "id": "aws-s3",
+    "type": "aws-s3",
+    "label": "AWS S3",
+    "category": "AWS",
+    "icon": "aws-s3.svg",
+    "tags": [
+      "aws",
+      "s3",
+      "aws"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 185,
+      "height": 100
+    },
+    "licence": "ISC / Lucide 0.468.0",
+    "symbol_note": "Generic service symbol, not an official AWS architecture icon"
+  },
+  {
+    "id": "aws-waf",
+    "type": "aws-waf",
+    "label": "AWS WAF",
+    "category": "AWS",
+    "icon": "aws-waf.svg",
+    "tags": [
+      "aws",
+      "waf",
+      "aws"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 185,
+      "height": 100
+    },
+    "licence": "ISC / Lucide 0.468.0",
+    "symbol_note": "Generic service symbol, not an official AWS architecture icon"
+  },
+  {
+    "id": "aws-cloudwatch",
+    "type": "aws-cloudwatch",
+    "label": "AWS CloudWatch",
+    "category": "AWS",
+    "icon": "aws-cloudwatch.svg",
+    "tags": [
+      "aws",
+      "cloudwatch",
+      "aws"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 185,
+      "height": 100
+    },
+    "licence": "ISC / Lucide 0.468.0",
+    "symbol_note": "Generic service symbol, not an official AWS architecture icon"
+  },
+  {
+    "id": "aws-iam",
+    "type": "aws-iam",
+    "label": "AWS IAM",
+    "category": "AWS",
+    "icon": "aws-iam.svg",
+    "tags": [
+      "aws",
+      "iam",
+      "aws"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 185,
+      "height": 100
+    },
+    "licence": "ISC / Lucide 0.468.0",
+    "symbol_note": "Generic service symbol, not an official AWS architecture icon"
+  },
+  {
+    "id": "aws-lambda",
+    "type": "aws-lambda",
+    "label": "AWS Lambda",
+    "category": "AWS",
+    "icon": "aws-lambda.svg",
+    "tags": [
+      "aws",
+      "lambda",
+      "aws"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 185,
+      "height": 100
+    },
+    "licence": "ISC / Lucide 0.468.0",
+    "symbol_note": "Generic service symbol, not an official AWS architecture icon"
+  },
+  {
+    "id": "aws-api-gateway",
+    "type": "aws-api-gateway",
+    "label": "AWS API Gateway",
+    "category": "AWS",
+    "icon": "aws-api-gateway.svg",
+    "tags": [
+      "aws",
+      "api",
+      "gateway",
+      "aws"
+    ],
+    "handles": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+    ],
+    "size": {
+      "width": 185,
+      "height": 100
+    },
+    "licence": "ISC / Lucide 0.468.0",
+    "symbol_note": "Generic service symbol, not an official AWS architecture icon"
+  }
+]

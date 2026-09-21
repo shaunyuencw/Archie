@@ -1,0 +1,132 @@
+{
+  "date": "2026-09-21",
+  "scope": "Synthetic source/reference pack, authored mock roundtrip, exported SVG and DOCX/PDF visual QA",
+  "provider_calls": 0,
+  "tests": {
+    "command": ".venv/bin/python -m pytest tests/test_demo_scenarios.py -q --junitxml=reports/demo-pack-qa/tests.xml",
+    "passed": 5,
+    "failed": 0,
+    "duration_seconds": 0.95,
+    "evidence": "tests.xml"
+  },
+  "references": {
+    "portal": {
+      "components": 7,
+      "interfaces": 4,
+      "zones": 3,
+      "policy_ids": 17
+    },
+    "robotics": {
+      "components": 14,
+      "interfaces": 11,
+      "zones": 8,
+      "policy_ids": 25
+    }
+  },
+  "document_review": [
+    {
+      "artifact": "fixtures/demos/portal/techspec.docx",
+      "render_directory": "portal-techspec-docx",
+      "pages": 2,
+      "visually_inspected": true,
+      "result": "Readable; no clipping or overflow."
+    },
+    {
+      "artifact": "fixtures/demos/portal/techspec.pdf",
+      "render_directory": "portal-techspec-pdf",
+      "pages": 2,
+      "visually_inspected": true,
+      "result": "Readable; no clipping or overflow."
+    },
+    {
+      "artifact": "fixtures/demos/robotics/techspec.docx",
+      "render_directory": "robotics-techspec-docx",
+      "pages": 2,
+      "visually_inspected": true,
+      "result": "Readable; no clipping or overflow."
+    },
+    {
+      "artifact": "fixtures/demos/robotics/techspec.pdf",
+      "render_directory": "robotics-techspec-pdf",
+      "pages": 2,
+      "visually_inspected": true,
+      "result": "Readable; no clipping or overflow."
+    },
+    {
+      "artifact": "fixtures/demos/inventory/techspec.docx",
+      "render_directory": "inventory-techspec-docx",
+      "pages": 1,
+      "visually_inspected": true,
+      "result": "Readable; no clipping or overflow."
+    },
+    {
+      "artifact": "fixtures/demos/inventory/techspec.pdf",
+      "render_directory": "inventory-techspec-pdf",
+      "pages": 1,
+      "visually_inspected": true,
+      "result": "Readable; no clipping or overflow."
+    },
+    {
+      "artifact": "fixtures/demos/building-access/techspec.docx",
+      "render_directory": "building-access-techspec-docx",
+      "pages": 1,
+      "visually_inspected": true,
+      "result": "Readable; no clipping or overflow."
+    },
+    {
+      "artifact": "fixtures/demos/building-access/techspec.pdf",
+      "render_directory": "building-access-techspec-pdf",
+      "pages": 1,
+      "visually_inspected": true,
+      "result": "Readable; no clipping or overflow."
+    },
+    {
+      "artifact": "fixtures/demos/portal/mock-input.docx",
+      "render_directory": "portal-mock-input-docx",
+      "pages": 2,
+      "visually_inspected": true,
+      "result": "Readable authored-record parser fixture; synthetic/mock limitation label retained."
+    },
+    {
+      "artifact": "fixtures/demos/robotics/mock-input.docx",
+      "render_directory": "robotics-mock-input-docx",
+      "pages": 3,
+      "visually_inspected": true,
+      "result": "Readable authored-record parser fixture; synthetic/mock limitation label retained."
+    },
+    {
+      "artifact": "reports/demo-pack-qa/portal-narrative.docx",
+      "render_directory": "portal-narrative-render",
+      "pages": 5,
+      "visually_inspected": true,
+      "result": "All five pages readable, headings/bullets kept together, no clipping. Review appendix retains source locators and excerpts."
+    }
+  ],
+  "svg_review": {
+    "files": [
+      "portal-logical.png",
+      "portal-sv1.png",
+      "portal-sv2.png",
+      "robotics-logical.png",
+      "robotics-sv1.png",
+      "robotics-sv2.png"
+    ],
+    "count": 6,
+    "findings": [
+      "All six current SVG renderings were visually inspected after final regeneration.",
+      "Device icons, transparent component backgrounds, dashed tier boundaries and source labels are visible.",
+      "Quantity stacks, VM/AWS indicators and hosted-firewall badges fit; Application hosts count and hosted badge no longer overlap.",
+      "Authored SV1 bottom rails preserve visible connector paths and aggregate labels.",
+      "Some dense SV2 label backgrounds partly cover arrowheads on short connections. Logical and SV1 views remain clearer at this scale."
+    ]
+  },
+  "limitations": [
+    "Natural-language upload and broad follow-up prompts have not been tested with a real OpenAI or Ollama call for this pack.",
+    "Mock roundtrip verifies the explicitly authored record fixtures, not general natural-language extraction.",
+    "Native editable Visio opening/editing remains unverified on this Mac.",
+    "Stored orthogonal paths are authored presentation; there is no general obstacle-avoidance guarantee or proof of deployed network enforcement.",
+    "Portal narrative repeats exact source paragraphs per claim in its review appendix; five pages are expected."
+  ],
+  "document_artifacts_inspected": 11,
+  "document_pages_inspected": 22
+}

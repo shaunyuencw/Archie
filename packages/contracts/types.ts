@@ -8,6 +8,7 @@ export type CreatedAt = string;
 export type UpdatedAt = string;
 export type Synthetic = boolean;
 export type PolicyVersion = string;
+export type PolicyIds = string[] | null;
 export type TemplateVersion = string;
 export type Id1 = string;
 export type Name1 = string;
@@ -23,6 +24,7 @@ export type SystemId = string | null;
 export type Status = "existing" | "new" | "proposed";
 export type AssetId = string;
 export type Scope1 = "internal" | "external" | "unknown";
+export type FormFactor = "unknown" | "physical" | "virtual" | "managed";
 export type AuditDestination = string | null;
 export type StorageDestination = string | null;
 export type LocalOnly = boolean | null;
@@ -38,6 +40,8 @@ export type ZoneId = string | null;
 export type Host = string | null;
 export type Site = string | null;
 export type Quantity = number | null;
+export type RedundancyMode = "unknown" | "active_passive" | "active_active";
+export type HostComponentId = string | null;
 export type Deployments = Deployment[];
 export type Id5 = string;
 export type Source = string;
@@ -58,6 +62,7 @@ export type Id6 = string;
 export type Name4 = string;
 export type Version = string;
 export type Kind = "document" | "prompt" | "template" | "assistant_proposal";
+export type Origin = "prompt" | "upload" | "bundled_demo" | "unknown";
 export type Sha256 = string;
 export type CanonicalId = string;
 export type Variants = string[];
@@ -118,7 +123,7 @@ export type Id10 = string;
 export type ProjectId = string;
 export type RequestId = string;
 export type BaseRevision = number;
-export type Op = "add" | "update" | "remove" | "placement" | "route" | "notes";
+export type Op = "add" | "update" | "remove" | "placement" | "route" | "notes" | "policy_selection" | "project_name";
 export type Entity =
   | (
       | "systems"
@@ -144,7 +149,7 @@ export type AffectedIds = string[];
 export type Evidence4 = string[];
 export type Findings = string[];
 export type State1 = "pending" | "accepted" | "rejected";
-export type Origin = "manual" | "assistant" | "ingest";
+export type Origin1 = "manual" | "assistant" | "ingest";
 
 export interface Contract {
   project: Project;
@@ -160,6 +165,7 @@ export interface Project {
   updated_at: UpdatedAt;
   synthetic: Synthetic;
   policy_version: PolicyVersion;
+  policy_ids: PolicyIds;
   template_version: TemplateVersion;
   systems: Systems;
   zones: Zones;
@@ -190,6 +196,7 @@ export interface Component {
   status: Status;
   asset_id: AssetId;
   scope: Scope1;
+  form_factor: FormFactor;
   audit_destination: AuditDestination;
   storage_destination: StorageDestination;
   local_only: LocalOnly;
@@ -203,6 +210,8 @@ export interface Deployment {
   host: Host;
   site: Site;
   quantity: Quantity;
+  redundancy_mode: RedundancyMode;
+  host_component_id: HostComponentId;
 }
 export interface Interface {
   id: Id5;
@@ -222,6 +231,7 @@ export interface Source1 {
   name: Name4;
   version: Version;
   kind: Kind;
+  origin: Origin;
   sha256: Sha256;
   canonical_id: CanonicalId;
   variants: Variants;
@@ -321,7 +331,7 @@ export interface ChangeSet {
   evidence?: Evidence4;
   findings?: Findings;
   state?: State1;
-  origin?: Origin;
+  origin?: Origin1;
 }
 export interface BaseViews {
   [k: string]: number;

@@ -5,9 +5,10 @@
 .react-flow__edgelabel-renderer{z-index:1002}
 .react-flow__edgelabel-renderer .edge-label{max-width:220px;line-height:1.35;background:#f7fafcef;border:1px solid #dbe6ed80;padding:2px 6px;border-radius:5px}
 .react-flow__edgelabel-renderer .edge-label-selected{color:#126e67;background:#f0faf7;border-color:#a7d6cc}
-.react-flow__edgelabel-renderer .route-waypoint{position:absolute;pointer-events:all;width:13px;height:13px;min-width:13px;padding:0;border:2px solid #fff;border-radius:4px;background:#138276;box-shadow:0 0 0 1px #138276;cursor:grab;touch-action:none;z-index:10}
-.react-flow__edgelabel-renderer .route-waypoint-new{background:#fff;border-color:#138276}
-.react-flow__edgelabel-renderer .route-waypoint:active{cursor:grabbing}
-.react-flow__edgelabel-renderer .route-waypoint:focus-visible{outline:3px solid #8cc9dd;outline-offset:3px}
+.route-segment{fill:none;stroke:transparent;stroke-width:16;pointer-events:stroke;touch-action:none}
+.route-segment.horizontal{cursor:ns-resize}.route-segment.vertical{cursor:ew-resize}
+.route-segment:hover,.route-segment:focus-visible{stroke:#16847920;outline:none}
+.react-flow__edgelabel-renderer .route-menu{position:absolute;pointer-events:all;z-index:30;min-width:190px;padding:5px;background:white;border:1px solid #bed5db;border-radius:8px;box-shadow:0 5px 24px #173b5030;display:flex;flex-direction:column;gap:2px}
+.route-menu button{justify-content:flex-start;border:0;padding:7px 10px}.route-menu small{max-width:190px;padding:5px 10px;color:#587184;font-size:10px}
 .react-flow__edge:not(.selected) .react-flow__edgeupdater{pointer-events:none}
 .react-flow__edge.selected .react-flow__edgeupdater{pointer-events:all;fill:#fff;stroke:#138276;stroke-width:1.5px}

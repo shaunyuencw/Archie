@@ -21,6 +21,27 @@ def test_temp_id_resolution_and_unknown():
     assert p.deployments[0].component_id==p.components[0].id
     assert p.deployments[0].quantity is None
 
+def test_host_and_redundancy_validation_and_transaction_undo(tmp_path):
+    store=Store(tmp_path/'deployment.sqlite');p=store.create(Project())
+    p=store.commit(command(p,[
+        {'op':'add','entity':'components','id':'tmp:host','value':{'name':'Host','role':'server'}},
+        {'op':'add','entity':'components','id':'tmp:fw','value':{'name':'Firewall','role':'firewall','asset_id':'virtual-firewall','form_factor':'virtual'}},
+        {'op':'add','entity':'deployments','id':'tmp:d','value':{'component_id':'tmp:fw','host_component_id':'tmp:host','quantity':2,'redundancy_mode':'active_passive'}},
+    ]))
+    host,fw=p.components;deployment=p.deployments[0]
+    assert deployment.host_component_id==host.id and deployment.component_id==fw.id
+    with pytest.raises(DomainError,match='at least two'):
+        store.commit(command(p,[{'op':'update','entity':'deployments','id':deployment.id,'value':{'quantity':1}}]))
+    with pytest.raises(DomainError,match='host itself'):
+        store.commit(command(p,[{'op':'update','entity':'deployments','id':deployment.id,'value':{'host_component_id':fw.id}}]))
+    with pytest.raises(DomainError,match='cycle'):
+        store.commit(command(p,[{'op':'add','entity':'deployments','id':'dh','value':{'component_id':host.id,'host_component_id':fw.id}}]))
+    assert store.get(p.id)==p
+    p=store.commit(command(p,[{'op':'remove','entity':'components','id':host.id,'confirmed':True}]))
+    assert p.deployments[0].host_component_id is None
+    p=store.undo(command(p,[{'op':'notes','value':{}}]))
+    assert p.deployments[0].host_component_id==host.id and p.deployments[0].redundancy_mode=='active_passive'
+
 def test_redo_restores_layout_and_rejects_stale_or_abandoned_branch(tmp_path):
     store=Store(tmp_path/'history.sqlite'); p=store.create(Project())
     p=store.commit(command(p,[{'op':'add','entity':'components','id':'a','value':{'name':'A','role':'server'}}]))

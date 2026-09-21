@@ -46,6 +46,18 @@ def view_graph(p:Project,kind:str):
         dx,dy=bx-ax,by-ay
         source,target=(('right','left') if dx>=0 else ('left','right')) if abs(dx)>=abs(dy) else (('bottom','top') if dy>=0 else ('top','bottom'))
         edge['route']=Route(source_handle=source,target_handle=target)
+    components={c.id:c for c in p.components}; deployments={d.component_id:d for d in p.deployments}
+    for n in nodes:
+        component=components.get(n['id'])
+        if component is None and len(n['object_ids'])==1: component=components.get(n['object_ids'][0])
+        if component:
+            deployment=deployments.get(component.id)
+            n.update(quantity=deployment.quantity if deployment else None,
+                     redundancy_mode=deployment.redundancy_mode if deployment else 'unknown',
+                     form_factor=component.form_factor,
+                     hosted_controls=[{'id':c.id,'name':c.name,'asset_id':c.asset_id} for c in p.components
+                                      if c.asset_id=='virtual-firewall' and deployments.get(c.id)
+                                      and deployments[c.id].host_component_id==component.id])
     return {'type':kind,'semantic_revision':p.revision,'presentation_revision':view.revision,'nodes':nodes,'edges':edges,'mappings':mappings}
 
 def initialise_views(p:Project):
@@ -56,17 +68,38 @@ def initialise_views(p:Project):
     return p
 
 def narrative(p:Project):
-    names={c.id:c.name for c in p.components}
-    lines=[f'# {p.name}', '', 'SYNTHETIC — DEMONSTRATION ONLY' if p.synthetic else 'User-supplied project',f'Accepted semantic revision: {p.revision}', '', '## Scope and responsibilities']
+    names={c.id:c.name for c in p.components}; zone_names={z.id:z.name for z in p.zones}
+    deployments={d.component_id:d for d in p.deployments}
+    lines=[f'# {p.name}', '', 'SYNTHETIC — DEMONSTRATION ONLY' if p.synthetic else 'User-supplied project',
+           f'Accepted semantic revision: {p.revision}', '', '## Design at a glance',
+           f'This design contains {len(p.components)} components and {len(p.interfaces)} connections. The sections below describe the accepted model; unspecified facts stay undecided.']
+    if p.notes:lines+=['', '## Design notes', p.notes]
+    lines+=['', '## What runs where']
     for c in p.components:
-        d=next((d for d in p.deployments if d.component_id==c.id),None)
-        lines.append(f'- [{c.id}] {c.name}: {c.role}; {c.status}; zone {d.zone_id if d and d.zone_id else "unspecified"}; quantity {d.quantity if d and d.quantity is not None else "undecided"}. Evidence: {", ".join(c.evidence) or "manual / proposed"}.')
-    lines+=['','## Interfaces and session initiation']
-    for e in p.interfaces: lines.append(f'- [{e.id}] {names[e.source]} → {names[e.target]}: {e.purpose or "purpose undecided"}; flow {e.data_direction}; initiator {names.get(e.initiator,"undecided")}; protocol {e.protocol or "undecided"}; port {e.port if e.port is not None else "undecided"}; enforcement {", ".join(e.enforcement) or "unspecified"}.')
-    lines+=['','## Constraints and open decisions']
-    for c in p.constraints: lines.append(f'- {c.key}: {c.value if c.value is not None else "undecided"}')
-    for d in p.decisions: lines.append(f'- {d.question}: {d.answer or "Not decided"}')
-    lines+=['','## Sources']
-    for c in p.claims: lines.append(f'- [{c.id}] {c.review}: {c.source_id} v{c.source_version}, {c.locator}: {c.excerpt}')
-    lines+=['','## Authored notes',p.notes or '(none)']
+        d=deployments.get(c.id);zone=zone_names.get(d.zone_id,'an unspecified deployment zone') if d else 'an unspecified deployment zone'
+        count=f'{d.quantity} declared instance'+('s' if d.quantity!=1 else '') if d and d.quantity is not None else 'instance count undecided'
+        text=f'- {c.name} [{c.id}] is a {c.role.replace("_"," ")} in {zone}. Status: {c.status}; {count}.'
+        if d and d.redundancy_mode!='unknown':text+=f' Redundancy: {d.redundancy_mode.replace("_"," ")}.'
+        if c.form_factor!='unknown':text+=f' Form: {c.form_factor}.'
+        if d and d.host_component_id:text+=f' Runs on {names[d.host_component_id]}.'
+        lines.append(text)
+    lines+=['', '## Connections']
+    for i in p.interfaces:
+        purpose=i.purpose or 'purpose undecided'
+        protocol=i.protocol or 'protocol undecided'
+        port=f'port {i.port}' if i.port is not None else 'port undecided'
+        starter=f'{names[i.initiator]} starts the session' if i.initiator else 'the session initiator is undecided'
+        control=', '.join(names.get(ident,ident) for ident in i.enforcement) or 'not recorded'
+        lines.append(f'- {names[i.source]} → {names[i.target]} [{i.id}]: {purpose}, using {protocol} ({port}); {starter}. Data flow: {i.data_direction.replace("_"," ")}. Enforcement: {control}.')
+    lines+=['', '## Requirements and open decisions']
+    for c in p.constraints:lines.append(f'- {c.key.replace("_"," ")}: {c.value if c.value is not None else "undecided"}.')
+    for d in p.decisions:lines.append(f'- {d.question} {d.answer or "Not decided."}')
+    if not p.constraints and not p.decisions:lines.append('No requirements or clarification questions are recorded yet. This is not confirmation that the design is complete.')
+    lines+=['', '## Sources and review trail']
+    sources={s.id:s for s in p.sources}
+    for c in p.claims:
+        source=sources[c.source_id]
+        lines.append(f'- [{c.id}] {c.review} — {source.name}, version {c.source_version}, {c.locator}: {c.excerpt}')
+    if not p.claims:lines.append('No source-linked claims are recorded. The current design may contain manual or proposed edits.')
+    lines+=['', 'Policy checks and synthetic examples do not constitute organisational approval.']
     return '\n'.join(lines)

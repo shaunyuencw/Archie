@@ -1,0 +1,898 @@
+version: '1.0'
+fixture_date: '2026-09-21'
+label: SYNTHETIC — DEMONSTRATION ONLY
+scenarios:
+- code: portal
+  title: Production service portal
+  summary: A proposed internal service-request portal for employees and the service desk. This small example
+    separates physical client devices, application services and protected data. It is a fictional review draft,
+    not an approved production design.
+  featured: true
+  requirements:
+  - id: P01
+    section: Purpose and placement
+    text: 'The Production service portal has three trust tiers: Client · user devices; Z1 · application services;
+      and Z2 · protected data. Every item below is a proposed part of this fictional design. Zone placement
+      describes intended trust separation, not proof of firewall configuration. The model groups responsibility
+      as User access, Portal services and Protected data.'
+  - id: P02
+    section: Purpose and placement
+    text: Client contains one physical Employee workstation and one physical Service desk workstation. They
+      are user devices only. No application server or database is placed in Client.
+  - id: P03
+    section: Purpose and placement
+    text: Z1 contains one virtual Portal web service and two virtual Request application instances operating
+      active-active. Both services run on the two physical Application hosts in Z1. The host pair is specified
+      as active-active; its hardware capacity is not yet sized. One virtual Zone firewall also runs on an Application
+      host; firewall failover is undecided.
+  - id: P04
+    section: Purpose and placement
+    text: Z2 contains two physical Request database servers operating active-passive. The database stores requests
+      and application audit records. No Client device may connect directly to the database.
+  - id: P05
+    section: Interfaces
+    text: Each workstation initiates an HTTPS session to Portal web service on TCP 443 for service requests
+      or service-desk actions. These are application sessions, not infrastructure administration sessions.
+  - id: P06
+    section: Interfaces
+    text: Portal web service initiates HTTPS sessions to Request application on TCP 443. Request application
+      initiates PostgreSQL sessions to Request database on TCP 5432. Zone firewall is the explicit enforcement
+      reference for the Z1-to-Z2 database interface; its intended rule permits only the application service
+      identity to that database service and denies other cross-tier traffic.
+  - id: P07
+    section: Operations and open decisions
+    text: The application is internal and has no required internet-hosted dependency. Data remains on premises.
+      Application database and audit records are the only stores defined here; backups, audit retention, IP
+      addresses, VLAN numbers, hardware capacity and infrastructure administration remain undecided.
+  - id: P08
+    section: Operations and open decisions
+    text: 'A service availability requirement exists, but its end-to-end strategy is not yet approved: the
+      application and database have the stated redundancy, while the web service and virtual firewall remain
+      single instances. The service owner must choose a recovery target and resolve these remaining failure
+      points before production acceptance.'
+  systems:
+  - id: portal-users
+    name: User access
+    scope: internal
+    ref: P01
+  - id: portal-services
+    name: Portal services
+    scope: internal
+    ref: P01
+  - id: portal-data
+    name: Protected data
+    scope: internal
+    ref: P01
+  zones:
+  - id: client
+    name: Client · user devices
+    ref: P01
+  - id: z1
+    name: Z1 · application services
+    ref: P01
+  - id: z2
+    name: Z2 · protected data
+    ref: P01
+  components:
+  - id: employee
+    name: Employee workstation
+    role: employee access
+    asset_id: workstation
+    zone_id: client
+    ref: P02
+    form_factor: physical
+    quantity: 1
+    redundancy_mode: unknown
+    host_component_id: null
+    system_id: portal-users
+    status: proposed
+    scope: internal
+  - id: service-desk
+    name: Service desk workstation
+    role: service desk access
+    asset_id: workstation
+    zone_id: client
+    ref: P02
+    form_factor: physical
+    quantity: 1
+    redundancy_mode: unknown
+    host_component_id: null
+    system_id: portal-users
+    status: proposed
+    scope: internal
+  - id: portal-web
+    name: Portal web service
+    role: web frontend
+    asset_id: web-server
+    zone_id: z1
+    ref: P03
+    form_factor: virtual
+    quantity: 1
+    redundancy_mode: unknown
+    host_component_id: app-host
+    system_id: portal-services
+    status: proposed
+    scope: internal
+  - id: portal-app
+    name: Request application
+    role: request processing
+    asset_id: application-server
+    zone_id: z1
+    ref: P03
+    form_factor: virtual
+    quantity: 2
+    redundancy_mode: active_active
+    host_component_id: app-host
+    system_id: portal-services
+    status: proposed
+    scope: internal
+  - id: app-host
+    name: Application hosts
+    role: application compute host
+    asset_id: server
+    zone_id: z1
+    ref: P03
+    form_factor: physical
+    quantity: 2
+    redundancy_mode: active_active
+    host_component_id: null
+    system_id: portal-services
+    status: proposed
+    scope: internal
+  - id: zone-firewall
+    name: Zone firewall
+    role: zone enforcement
+    asset_id: virtual-firewall
+    zone_id: z1
+    ref: P03
+    form_factor: virtual
+    quantity: 1
+    redundancy_mode: unknown
+    host_component_id: app-host
+    system_id: portal-services
+    status: proposed
+    scope: internal
+  - id: request-db
+    name: Request database
+    role: protected relational data and audit records
+    asset_id: database
+    zone_id: z2
+    ref: P04
+    form_factor: physical
+    quantity: 2
+    redundancy_mode: active_passive
+    host_component_id: null
+    system_id: portal-data
+    status: proposed
+    scope: internal
+  interfaces:
+  - id: employee-web
+    source: employee
+    target: portal-web
+    purpose: service requests
+    protocol: HTTPS
+    port: 443
+    initiator: employee
+    data_direction: bidirectional
+    enforcement: []
+    delivery: null
+    ref: P05
+  - id: desk-web
+    source: service-desk
+    target: portal-web
+    purpose: service desk actions
+    protocol: HTTPS
+    port: 443
+    initiator: service-desk
+    data_direction: bidirectional
+    enforcement: []
+    delivery: null
+    ref: P05
+  - id: web-app
+    source: portal-web
+    target: portal-app
+    purpose: request processing
+    protocol: HTTPS
+    port: 443
+    initiator: portal-web
+    data_direction: bidirectional
+    enforcement: []
+    delivery: null
+    ref: P06
+  - id: app-database
+    source: portal-app
+    target: request-db
+    purpose: database access
+    protocol: PostgreSQL
+    port: 5432
+    initiator: portal-app
+    data_direction: bidirectional
+    enforcement:
+    - zone-firewall
+    delivery: null
+    ref: P06
+  constraints:
+  - id: portal-offline
+    key: no_internet
+    value: true
+    ref: P07
+  - id: portal-resilience
+    key: resilience_required
+    value: true
+    ref: P08
+  - id: portal-availability
+    key: availability_strategy
+    value: null
+    ref: P08
+  - id: portal-sizing
+    key: equipment_sizing
+    value: null
+    ref: P07
+  - id: portal-boundary
+    key: client_direct_database_access
+    value: forbidden
+    ref: P04
+  decisions:
+  - id: portal-availability-question
+    question: What end-to-end availability strategy should be used for the portal?
+    target_id: portal-availability
+    field: value
+    options:
+    - Redundant web and firewall tiers with documented recovery
+    - Document a single-site recovery plan
+    - Not decided
+    ref: P08
+  followups:
+  - prompt: Rename Portal web service to Employee self-service portal
+    provider: mock or live
+    expected: Preview one component rename; preserve its ID, interfaces and manually adjusted placements.
+  - prompt: Add one workstation
+    provider: mock or live
+    expected: Mock adds one unzoned workstation; explicitly review and assign its deployment to Client. It
+      must not silently assume a trust zone.
+  - prompt: Add a reporting service to Z1 and connect it to Request database over PostgreSQL TCP 5432 through
+      Zone firewall. Keep all existing positions and routes.
+    provider: live
+    expected: Review a targeted new service/deployment/interface proposal. Database zone stays Z2 and existing
+      manual placements remain.
+  - prompt: Make Portal web service a pair of active-active instances, and make Zone firewall a pair of active-passive
+      instances. Keep them hosted on Application hosts. Do not change Request database.
+    provider: live
+    expected: Review quantity 2 and explicit redundancy changes only for those deployments. This does not by
+      itself settle recovery targets or approve the architecture.
+  policy_ids:
+  - DEMO-ZON-01
+  - DEMO-IF-01
+  - DEMO-HA-01
+  - ARCH-SEG-01
+  - ARCH-DAT-01
+  - ARCH-FLW-01
+  - ARCH-TLS-01
+  - ARCH-IAM-01
+  - ARCH-SEC-01
+  - ARCH-LPR-01
+  - ARCH-BAK-01
+  - ARCH-AVL-01
+  - ARCH-LOG-01
+  - ARCH-PAT-01
+  - ARCH-DATA-01
+  - ARCH-OWN-01
+  - ARCH-BOUND-01
+- code: robotics
+  title: Hybrid robotics trial
+  summary: 'A bounded wireless robotics trial that is isolated from a small production operations service.
+    Testbed data may leave through two named interfaces: a narrow production status handoff and an AWS telemetry
+    path. Cloud services are shown explicitly as managed services, not as software secretly placed inside an
+    on-premises zone.'
+  featured: true
+  requirements:
+  - id: R01
+    section: Purpose and placement
+    text: Production uses Production · Client · user devices, Production · Z1 · application services and Production
+      · Z2 · protected data. Testbed uses separate Testbed · Client · trial devices, Testbed · Z1 · trial services
+      and Testbed · Z2 · trial data. The Production operations and Robotics testbed systems are separate; a
+      shared zone name must never merge their trust boundaries.
+  - id: R02
+    section: Purpose and placement
+    text: Production Client contains one physical Production operator workstation. Production Z1 contains two
+      virtual Production integration API instances operating active-active. Production Z2 contains two physical
+      Production job database servers operating active-passive. The API and database have no declared shared
+      physical host.
+  - id: R03
+    section: Purpose and placement
+    text: Testbed Client contains one physical Trial robot, one physical Trial operator tablet and one physical
+      Trial wireless access point. The trial uses its own WPA3-Enterprise wireless network. It does not bridge
+      to the production client LAN. Authentication server details, radio survey and RF coverage remain undecided;
+      an access-point icon does not prove those controls exist.
+  - id: R04
+    section: Purpose and placement
+    text: 'Testbed Z1 contains one physical Trial compute host. It runs three single-instance virtual components:
+      Robot controller, Trial integration gateway and Trial virtual firewall. Testbed Z2 contains one virtual
+      Trial data store; its host is not specified. No resilience claim is made for these single-instance trial
+      services.'
+  - id: R05
+    section: AWS telemetry placement
+    text: AWS telemetry is a separate external managed-service system with AWS · Z1 · telemetry ingestion and
+      AWS · Z2 · protected telemetry. One Amazon API Gateway endpoint and one AWS Lambda telemetry function
+      belong to its ingestion tier; one Amazon S3 telemetry bucket belongs to its protected-data tier. These
+      labels are logical trust tiers, not assertions that the regional managed services reside in a private
+      subnet or VPC.
+  - id: R06
+    section: Interfaces
+    text: Production operator workstation initiates HTTPS on TCP 443 to Production integration API. That API
+      initiates PostgreSQL on TCP 5432 to Production job database. There is no Testbed-to-production-database
+      interface, no cloud-to-robot command interface and no unrestricted lateral production access.
+  - id: R07
+    section: Interfaces
+    text: Trial robot associates with Trial wireless access point using WPA3-Enterprise over IEEE 802.11. Its
+      separate application session initiates MQTT over TLS on TCP 8883 to Robot controller; Trial virtual firewall
+      is the enforcement reference. Trial operator tablet initiates HTTPS on TCP 443 to Robot controller through
+      the same enforcement control. Radio association is not evidence of application session initiation.
+  - id: R08
+    section: Interfaces
+    text: Robot controller initiates PostgreSQL on TCP 5432 to Trial data store through Trial virtual firewall.
+      Trial integration gateway polls Robot controller using HTTPS on TCP 443 to read a bounded status snapshot.
+      Telemetry delivery retries, queueing limits and failure handling are not yet specified.
+  - id: R09
+    section: Interfaces
+    text: The only proposed Testbed-to-Production handoff is Trial integration gateway initiating HTTPS on
+      TCP 443 to Production integration API, through Trial virtual firewall. It pushes only trial ID, job ID,
+      readiness state and timestamp; robot control commands and personal data are excluded. The gateway uses
+      a dedicated trial service identity. Production must validate that identity and schema and may reject
+      the request. This synthetic intended rule is not organisational approval.
+  - id: R10
+    section: Interfaces
+    text: Trial integration gateway initiates HTTPS on TCP 443 to Amazon API Gateway for outbound operational
+      telemetry, through Trial virtual firewall. The telemetry excludes production records and personal data.
+      A dedicated IAM principal signs the requests; key provisioning and rotation remain to be designed. API
+      Gateway invokes the AWS Lambda telemetry function using the AWS-managed Lambda integration, and Lambda
+      writes telemetry objects to Amazon S3 using HTTPS on TCP 443. No reverse command path is defined.
+  - id: R11
+    section: Operations and open decisions
+    text: AWS region, data residency approval, private connectivity versus public TLS, telemetry retention,
+      permitted telemetry schema, credential lifecycle and the trial decommissioning date remain undecided.
+      A routed network path or a cloud icon must not be treated as approval. Production database and trial
+      raw data stay on premises; only the explicitly bounded status/telemetry payloads may cross the stated
+      interfaces.
+  - id: R12
+    section: Operations and open decisions
+    text: Production has the stated API and database redundancy. Testbed recovery is manual restart and does
+      not have a production availability commitment. End-to-end resilience, recovery times and evidence of
+      firewall configuration are unverified. Do not describe this source as proof of compliance or operational
+      readiness.
+  systems:
+  - id: production-system
+    name: Production operations
+    scope: internal
+    ref: R01
+  - id: testbed-system
+    name: Robotics testbed
+    scope: internal
+    ref: R01
+  - id: telemetry-system
+    name: AWS telemetry
+    scope: external
+    ref: R05
+  zones:
+  - id: prod-client
+    name: Production · Client · user devices
+    ref: R01
+  - id: prod-z1
+    name: Production · Z1 · application services
+    ref: R01
+  - id: prod-z2
+    name: Production · Z2 · protected data
+    ref: R01
+  - id: test-client
+    name: Testbed · Client · trial devices
+    ref: R01
+  - id: test-z1
+    name: Testbed · Z1 · trial services
+    ref: R01
+  - id: test-z2
+    name: Testbed · Z2 · trial data
+    ref: R01
+  - id: aws-z1
+    name: AWS · Z1 · telemetry ingestion
+    ref: R05
+  - id: aws-z2
+    name: AWS · Z2 · protected telemetry
+    ref: R05
+  components:
+  - id: prod-operator
+    name: Production operator workstation
+    role: production operator access
+    asset_id: workstation
+    zone_id: prod-client
+    ref: R02
+    form_factor: physical
+    quantity: 1
+    redundancy_mode: unknown
+    host_component_id: null
+    system_id: production-system
+    status: proposed
+    scope: internal
+  - id: prod-api
+    name: Production integration API
+    role: production status application
+    asset_id: api-service
+    zone_id: prod-z1
+    ref: R02
+    form_factor: virtual
+    quantity: 2
+    redundancy_mode: active_active
+    host_component_id: null
+    system_id: production-system
+    status: proposed
+    scope: internal
+  - id: prod-db
+    name: Production job database
+    role: protected production data
+    asset_id: database
+    zone_id: prod-z2
+    ref: R02
+    form_factor: physical
+    quantity: 2
+    redundancy_mode: active_passive
+    host_component_id: null
+    system_id: production-system
+    status: proposed
+    scope: internal
+  - id: trial-robot
+    name: Trial robot
+    role: trial mobile robot
+    asset_id: robot
+    zone_id: test-client
+    ref: R03
+    form_factor: physical
+    quantity: 1
+    redundancy_mode: unknown
+    host_component_id: null
+    system_id: testbed-system
+    status: proposed
+    scope: internal
+  - id: trial-tablet
+    name: Trial operator tablet
+    role: trial operator access
+    asset_id: operator-tablet
+    zone_id: test-client
+    ref: R03
+    form_factor: physical
+    quantity: 1
+    redundancy_mode: unknown
+    host_component_id: null
+    system_id: testbed-system
+    status: proposed
+    scope: internal
+  - id: trial-ap
+    name: Trial wireless access point
+    role: isolated trial wireless access
+    asset_id: wireless-access-point
+    zone_id: test-client
+    ref: R03
+    form_factor: physical
+    quantity: 1
+    redundancy_mode: unknown
+    host_component_id: null
+    system_id: testbed-system
+    status: proposed
+    scope: internal
+  - id: trial-host
+    name: Trial compute host
+    role: trial compute host
+    asset_id: server
+    zone_id: test-z1
+    ref: R04
+    form_factor: physical
+    quantity: 1
+    redundancy_mode: unknown
+    host_component_id: null
+    system_id: testbed-system
+    status: proposed
+    scope: internal
+  - id: robot-controller
+    name: Robot controller
+    role: robot trial control and telemetry
+    asset_id: application-server
+    zone_id: test-z1
+    ref: R04
+    form_factor: virtual
+    quantity: 1
+    redundancy_mode: unknown
+    host_component_id: trial-host
+    system_id: testbed-system
+    status: proposed
+    scope: internal
+  - id: trial-gateway
+    name: Trial integration gateway
+    role: bounded status and telemetry gateway
+    asset_id: edge-gateway
+    zone_id: test-z1
+    ref: R04
+    form_factor: virtual
+    quantity: 1
+    redundancy_mode: unknown
+    host_component_id: trial-host
+    system_id: testbed-system
+    status: proposed
+    scope: internal
+  - id: trial-firewall
+    name: Trial virtual firewall
+    role: trial boundary enforcement
+    asset_id: virtual-firewall
+    zone_id: test-z1
+    ref: R04
+    form_factor: virtual
+    quantity: 1
+    redundancy_mode: unknown
+    host_component_id: trial-host
+    system_id: testbed-system
+    status: proposed
+    scope: internal
+  - id: trial-data
+    name: Trial data store
+    role: protected trial data
+    asset_id: database
+    zone_id: test-z2
+    ref: R04
+    form_factor: virtual
+    quantity: 1
+    redundancy_mode: unknown
+    host_component_id: null
+    system_id: testbed-system
+    status: proposed
+    scope: internal
+  - id: aws-api
+    name: Amazon API Gateway
+    role: managed telemetry ingress
+    asset_id: aws-api-gateway
+    zone_id: aws-z1
+    ref: R05
+    form_factor: managed
+    quantity: 1
+    redundancy_mode: unknown
+    host_component_id: null
+    system_id: telemetry-system
+    status: proposed
+    scope: external
+    internet_hosted: true
+  - id: aws-function
+    name: AWS Lambda telemetry function
+    role: managed telemetry transformation
+    asset_id: aws-lambda
+    zone_id: aws-z1
+    ref: R05
+    form_factor: managed
+    quantity: 1
+    redundancy_mode: unknown
+    host_component_id: null
+    system_id: telemetry-system
+    status: proposed
+    scope: external
+    internet_hosted: true
+  - id: aws-telemetry
+    name: Amazon S3 telemetry bucket
+    role: protected managed telemetry storage
+    asset_id: aws-s3
+    zone_id: aws-z2
+    ref: R05
+    form_factor: managed
+    quantity: 1
+    redundancy_mode: unknown
+    host_component_id: null
+    system_id: telemetry-system
+    status: proposed
+    scope: external
+    internet_hosted: true
+  interfaces:
+  - id: production-access
+    source: prod-operator
+    target: prod-api
+    purpose: production operations
+    protocol: HTTPS
+    port: 443
+    initiator: prod-operator
+    data_direction: bidirectional
+    enforcement: []
+    delivery: null
+    ref: R06
+  - id: production-database
+    source: prod-api
+    target: prod-db
+    purpose: production database access
+    protocol: PostgreSQL
+    port: 5432
+    initiator: prod-api
+    data_direction: bidirectional
+    enforcement: []
+    delivery: null
+    ref: R06
+  - id: trial-wireless
+    source: trial-robot
+    target: trial-ap
+    purpose: wireless association
+    protocol: IEEE 802.11 / WPA3-Enterprise
+    port: null
+    initiator: trial-robot
+    data_direction: bidirectional
+    enforcement: []
+    delivery: null
+    ref: R07
+  - id: robot-telemetry
+    source: trial-robot
+    target: robot-controller
+    purpose: robot telemetry
+    protocol: MQTT/TLS
+    port: 8883
+    initiator: trial-robot
+    data_direction: bidirectional
+    enforcement:
+    - trial-firewall
+    delivery: publish
+    ref: R07
+  - id: trial-operator-access
+    source: trial-tablet
+    target: robot-controller
+    purpose: trial operator application
+    protocol: HTTPS
+    port: 443
+    initiator: trial-tablet
+    data_direction: bidirectional
+    enforcement:
+    - trial-firewall
+    delivery: null
+    ref: R07
+  - id: trial-database
+    source: robot-controller
+    target: trial-data
+    purpose: trial database access
+    protocol: PostgreSQL
+    port: 5432
+    initiator: robot-controller
+    data_direction: bidirectional
+    enforcement:
+    - trial-firewall
+    delivery: null
+    ref: R08
+  - id: trial-snapshot
+    source: trial-gateway
+    target: robot-controller
+    purpose: bounded status snapshot
+    protocol: HTTPS
+    port: 443
+    initiator: trial-gateway
+    data_direction: bidirectional
+    enforcement: []
+    delivery: pull
+    ref: R08
+  - id: production-handoff
+    source: trial-gateway
+    target: prod-api
+    purpose: bounded trial status handoff
+    protocol: HTTPS
+    port: 443
+    initiator: trial-gateway
+    data_direction: source_to_target
+    enforcement:
+    - trial-firewall
+    delivery: push
+    ref: R09
+  - id: cloud-telemetry
+    source: trial-gateway
+    target: aws-api
+    purpose: outbound trial telemetry
+    protocol: HTTPS
+    port: 443
+    initiator: trial-gateway
+    data_direction: source_to_target
+    enforcement:
+    - trial-firewall
+    delivery: push
+    ref: R10
+  - id: telemetry-transform
+    source: aws-api
+    target: aws-function
+    purpose: telemetry transformation
+    protocol: AWS-managed Lambda integration
+    port: null
+    initiator: aws-api
+    data_direction: source_to_target
+    enforcement: []
+    delivery: null
+    ref: R10
+  - id: telemetry-store
+    source: aws-function
+    target: aws-telemetry
+    purpose: telemetry object writes
+    protocol: HTTPS
+    port: 443
+    initiator: aws-function
+    data_direction: source_to_target
+    enforcement: []
+    delivery: null
+    ref: R10
+  constraints:
+  - id: trial-isolation
+    key: testbed_production_isolation
+    value: deny all except the named production-handoff interface and bounded schema
+    ref: R09
+  - id: telemetry-content
+    key: cloud_payload
+    value: trial operational telemetry only; exclude production records and personal data
+    ref: R10
+  - id: cloud-connectivity
+    key: cloud_connectivity_approval
+    value: null
+    ref: R11
+  - id: cloud-residency
+    key: cloud_region_and_residency
+    value: null
+    ref: R11
+  - id: trial-retention
+    key: telemetry_retention
+    value: null
+    ref: R11
+  - id: hybrid-availability
+    key: availability_strategy
+    value: Production API active-active and database active-passive; Testbed manual restart; end-to-end recovery
+      unverified
+    ref: R12
+  decisions:
+  - id: cloud-connectivity-question
+    question: Which AWS connectivity approach should be reviewed for this trial?
+    target_id: cloud-connectivity
+    field: value
+    options:
+    - Private connectivity design review
+    - Public TLS with signed requests and strict egress review
+    - Not decided
+    ref: R11
+  - id: cloud-retention-question
+    question: How long should trial telemetry be retained in AWS?
+    target_id: trial-retention
+    field: value
+    options:
+    - 7 days for the trial
+    - 30 days for trial analysis
+    - Not decided
+    ref: R11
+  followups:
+  - prompt: Rename Trial integration gateway to Trial telemetry gateway
+    provider: mock or live
+    expected: Preview a rename only. Keep production-handoff and cloud-telemetry interface IDs and routes.
+  - prompt: Add a second Trial robot in Testbed Client with its own MQTT over TLS TCP 8883 session to Robot
+      controller through Trial virtual firewall. Keep production and AWS unchanged.
+    provider: live
+    expected: New physical robot, Testbed Client deployment and bounded interface only; no production-zone
+      reassignment.
+  - prompt: Set telemetry retention to 7 days for this trial. Do not change which payloads may leave the testbed.
+    provider: live
+    expected: Update the named retention constraint/decision; keep the production-data and personal-data exclusions.
+  - prompt: Make Trial virtual firewall a pair of active-passive instances, hosted on Trial compute host. Keep
+      all placements and routes.
+    provider: live
+    expected: Review explicit quantity 2 and active_passive deployment metadata. A shared host is still a common
+      failure point; do not claim full resilience.
+  - prompt: Remove the proposed production status handoff for the trial, leaving the AWS telemetry path unchanged.
+    provider: live
+    expected: Preview removal of production-handoff only and review before accepting; no component or cloud
+      interface deletion.
+  policy_ids:
+  - DEMO-ZON-01
+  - DEMO-IF-01
+  - DEMO-HA-01
+  - ARCH-SEG-01
+  - ARCH-DAT-01
+  - ARCH-FLW-01
+  - ARCH-TLS-01
+  - ARCH-IAM-01
+  - ARCH-SEC-01
+  - ARCH-LPR-01
+  - ARCH-BAK-01
+  - ARCH-AVL-01
+  - ARCH-LOG-01
+  - ARCH-PAT-01
+  - ARCH-DATA-01
+  - ARCH-OWN-01
+  - ARCH-BOUND-01
+  - ARCH-CLD-01
+  - ARCH-EGR-01
+  - ARCH-HYB-01
+  - ARCH-TST-01
+  - ARCH-HND-01
+  - ARCH-WLS-01
+  - ARCH-ROB-01
+  - ARCH-TRL-01
+- code: inventory
+  title: Warehouse inventory system
+  summary: A small internal stock-control application with handheld users, an application tier and a protected
+    stock ledger. Its unresolved integration decision is deliberate so a live extraction can ask a useful question.
+  featured: false
+  requirements:
+  - id: I01
+    section: Purpose and placement
+    text: The proposed Warehouse inventory system uses Client · user devices for two physical handheld scanners
+      and one physical Supervisor workstation, Z1 · application services for one Inventory web application,
+      and Z2 · protected data for one Inventory database. Application and database are virtual; their physical
+      hosts and hardware sizing are not specified.
+  - id: I02
+    section: Interfaces
+    text: Scanners and Supervisor workstation initiate HTTPS on TCP 443 to Inventory web application. The application
+      initiates PostgreSQL on TCP 5432 to Inventory database. Client devices have no direct database access.
+      A cross-tier enforcement design has not been supplied and must remain an open item.
+  - id: I03
+    section: Operations and open decisions
+    text: The ledger records product identifiers, warehouse locations, stock movements and quantities. Video
+      surveillance is outside scope. Stock movement may need to reach an existing finance system, but the finance
+      endpoint, protocol, delivery mode and initiator are not yet agreed. Do not invent that interface before
+      clarification.
+  - id: I04
+    section: Operations and open decisions
+    text: The warehouse has no required public-cloud or internet dependency in this source. A resilient service
+      is requested, but backup frequency, recovery targets and redundancy remain undecided. The stated single
+      instances describe the current draft rather than evidence of adequate availability.
+  systems: []
+  zones: []
+  components: []
+  interfaces: []
+  constraints: []
+  decisions: []
+  followups:
+  - prompt: Rename Inventory web application to Warehouse stock application
+    provider: live after natural-language document extraction
+    expected: One rename; preserve identifiers and placement.
+  - prompt: Add a stock-movement API for the finance integration in Z1, but leave its external endpoint, protocol
+      and initiator unresolved. Ask me the most important integration question.
+    provider: live
+    expected: Label unresolved integration facts and ask focused clarification; do not fabricate the finance
+      system.
+  - prompt: Make Inventory database a pair of active-passive instances and keep its zone Z2.
+    provider: live
+    expected: Explicit quantity 2 and active_passive metadata after review; no automatic claim about backups
+      or recovery time.
+- code: building-access
+  title: Building access event system
+  summary: A simple physical access event viewer. Door hardware remains client equipment; the application and
+    protected event store occupy separate tiers. Event delivery is deliberately unspecified.
+  featured: false
+  requirements:
+  - id: B01
+    section: Purpose and placement
+    text: The proposed Building access event system has three tiers. Client · user devices contains four physical
+      Door controllers and one physical Security operator workstation. Z1 · application services contains one
+      virtual Access event service. Z2 · protected data contains one virtual Access event database. Host hardware,
+      IP addresses and VLAN numbers are not yet specified.
+  - id: B02
+    section: Interfaces
+    text: Security operator workstation initiates HTTPS on TCP 443 to Access event service. The service initiates
+      PostgreSQL on TCP 5432 to Access event database. Door controllers exchange access events with Access
+      event service, but push versus polling, session initiator, protocol and port have not been decided. Do
+      not infer those facts from an arrow.
+  - id: B03
+    section: Operations and open decisions
+    text: This scope is event viewing only. It does not include remote unlock commands, facial recognition,
+      cameras or video analysis. Personal access-event records remain on premises. Cross-tier enforcement,
+      database retention, auditing and backups require explicit review.
+  - id: B04
+    section: Operations and open decisions
+    text: No production availability commitment or redundant instance count is supplied. The owner must choose
+      an availability design and event-delivery approach. Continue with a labelled draft and the stated single
+      service/database instances while these decisions remain open.
+  systems: []
+  zones: []
+  components: []
+  interfaces: []
+  constraints: []
+  decisions: []
+  followups:
+  - prompt: Rename Access event service to Building event viewer
+    provider: live after natural-language document extraction
+    expected: Rename the application only; keep all door hardware in Client.
+  - prompt: Use push delivery from Door controllers to Access event service over HTTPS TCP 443, initiated by
+      each controller. Keep remote unlock out of scope.
+    provider: live
+    expected: Resolve delivery, protocol, port and initiator with prompt evidence; do not add control functionality.
+  - prompt: Add a separate audit service in Z2 and connect Access event service to it. Leave the audit transport
+      undecided.
+    provider: live
+    expected: New protected audit component and unresolved interface; no invented protocol or port.

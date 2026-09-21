@@ -1,0 +1,3 @@
+# Preserve document bytes and offsets, including ASCII-encoded PDF streams.
+*.pdf binary
+*.docx binary

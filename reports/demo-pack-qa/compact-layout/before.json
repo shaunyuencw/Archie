@@ -1,0 +1,36 @@
+{
+  "portal": {
+    "semantic_sha256": "8d2df4fd11ecfb29d4532933d0ab5205aa3ce68f40157b888751301d4145b0eb",
+    "svg": {
+      "logical": {
+        "width": 1420.0,
+        "height": 830.0
+      },
+      "sv1": {
+        "width": 1480.0,
+        "height": 620.0
+      },
+      "sv2": {
+        "width": 1420.0,
+        "height": 830.0
+      }
+    }
+  },
+  "robotics": {
+    "semantic_sha256": "83fa5b867c0b9108905575475556e7a976684c829e90cf7bad85c82e3f6ee448",
+    "svg": {
+      "logical": {
+        "width": 1454.0,
+        "height": 1610.0
+      },
+      "sv1": {
+        "width": 1480.0,
+        "height": 620.0
+      },
+      "sv2": {
+        "width": 1515.6,
+        "height": 1610.0
+      }
+    }
+  }
+}

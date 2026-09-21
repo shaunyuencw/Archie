@@ -22,6 +22,13 @@ describe('selection transactions',()=>{
  });
  it('rejects cross-project references and aggregate view duplication',()=>{
   expect(()=>pasteOperations({project,ids:['vms'],view:'logical'},{...project,id:'different'},'logical')).toThrow('current project');
-  expect(()=>pasteOperations({project,ids:['vms'],view:'sv1'},project,'logical')).toThrow('Logical');
+  expect(()=>pasteOperations({project,ids:['vms'],view:'sv1'},project,'logical')).toThrow('Architecture');
+ });
+ it('remaps a copied virtual appliance to its copied host',()=>{
+  const p=structuredClone(project);
+  p.deployments.find(d=>d.component_id==='management')!.host_component_id='vms';
+  const ops=pasteOperations({project:p,ids:['management','vms'],view:'logical'},p,'logical').operations;
+  const host=ops.find(o=>o.entity==='components'&&o.value?.name===p.components.find(c=>c.id==='vms')!.name+' copy')!;
+  expect(ops.find(o=>o.entity==='deployments'&&o.value?.host_component_id)?.value?.host_component_id).toBe(host.id);
  });
 });

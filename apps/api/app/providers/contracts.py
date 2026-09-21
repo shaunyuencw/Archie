@@ -26,6 +26,7 @@ class Envelope(Record):
     claims:list[WireClaim]
     tool:ToolRequest|None
     message:str
+    project_name:str|None=Field(default=None,max_length=160)
 
 class Usage(Record):
     input_tokens:int=0
@@ -41,7 +42,12 @@ class ProviderResult(Record):
     model:str
     usage:Usage
 
-def schema():return Envelope.model_json_schema()
+def schema():
+    result=Envelope.model_json_schema()
+    # Live strict schemas require every property, including nullable metadata.
+    result['required']=list(result['properties'])
+    result['properties']['project_name'].pop('default',None)
+    return result
 def estimate(text):
     # Conservative byte upper bound. May reject long local requests early; never truncates context.
     return len(text.encode('utf-8'))

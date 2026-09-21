@@ -1,9 +1,11 @@
 import json,threading
 from pathlib import Path
 from ..domain.models import Operation,Claim,uid
+from ..domain.naming import name_operation,can_suggest_name,explicit_name_request
 from ..domain.commands import command,apply,DomainError
 from ..ingest.parser import parse
 from ..policies.engine import lookup
+from ..policies.library import selected_ids
 from ..providers.adapters import OpenAIAdapter,OllamaAdapter,MockAdapter
 from ..providers.budget import BudgetedProvider
 from ..providers.config import Settings
@@ -16,13 +18,21 @@ def context(p,query):
     matched=[c for c in p.components if c.name.lower() in query.lower() or c.id.lower() in query.lower()]
     selected=matched[:8] or p.components[:6]
     ids={c.id for c in selected}
-    return {'revision':p.revision,'components':[{'id':c.id,'name':c.name,'role':c.role} for c in selected],'interfaces':[{'id':i.id,'source':i.source,'target':i.target,'purpose':i.purpose} for i in p.interfaces if i.source in ids and i.target in ids][:8],'constraints':{c.key:c.value for c in p.constraints},'decisions':{d.id:d.answer for d in p.decisions},'omitted_components':len(p.components)-len(selected)}
+    deployments=[d for d in p.deployments if d.component_id in ids]
+    zone_ids={d.zone_id for d in deployments}
+    return {'revision':p.revision,'project_name':p.name,'suggest_project_name':can_suggest_name(p),'components':[c.model_dump(exclude={'evidence'}) for c in selected],
+            'deployments':[d.model_dump() for d in deployments],
+            'zones':[z.model_dump() for z in p.zones if z.id in zone_ids],
+            'interfaces':[i.model_dump(exclude={'evidence'}) for i in p.interfaces if i.source in ids and i.target in ids][:8],
+            'constraints':{c.key:c.value for c in p.constraints},'decisions':{d.id:d.answer for d in p.decisions},
+            'omitted_components':len(p.components)-len(selected)}
 
 def dispatch(tool,p):
     if tool.name=='get_architecture_context':return context(p,tool.query)
-    if tool.name=='lookup_policies':return lookup(tool.query)
+    if tool.name=='lookup_policies':return lookup(tool.query,policy_ids=selected_ids(p))
     if tool.name=='find_assets':
-        rows=json.loads((ROOT/'fixtures/assets/manifest.json').read_text())
+        from ..domain.catalogue import catalogue
+        rows=catalogue()
         return [r for r in rows if tool.query.lower() in r['id']][:5]
     if tool.name=='load_view_spec':
         import yaml
@@ -32,8 +42,10 @@ def dispatch(tool,p):
     raise DomainError('invalid_input','Tool is not allowed')
 
 def proposal_from_envelope(p,source,envelope,source_alias=None):
-    if not envelope.operations:raise DomainError('insufficient_context',envelope.message or 'No changes proposed')
-    claims=[]; ops=[]; uncertainties=[]
+    naming=name_operation(p,source,envelope.project_name)
+    if not envelope.operations and (naming is None or not explicit_name_request(source)):
+        raise DomainError('insufficient_context',envelope.message or 'No architecture changes proposed')
+    claims=[]; ops=[naming] if naming else []; uncertainties=[]
     for w in envelope.claims:
         if w.source_id not in {source.id,source_alias}: raise DomainError('provider_output','Evidence was not in the supplied source context')
         claims.append(Claim(id=uid(),source_id=source.id,source_version=source.version,locator=w.locator,excerpt=w.excerpt,target_id=w.target_id,field=w.field,value=json.loads(w.value_json),source_kind=source.kind,review='confirmed'))

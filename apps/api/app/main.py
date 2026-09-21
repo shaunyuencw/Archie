@@ -3,24 +3,28 @@ from pathlib import Path
 from fastapi import FastAPI, UploadFile, File,Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse,Response
-from pydantic import BaseModel
+from pydantic import BaseModel,Field
 from .domain.models import Project, ChangeSet, uid
 from .domain.commands import DomainError
 from .domain.views import view_graph,narrative
+from .domain.catalogue import catalogue as asset_catalogue
 from .storage.store import Store
 from .orchestration.service import ingest,answer
 from .orchestration.live import assisted_run,CANCELLATIONS
 from .providers.config import Settings,pricing
 from .providers.budget import usage_summary
 from .policies.engine import evaluate,lookup
+from .policies.library import router as policy_router
 from .exports.service import export
 from .orchestration.documents import ingest_live,document_preflight
+from .orchestration.policy_review import ReviewRequest, review_project, latest_review
 
 ROOT=Path(__file__).resolve().parents[3]
 store=Store()
 
 STARTUP_SETTINGS = Settings.environment()  # Validate limits before serving; never performs a provider call.
 app = FastAPI(title="Architecture Workbench", version="0.1.0")
+app.include_router(policy_router)
 app.add_middleware(CORSMiddleware, allow_origins=["http://127.0.0.1:5173", "http://localhost:5173"], allow_methods=["GET", "POST"], allow_headers=["Content-Type"])
 
 @app.get("/api/health")
@@ -38,12 +42,33 @@ class CreateRequest(BaseModel):
 @app.get('/api/projects')
 def projects(): return store.list()
 
+@app.get('/api/projects/trash')
+def trashed_projects(): return store.list_trash()
+
+class EmptyTrashRequest(BaseModel):
+    confirmed:bool=False
+    project_ids:list[str]=Field(default_factory=list,max_length=10000)
+
+@app.post('/api/projects/trash/empty')
+def empty_project_trash(req:EmptyTrashRequest):
+    if not req.confirmed:raise DomainError('confirmation_required','Confirm permanent removal of the selected trashed projects.')
+    return store.empty_trash(req.project_ids)
+
+@app.post('/api/projects/{pid}/trash')
+def trash_project(pid:str): return store.trash(pid)
+
+@app.post('/api/projects/{pid}/restore',response_model=Project)
+def restore_project(pid:str): return store.restore(pid)
+
 @app.post('/api/projects',response_model=Project)
 def create(req:CreateRequest):
     if req.reference:
-        if req.reference not in ['A','B']: raise DomainError('invalid_input','Unknown reference')
-        p=Project.model_validate_json((ROOT/f'fixtures/references/{req.reference}/project.json').read_text(encoding='utf-8')); p.id=uid(); p.name=req.name
-    else: p=Project(name=req.name)
+        if req.reference not in ['A','B','portal','robotics']: raise DomainError('invalid_input','Unknown reference')
+        folder='references' if req.reference in ['A','B'] else 'demos'
+        p=Project.model_validate_json((ROOT/f'fixtures/{folder}/{req.reference}/project.json').read_text(encoding='utf-8')); p.id=uid(); p.name=req.name if req.name!='Untitled architecture' else p.name
+    else: p=Project(name=req.name,policy_ids=[])
+    if req.reference:
+        for source in p.sources: source.origin='bundled_demo'
     return store.create(p)
 
 @app.get('/api/projects/{pid}',response_model=Project)
@@ -91,7 +116,7 @@ def view(pid:str,kind:str):
 
 @app.get('/api/projects/{pid}/narrative')
 def get_narrative(pid:str):
-    p=store.get(pid);key=f'narrative:{pid}:{p.revision}'
+    p=store.get(pid);key=f'narrative-v2:{pid}:{p.revision}'
     with store.connect() as db:
         row=db.execute('SELECT body FROM cache WHERE hash=?',(key,)).fetchone()
         text=row[0] if row else narrative(p)
@@ -99,7 +124,7 @@ def get_narrative(pid:str):
     return {'revision':p.revision,'text':text}
 
 @app.get('/api/catalogue')
-def catalogue(): return json.loads((ROOT/'fixtures/assets/manifest.json').read_text(encoding='utf-8'))
+def catalogue(): return asset_catalogue()
 
 @app.get('/api/assets/{asset}')
 def asset_file(asset:str):
@@ -155,8 +180,11 @@ def answers(pid:str,req:AnswerRequest): return answer(store,pid,req)
 @app.get('/api/projects/{pid}/findings')
 def findings(pid:str):return evaluate(store.get(pid))
 
-@app.get('/api/policies')
-def policies(q:str=''):return lookup(q)
+@app.get('/api/projects/{pid}/policy-review')
+def get_policy_review(pid:str,provider:str='mock'):return latest_review(store,pid,provider)
+
+@app.post('/api/projects/{pid}/policy-review')
+def run_policy_review(pid:str,request:ReviewRequest):return review_project(store,pid,request)
 
 @app.get('/api/settings')
 def settings():

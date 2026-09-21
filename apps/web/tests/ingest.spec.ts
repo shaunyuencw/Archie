@@ -8,6 +8,12 @@ test('T02 T04 upload review, sources and saved answer',async({page})=>{
  await page.getByRole('button',{name:'Accept changes',exact:true}).click();
  await expect(page.getByText('8 components · 4 interfaces · saved locally',{exact:true})).toBeVisible();
  await expect(page.locator('.claim').first()).toContainText('confirmed');
- const question=page.locator('.question select').first();await expect(question).toBeVisible();await question.selectOption({index:1});
+ const question=page.locator('.clarification-question').first();await expect(question).toBeVisible();
+ await expect(question.getByRole('radio',{name:/^Other/})).toBeVisible();
+ await expect(question.getByRole('radio',{name:/^Not decided yet/})).toBeVisible();
+ await page.screenshot({path:'../../reports/archie-clarification-questions.png',fullPage:true});
+ await question.getByRole('radio').first().check();
+ const saved=page.waitForResponse(response=>response.url().endsWith('/answers')&&response.request().method()==='POST');
+ await question.getByRole('button',{name:'Save answer',exact:true}).click();expect((await saved).ok()).toBe(true);
  await page.getByRole('button',{name:'Save / reopen',exact:true}).click();await expect(page.getByRole('alert')).toHaveCount(0);
 });

@@ -1,0 +1,50 @@
+[
+  {
+    "path": "portal/techspec.docx",
+    "source_id": "demo-portal-techspec",
+    "version": "1.0",
+    "sha256": "9a93c947a343d01e7130d2165a7f8959a74357cce6cedf2c49dc97fd376e9167"
+  },
+  {
+    "path": "portal/techspec.pdf",
+    "source_id": "demo-portal-techspec",
+    "version": "1.0",
+    "sha256": "b916ea0999e6b08314cda79544d12b7788d6d075fbf30b07be7823a88e73b333"
+  },
+  {
+    "path": "robotics/techspec.docx",
+    "source_id": "demo-robotics-techspec",
+    "version": "1.0",
+    "sha256": "055cc1111c345f9eee4a193ebc90ecaed50d67c2efbf585ec58cb371d3c0ef7b"
+  },
+  {
+    "path": "robotics/techspec.pdf",
+    "source_id": "demo-robotics-techspec",
+    "version": "1.0",
+    "sha256": "2392ab6b8fbf719b85e4f55298566461e9de029a0c706b040308ddc29d857602"
+  },
+  {
+    "path": "inventory/techspec.docx",
+    "source_id": "demo-inventory-techspec",
+    "version": "1.0",
+    "sha256": "369802f58e52b24d82fabb7154e19407bd02a97dd8c582b785a9e22b2dde2147"
+  },
+  {
+    "path": "inventory/techspec.pdf",
+    "source_id": "demo-inventory-techspec",
+    "version": "1.0",
+    "sha256": "82b6a42ccb33b00e4cb4399f3ee4f6eee22992e468b19e69b98bbcbf71b522c4"
+  },
+  {
+    "path": "building-access/techspec.docx",
+    "source_id": "demo-building-access-techspec",
+    "version": "1.0",
+    "sha256": "e34eabca93df5ed6c14538b32af6e9562a621805bb7fd1485e60922ffca7e795"
+  },
+  {
+    "path": "building-access/techspec.pdf",
+    "source_id": "demo-building-access-techspec",
+    "version": "1.0",
+    "sha256": "30a8937d80e610184abaee6fd070f11f3c1bb8e98b4d90a6c5d556d08252e8ab"
+  }
+]

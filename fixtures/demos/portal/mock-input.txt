@@ -1,0 +1,45 @@
+SYNTHETIC — DEMONSTRATION ONLY
+
+System portal-users: name="User access"; scope="internal"
+
+System portal-services: name="Portal services"; scope="internal"
+
+System portal-data: name="Protected data"; scope="internal"
+
+Zone client: name="Client · user devices"
+
+Zone z1: name="Z1 · application services"
+
+Zone z2: name="Z2 · protected data"
+
+Component employee: name="Employee workstation"; role="employee access"; asset_id="workstation"; form_factor="physical"; system_id="portal-users"; status="proposed"; scope="internal"; zone_id="client"; quantity=1; redundancy_mode="unknown"; host_component_id=null
+
+Component service-desk: name="Service desk workstation"; role="service desk access"; asset_id="workstation"; form_factor="physical"; system_id="portal-users"; status="proposed"; scope="internal"; zone_id="client"; quantity=1; redundancy_mode="unknown"; host_component_id=null
+
+Component portal-web: name="Portal web service"; role="web frontend"; asset_id="web-server"; form_factor="virtual"; system_id="portal-services"; status="proposed"; scope="internal"; zone_id="z1"; quantity=1; redundancy_mode="unknown"; host_component_id="app-host"
+
+Component portal-app: name="Request application"; role="request processing"; asset_id="application-server"; form_factor="virtual"; system_id="portal-services"; status="proposed"; scope="internal"; zone_id="z1"; quantity=2; redundancy_mode="active_active"; host_component_id="app-host"
+
+Component app-host: name="Application hosts"; role="application compute host"; asset_id="server"; form_factor="physical"; system_id="portal-services"; status="proposed"; scope="internal"; zone_id="z1"; quantity=2; redundancy_mode="active_active"; host_component_id=null
+
+Component zone-firewall: name="Zone firewall"; role="zone enforcement"; asset_id="virtual-firewall"; form_factor="virtual"; system_id="portal-services"; status="proposed"; scope="internal"; zone_id="z1"; quantity=1; redundancy_mode="unknown"; host_component_id="app-host"
+
+Component request-db: name="Request database"; role="protected relational data and audit records"; asset_id="database"; form_factor="physical"; system_id="portal-data"; status="proposed"; scope="internal"; zone_id="z2"; quantity=2; redundancy_mode="active_passive"; host_component_id=null
+
+Interface employee-web: source="employee"; target="portal-web"; purpose="service requests"; protocol="HTTPS"; port=443; initiator="employee"; data_direction="bidirectional"; enforcement=[]; delivery=null
+
+Interface desk-web: source="service-desk"; target="portal-web"; purpose="service desk actions"; protocol="HTTPS"; port=443; initiator="service-desk"; data_direction="bidirectional"; enforcement=[]; delivery=null
+
+Interface web-app: source="portal-web"; target="portal-app"; purpose="request processing"; protocol="HTTPS"; port=443; initiator="portal-web"; data_direction="bidirectional"; enforcement=[]; delivery=null
+
+Interface app-database: source="portal-app"; target="request-db"; purpose="database access"; protocol="PostgreSQL"; port=5432; initiator="portal-app"; data_direction="bidirectional"; enforcement=["zone-firewall"]; delivery=null
+
+Constraint portal-offline: key="no_internet"; value=true
+
+Constraint portal-resilience: key="resilience_required"; value=true
+
+Constraint portal-availability: key="availability_strategy"; value=null
+
+Constraint portal-sizing: key="equipment_sizing"; value=null
+
+Constraint portal-boundary: key="client_direct_database_access"; value="forbidden"

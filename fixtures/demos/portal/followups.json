@@ -1,0 +1,27 @@
+{
+  "synthetic": true,
+  "scenario": "Production service portal",
+  "provider_notes": "Mock supports authored key-value fixtures and narrow add-workstation/rename prompts only. Natural-language technical specs and all broader follow-ups require an explicitly selected live provider. Review every change set before accepting. Ordinary edits and exports use no model calls.",
+  "prompts": [
+    {
+      "prompt": "Rename Portal web service to Employee self-service portal",
+      "provider": "mock or live",
+      "expected": "Preview one component rename; preserve its ID, interfaces and manually adjusted placements."
+    },
+    {
+      "prompt": "Add one workstation",
+      "provider": "mock or live",
+      "expected": "Mock adds one unzoned workstation; explicitly review and assign its deployment to Client. It must not silently assume a trust zone."
+    },
+    {
+      "prompt": "Add a reporting service to Z1 and connect it to Request database over PostgreSQL TCP 5432 through Zone firewall. Keep all existing positions and routes.",
+      "provider": "live",
+      "expected": "Review a targeted new service/deployment/interface proposal. Database zone stays Z2 and existing manual placements remain."
+    },
+    {
+      "prompt": "Make Portal web service a pair of active-active instances, and make Zone firewall a pair of active-passive instances. Keep them hosted on Application hosts. Do not change Request database.",
+      "provider": "live",
+      "expected": "Review quantity 2 and explicit redundancy changes only for those deployments. This does not by itself settle recovery targets or approve the architecture."
+    }
+  ]
+}

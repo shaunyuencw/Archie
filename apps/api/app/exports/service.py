@@ -65,6 +65,11 @@ def _edge_points(a, b, route):
     points = [start]
     anchors = [start, *waypoints, end]
     for i, (first, last) in enumerate(zip(anchors, anchors[1:])):
+        # Segment drags persist adjacent bend vertices, not extra midpoint hints.
+        if first[0] == last[0] or first[1] == last[1]:
+            if last != points[-1]:
+                points.append(last)
+            continue
         dx, dy = last[0] - first[0], last[1] - first[1]
         outgoing = ('right' if dx >= 0 else 'left') if abs(dx) >= abs(dy) else ('bottom' if dy >= 0 else 'top')
         opposite = {'left': 'right', 'right': 'left', 'top': 'bottom', 'bottom': 'top'}
@@ -118,7 +123,8 @@ def svg(p, kind):
              '<defs><marker id="flow-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto-start-reverse" markerUnits="strokeWidth"><path d="M 0 0 L 8 4 L 0 8 z" fill="#587d93"/></marker></defs>'
              f'<rect x="{x0}" y="{y0}" width="{width}" height="{height}" fill="#f7fafc"/>'
              f'<text x="{x0 + 24}" y="{y0 + 30}" font-family="Arial" font-size="14" fill="#173c58">{escape(label)} · {kind} · revision {p.revision}</text>']
-    allowed = {a['id'] for a in json.loads((ROOT / 'fixtures/assets/manifest.json').read_text())}
+    from ..domain.catalogue import catalogue
+    allowed = {a['id'] for a in catalogue()}
 
     def draw_node(n, zone=False):
         x, y, w, h = n['x'], n['y'], n['width'], n['height']
@@ -127,7 +133,21 @@ def svg(p, kind):
             parts.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="8" fill="#eef5f7" fill-opacity=".2" stroke="#b29e76" stroke-width="2" stroke-dasharray="7 5"/>')
         elif n['asset_id'] in allowed:
             data = base64.b64encode((ROOT / 'fixtures/assets' / f'{n["asset_id"]}.svg').read_bytes()).decode()
-            parts.append(f'<image x="{x + (w - 43) / 2}" y="{y + 5}" width="43" height="43" href="data:image/svg+xml;base64,{data}"/>')
+            ix=x+(w-43)/2; iy=y+5
+            quantity=n.get('quantity')
+            for offset in reversed(range(1,min(quantity or 1,3))):
+                parts.append(f'<image class="stack-copy" x="{ix+offset*6}" y="{iy-offset*4}" width="43" height="43" opacity=".35" href="data:image/svg+xml;base64,{data}"/>')
+            parts.append(f'<image x="{ix}" y="{iy}" width="43" height="43" href="data:image/svg+xml;base64,{data}"/>')
+            if quantity and quantity>1:
+                mode={'unknown':'arrangement not decided','active_passive':'active / standby','active_active':'active / active'}[n['redundancy_mode']]
+                parts.append(f'<text class="instance-count" x="{ix+47}" y="{iy+41}" font-family="Arial" font-size="11" fill="#187361"><title>{quantity} instances; {mode}</title>×{quantity}</text>')
+            marker='AWS' if n['asset_id'].startswith('aws-') else 'VM' if n.get('form_factor')=='virtual' else None
+            if marker:
+                parts.append(f'<text x="{ix-8}" y="{iy+44}" font-family="Arial" font-size="8" fill="#526e86">{marker}</text>')
+            if n.get('hosted_controls'):
+                badge=base64.b64encode((ROOT/'fixtures/assets/virtual-firewall.svg').read_bytes()).decode()
+                names=', '.join(c['name'] for c in n['hosted_controls'])
+                parts.append(f'<g class="hosted-control"><title>{escape(names)} hosted here</title><rect x="{ix+44}" y="{iy-1}" width="27" height="27" rx="4" fill="#eef7f6" stroke="#b4d4cf"/><image x="{ix+47}" y="{iy+2}" width="21" height="21" href="data:image/svg+xml;base64,{badge}"/></g>')
         lines = _wrap_label(n['label'], w - 26 if zone else w - 18)
         for i, line in enumerate(lines):
             parts.append(f'<text x="{x + 13 if zone else x + w / 2}" y="{y + (27 if zone else 65) + i * 17}" font-family="Arial" font-size="{14 if zone else 13}" font-weight="600" text-anchor="{"start" if zone else "middle"}" fill="{"#655c45" if zone else "#1d3545"}">{escape(line)}</text>')
@@ -164,8 +184,9 @@ def docx_bytes(p):
 
 def pattern(p):
     """Whitelist reusable semantics. No addresses, arbitrary labels, evidence or answers."""
-    out=Project(name='Synthetic reusable architecture pattern')
-    allowed={a['id'] for a in json.loads((ROOT/'fixtures/assets/manifest.json').read_text())}
+    out=Project(name='Synthetic reusable architecture pattern',policy_ids=[])
+    from ..domain.catalogue import catalogue
+    allowed={a['id'] for a in catalogue()}
     mapping={x.id:f'{group}-{i+1}' for group in ['systems','zones','components','deployments','interfaces','decisions'] for i,x in enumerate(getattr(p,group))}
     d=out.model_dump();roles={'video management','operator','configuration','management integration','analytics','audit','firewall','workstation','external command system'}
     d['systems']=[{'id':mapping[x.id],'name':f'System {i+1}','scope':x.scope} for i,x in enumerate(p.systems)]

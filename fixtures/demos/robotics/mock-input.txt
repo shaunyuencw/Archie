@@ -1,0 +1,85 @@
+SYNTHETIC — DEMONSTRATION ONLY
+
+System production-system: name="Production operations"; scope="internal"
+
+System testbed-system: name="Robotics testbed"; scope="internal"
+
+System telemetry-system: name="AWS telemetry"; scope="external"
+
+Zone prod-client: name="Production · Client · user devices"
+
+Zone prod-z1: name="Production · Z1 · application services"
+
+Zone prod-z2: name="Production · Z2 · protected data"
+
+Zone test-client: name="Testbed · Client · trial devices"
+
+Zone test-z1: name="Testbed · Z1 · trial services"
+
+Zone test-z2: name="Testbed · Z2 · trial data"
+
+Zone aws-z1: name="AWS · Z1 · telemetry ingestion"
+
+Zone aws-z2: name="AWS · Z2 · protected telemetry"
+
+Component prod-operator: name="Production operator workstation"; role="production operator access"; asset_id="workstation"; form_factor="physical"; system_id="production-system"; status="proposed"; scope="internal"; zone_id="prod-client"; quantity=1; redundancy_mode="unknown"; host_component_id=null
+
+Component prod-api: name="Production integration API"; role="production status application"; asset_id="api-service"; form_factor="virtual"; system_id="production-system"; status="proposed"; scope="internal"; zone_id="prod-z1"; quantity=2; redundancy_mode="active_active"; host_component_id=null
+
+Component prod-db: name="Production job database"; role="protected production data"; asset_id="database"; form_factor="physical"; system_id="production-system"; status="proposed"; scope="internal"; zone_id="prod-z2"; quantity=2; redundancy_mode="active_passive"; host_component_id=null
+
+Component trial-robot: name="Trial robot"; role="trial mobile robot"; asset_id="robot"; form_factor="physical"; system_id="testbed-system"; status="proposed"; scope="internal"; zone_id="test-client"; quantity=1; redundancy_mode="unknown"; host_component_id=null
+
+Component trial-tablet: name="Trial operator tablet"; role="trial operator access"; asset_id="operator-tablet"; form_factor="physical"; system_id="testbed-system"; status="proposed"; scope="internal"; zone_id="test-client"; quantity=1; redundancy_mode="unknown"; host_component_id=null
+
+Component trial-ap: name="Trial wireless access point"; role="isolated trial wireless access"; asset_id="wireless-access-point"; form_factor="physical"; system_id="testbed-system"; status="proposed"; scope="internal"; zone_id="test-client"; quantity=1; redundancy_mode="unknown"; host_component_id=null
+
+Component trial-host: name="Trial compute host"; role="trial compute host"; asset_id="server"; form_factor="physical"; system_id="testbed-system"; status="proposed"; scope="internal"; zone_id="test-z1"; quantity=1; redundancy_mode="unknown"; host_component_id=null
+
+Component robot-controller: name="Robot controller"; role="robot trial control and telemetry"; asset_id="application-server"; form_factor="virtual"; system_id="testbed-system"; status="proposed"; scope="internal"; zone_id="test-z1"; quantity=1; redundancy_mode="unknown"; host_component_id="trial-host"
+
+Component trial-gateway: name="Trial integration gateway"; role="bounded status and telemetry gateway"; asset_id="edge-gateway"; form_factor="virtual"; system_id="testbed-system"; status="proposed"; scope="internal"; zone_id="test-z1"; quantity=1; redundancy_mode="unknown"; host_component_id="trial-host"
+
+Component trial-firewall: name="Trial virtual firewall"; role="trial boundary enforcement"; asset_id="virtual-firewall"; form_factor="virtual"; system_id="testbed-system"; status="proposed"; scope="internal"; zone_id="test-z1"; quantity=1; redundancy_mode="unknown"; host_component_id="trial-host"
+
+Component trial-data: name="Trial data store"; role="protected trial data"; asset_id="database"; form_factor="virtual"; system_id="testbed-system"; status="proposed"; scope="internal"; zone_id="test-z2"; quantity=1; redundancy_mode="unknown"; host_component_id=null
+
+Component aws-api: name="Amazon API Gateway"; role="managed telemetry ingress"; asset_id="aws-api-gateway"; form_factor="managed"; system_id="telemetry-system"; status="proposed"; scope="external"; internet_hosted=true; zone_id="aws-z1"; quantity=1; redundancy_mode="unknown"; host_component_id=null
+
+Component aws-function: name="AWS Lambda telemetry function"; role="managed telemetry transformation"; asset_id="aws-lambda"; form_factor="managed"; system_id="telemetry-system"; status="proposed"; scope="external"; internet_hosted=true; zone_id="aws-z1"; quantity=1; redundancy_mode="unknown"; host_component_id=null
+
+Component aws-telemetry: name="Amazon S3 telemetry bucket"; role="protected managed telemetry storage"; asset_id="aws-s3"; form_factor="managed"; system_id="telemetry-system"; status="proposed"; scope="external"; internet_hosted=true; zone_id="aws-z2"; quantity=1; redundancy_mode="unknown"; host_component_id=null
+
+Interface production-access: source="prod-operator"; target="prod-api"; purpose="production operations"; protocol="HTTPS"; port=443; initiator="prod-operator"; data_direction="bidirectional"; enforcement=[]; delivery=null
+
+Interface production-database: source="prod-api"; target="prod-db"; purpose="production database access"; protocol="PostgreSQL"; port=5432; initiator="prod-api"; data_direction="bidirectional"; enforcement=[]; delivery=null
+
+Interface trial-wireless: source="trial-robot"; target="trial-ap"; purpose="wireless association"; protocol="IEEE 802.11 / WPA3-Enterprise"; port=null; initiator="trial-robot"; data_direction="bidirectional"; enforcement=[]; delivery=null
+
+Interface robot-telemetry: source="trial-robot"; target="robot-controller"; purpose="robot telemetry"; protocol="MQTT/TLS"; port=8883; initiator="trial-robot"; data_direction="bidirectional"; enforcement=["trial-firewall"]; delivery="publish"
+
+Interface trial-operator-access: source="trial-tablet"; target="robot-controller"; purpose="trial operator application"; protocol="HTTPS"; port=443; initiator="trial-tablet"; data_direction="bidirectional"; enforcement=["trial-firewall"]; delivery=null
+
+Interface trial-database: source="robot-controller"; target="trial-data"; purpose="trial database access"; protocol="PostgreSQL"; port=5432; initiator="robot-controller"; data_direction="bidirectional"; enforcement=["trial-firewall"]; delivery=null
+
+Interface trial-snapshot: source="trial-gateway"; target="robot-controller"; purpose="bounded status snapshot"; protocol="HTTPS"; port=443; initiator="trial-gateway"; data_direction="bidirectional"; enforcement=[]; delivery="pull"
+
+Interface production-handoff: source="trial-gateway"; target="prod-api"; purpose="bounded trial status handoff"; protocol="HTTPS"; port=443; initiator="trial-gateway"; data_direction="source_to_target"; enforcement=["trial-firewall"]; delivery="push"
+
+Interface cloud-telemetry: source="trial-gateway"; target="aws-api"; purpose="outbound trial telemetry"; protocol="HTTPS"; port=443; initiator="trial-gateway"; data_direction="source_to_target"; enforcement=["trial-firewall"]; delivery="push"
+
+Interface telemetry-transform: source="aws-api"; target="aws-function"; purpose="telemetry transformation"; protocol="AWS-managed Lambda integration"; port=null; initiator="aws-api"; data_direction="source_to_target"; enforcement=[]; delivery=null
+
+Interface telemetry-store: source="aws-function"; target="aws-telemetry"; purpose="telemetry object writes"; protocol="HTTPS"; port=443; initiator="aws-function"; data_direction="source_to_target"; enforcement=[]; delivery=null
+
+Constraint trial-isolation: key="testbed_production_isolation"; value="deny all except the named production-handoff interface and bounded schema"
+
+Constraint telemetry-content: key="cloud_payload"; value="trial operational telemetry only; exclude production records and personal data"
+
+Constraint cloud-connectivity: key="cloud_connectivity_approval"; value=null
+
+Constraint cloud-residency: key="cloud_region_and_residency"; value=null
+
+Constraint trial-retention: key="telemetry_retention"; value=null
+
+Constraint hybrid-availability: key="availability_strategy"; value="Production API active-active and database active-passive; Testbed manual restart; end-to-end recovery unverified"

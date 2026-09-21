@@ -46,8 +46,10 @@ def parse(data:bytes,name:str,kind='document',store=None)->Source:
     except DomainError: raise
     except Exception as e: raise DomainError('unsupported_document','Document could not be parsed safely') from e
     manifest=json.loads((ROOT/'fixtures/projects/manifest.json').read_text())
+    demo_manifest=ROOT/'fixtures/demos/manifest.json'
+    if demo_manifest.exists(): manifest+=json.loads(demo_manifest.read_text())
     entry=next((m for m in manifest if m['sha256']==digest),None)
-    src=Source(id=uid(),name=Path(name).name,kind=kind,sha256=digest,canonical_id=entry['source_id'] if entry else digest,version=entry['version'] if entry else '1.0',variants=[digest],passages=passages,unprocessed=[p.locator for p in passages],unsupported_pages=unsupported)
+    src=Source(id=uid(),name=Path(name).name,kind=kind,origin='prompt' if kind=='prompt' else 'bundled_demo' if entry else 'upload',sha256=digest,canonical_id=entry['source_id'] if entry else digest,version=entry['version'] if entry else '1.0',variants=[digest],passages=passages,unprocessed=[p.locator for p in passages],unsupported_pages=unsupported)
     if store:
         with store.connect() as db: db.execute('INSERT OR REPLACE INTO cache VALUES(?,?)',(digest,src.model_dump_json()))
     return src

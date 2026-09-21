@@ -28,6 +28,7 @@ class Component(Record):
     status: Literal['existing','new','proposed'] = 'proposed'
     asset_id: str = 'server'
     scope: Literal['internal','external','unknown'] = 'internal'
+    form_factor: Literal['unknown','physical','virtual','managed'] = 'unknown'
     audit_destination: str | None = None
     storage_destination: str | None = None
     local_only: bool | None = None
@@ -41,6 +42,8 @@ class Deployment(Record):
     host: str | None = None
     site: str | None = None
     quantity: int | None = Field(default=None, ge=0)
+    redundancy_mode: Literal['unknown','active_passive','active_active'] = 'unknown'
+    host_component_id: str | None = None
 
 class Interface(Record):
     id: str
@@ -66,6 +69,7 @@ class Source(Record):
     name: str
     version: str = '1.0'
     kind: Literal['document','prompt','template','assistant_proposal']
+    origin: Literal['prompt','upload','bundled_demo','unknown'] = 'unknown'
     sha256: str
     canonical_id: str
     variants: list[str] = Field(default_factory=list)
@@ -139,6 +143,7 @@ class Project(Record):
     updated_at: str = Field(default_factory=now)
     synthetic: bool = True
     policy_version: str = '1.0'
+    policy_ids: list[str] | None = Field(default=None,max_length=100)
     template_version: str = '1.0'
     systems: list[System] = Field(default_factory=list)
     zones: list[Zone] = Field(default_factory=list)
@@ -154,6 +159,8 @@ class Project(Record):
 
     @model_validator(mode='after')
     def references(self):
+        if self.policy_ids is not None and len(self.policy_ids)!=len(set(self.policy_ids)):
+            raise ValueError('Policy IDs must be unique')
         groups=['systems','zones','components','deployments','interfaces','sources','claims','constraints','decisions']
         ids=[x.id for group in groups for x in getattr(self,group)]
         if len(ids)!=len(set(ids)): raise ValueError('IDs must be globally unique')
@@ -168,8 +175,17 @@ class Project(Record):
         seen=set()
         for x in self.deployments:
             ref(x.component_id,c); ref(x.zone_id,z)
+            ref(x.host_component_id,c)
+            if x.host_component_id==x.component_id: raise ValueError('A component cannot host itself')
+            if x.redundancy_mode!='unknown' and (x.quantity is None or x.quantity<2): raise ValueError('A redundancy mode requires at least two declared instances')
             if x.component_id in seen: raise ValueError('One deployment record per component in PoC')
             seen.add(x.component_id)
+        hosts={x.component_id:x.host_component_id for x in self.deployments}
+        for ident in hosts:
+            visited=set(); parent=ident
+            while parent is not None:
+                if parent in visited: raise ValueError('Hosting relationships cannot form a cycle')
+                visited.add(parent); parent=hosts.get(parent)
         for x in self.interfaces:
             ref(x.source,c); ref(x.target,c); ref(x.initiator,{x.source,x.target})
             for e in x.enforcement: ref(e,c)
@@ -189,7 +205,7 @@ class Project(Record):
         return self
 
 class Operation(Record):
-    op: Literal['add','update','remove','placement','route','notes']
+    op: Literal['add','update','remove','placement','route','notes','policy_selection','project_name']
     entity: Literal['systems','zones','components','deployments','interfaces','sources','claims','constraints','decisions'] | None = None
     id: str = ''
     value: dict[str,Any] = Field(default_factory=dict)

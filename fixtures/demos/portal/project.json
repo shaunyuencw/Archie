@@ -1,0 +1,1584 @@
+{
+  "id": "demo-portal",
+  "name": "Production service portal",
+  "schema_version": "1.0",
+  "revision": 0,
+  "created_at": "2026-09-21T00:00:00+00:00",
+  "updated_at": "2026-09-21T00:00:00+00:00",
+  "synthetic": true,
+  "policy_version": "1.0",
+  "policy_ids": [
+    "DEMO-ZON-01",
+    "DEMO-IF-01",
+    "DEMO-HA-01",
+    "ARCH-SEG-01",
+    "ARCH-DAT-01",
+    "ARCH-FLW-01",
+    "ARCH-TLS-01",
+    "ARCH-IAM-01",
+    "ARCH-SEC-01",
+    "ARCH-LPR-01",
+    "ARCH-BAK-01",
+    "ARCH-AVL-01",
+    "ARCH-LOG-01",
+    "ARCH-PAT-01",
+    "ARCH-DATA-01",
+    "ARCH-OWN-01",
+    "ARCH-BOUND-01"
+  ],
+  "template_version": "1.0",
+  "systems": [
+    {
+      "id": "portal-users",
+      "name": "User access",
+      "scope": "internal"
+    },
+    {
+      "id": "portal-services",
+      "name": "Portal services",
+      "scope": "internal"
+    },
+    {
+      "id": "portal-data",
+      "name": "Protected data",
+      "scope": "internal"
+    }
+  ],
+  "zones": [
+    {
+      "id": "client",
+      "name": "Client · user devices"
+    },
+    {
+      "id": "z1",
+      "name": "Z1 · application services"
+    },
+    {
+      "id": "z2",
+      "name": "Z2 · protected data"
+    }
+  ],
+  "components": [
+    {
+      "id": "employee",
+      "name": "Employee workstation",
+      "role": "employee access",
+      "system_id": "portal-users",
+      "status": "proposed",
+      "asset_id": "workstation",
+      "scope": "internal",
+      "form_factor": "physical",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "claim-employee"
+      ]
+    },
+    {
+      "id": "service-desk",
+      "name": "Service desk workstation",
+      "role": "service desk access",
+      "system_id": "portal-users",
+      "status": "proposed",
+      "asset_id": "workstation",
+      "scope": "internal",
+      "form_factor": "physical",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "claim-service-desk"
+      ]
+    },
+    {
+      "id": "portal-web",
+      "name": "Portal web service",
+      "role": "web frontend",
+      "system_id": "portal-services",
+      "status": "proposed",
+      "asset_id": "web-server",
+      "scope": "internal",
+      "form_factor": "virtual",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "claim-portal-web"
+      ]
+    },
+    {
+      "id": "portal-app",
+      "name": "Request application",
+      "role": "request processing",
+      "system_id": "portal-services",
+      "status": "proposed",
+      "asset_id": "application-server",
+      "scope": "internal",
+      "form_factor": "virtual",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "claim-portal-app"
+      ]
+    },
+    {
+      "id": "app-host",
+      "name": "Application hosts",
+      "role": "application compute host",
+      "system_id": "portal-services",
+      "status": "proposed",
+      "asset_id": "server",
+      "scope": "internal",
+      "form_factor": "physical",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "claim-app-host"
+      ]
+    },
+    {
+      "id": "zone-firewall",
+      "name": "Zone firewall",
+      "role": "zone enforcement",
+      "system_id": "portal-services",
+      "status": "proposed",
+      "asset_id": "virtual-firewall",
+      "scope": "internal",
+      "form_factor": "virtual",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "claim-zone-firewall"
+      ]
+    },
+    {
+      "id": "request-db",
+      "name": "Request database",
+      "role": "protected relational data and audit records",
+      "system_id": "portal-data",
+      "status": "proposed",
+      "asset_id": "database",
+      "scope": "internal",
+      "form_factor": "physical",
+      "audit_destination": null,
+      "storage_destination": null,
+      "local_only": null,
+      "internet_hosted": null,
+      "evidence": [
+        "claim-request-db"
+      ]
+    }
+  ],
+  "deployments": [
+    {
+      "id": "deployment-employee",
+      "component_id": "employee",
+      "zone_id": "client",
+      "host": null,
+      "site": null,
+      "quantity": 1,
+      "redundancy_mode": "unknown",
+      "host_component_id": null
+    },
+    {
+      "id": "deployment-service-desk",
+      "component_id": "service-desk",
+      "zone_id": "client",
+      "host": null,
+      "site": null,
+      "quantity": 1,
+      "redundancy_mode": "unknown",
+      "host_component_id": null
+    },
+    {
+      "id": "deployment-portal-web",
+      "component_id": "portal-web",
+      "zone_id": "z1",
+      "host": null,
+      "site": null,
+      "quantity": 1,
+      "redundancy_mode": "unknown",
+      "host_component_id": "app-host"
+    },
+    {
+      "id": "deployment-portal-app",
+      "component_id": "portal-app",
+      "zone_id": "z1",
+      "host": null,
+      "site": null,
+      "quantity": 2,
+      "redundancy_mode": "active_active",
+      "host_component_id": "app-host"
+    },
+    {
+      "id": "deployment-app-host",
+      "component_id": "app-host",
+      "zone_id": "z1",
+      "host": null,
+      "site": null,
+      "quantity": 2,
+      "redundancy_mode": "active_active",
+      "host_component_id": null
+    },
+    {
+      "id": "deployment-zone-firewall",
+      "component_id": "zone-firewall",
+      "zone_id": "z1",
+      "host": null,
+      "site": null,
+      "quantity": 1,
+      "redundancy_mode": "unknown",
+      "host_component_id": "app-host"
+    },
+    {
+      "id": "deployment-request-db",
+      "component_id": "request-db",
+      "zone_id": "z2",
+      "host": null,
+      "site": null,
+      "quantity": 2,
+      "redundancy_mode": "active_passive",
+      "host_component_id": null
+    }
+  ],
+  "interfaces": [
+    {
+      "id": "employee-web",
+      "source": "employee",
+      "target": "portal-web",
+      "purpose": "service requests",
+      "data_direction": "bidirectional",
+      "initiator": "employee",
+      "protocol": "HTTPS",
+      "port": 443,
+      "enforcement": [],
+      "delivery": null,
+      "evidence": [
+        "claim-employee-web"
+      ]
+    },
+    {
+      "id": "desk-web",
+      "source": "service-desk",
+      "target": "portal-web",
+      "purpose": "service desk actions",
+      "data_direction": "bidirectional",
+      "initiator": "service-desk",
+      "protocol": "HTTPS",
+      "port": 443,
+      "enforcement": [],
+      "delivery": null,
+      "evidence": [
+        "claim-desk-web"
+      ]
+    },
+    {
+      "id": "web-app",
+      "source": "portal-web",
+      "target": "portal-app",
+      "purpose": "request processing",
+      "data_direction": "bidirectional",
+      "initiator": "portal-web",
+      "protocol": "HTTPS",
+      "port": 443,
+      "enforcement": [],
+      "delivery": null,
+      "evidence": [
+        "claim-web-app"
+      ]
+    },
+    {
+      "id": "app-database",
+      "source": "portal-app",
+      "target": "request-db",
+      "purpose": "database access",
+      "data_direction": "bidirectional",
+      "initiator": "portal-app",
+      "protocol": "PostgreSQL",
+      "port": 5432,
+      "enforcement": [
+        "zone-firewall"
+      ],
+      "delivery": null,
+      "evidence": [
+        "claim-app-database"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "demo-portal-source",
+      "name": "techspec.docx",
+      "version": "1.0",
+      "kind": "document",
+      "origin": "bundled_demo",
+      "sha256": "9a93c947a343d01e7130d2165a7f8959a74357cce6cedf2c49dc97fd376e9167",
+      "canonical_id": "demo-portal-techspec",
+      "variants": [
+        "9a93c947a343d01e7130d2165a7f8959a74357cce6cedf2c49dc97fd376e9167",
+        "b916ea0999e6b08314cda79544d12b7788d6d075fbf30b07be7823a88e73b333"
+      ],
+      "passages": [
+        {
+          "locator": "paragraph/1",
+          "heading": "",
+          "text": "Production service portal technical specification",
+          "page": null
+        },
+        {
+          "locator": "paragraph/2",
+          "heading": "",
+          "text": "SYNTHETIC — DEMONSTRATION ONLY",
+          "page": null
+        },
+        {
+          "locator": "paragraph/3",
+          "heading": "",
+          "text": "Version 1.0 · Fixed fixture date 21 September 2026",
+          "page": null
+        },
+        {
+          "locator": "paragraph/4",
+          "heading": "",
+          "text": "A proposed internal service-request portal for employees and the service desk. This small example separates physical client devices, application services and protected data. It is a fictional review draft, not an approved production design.",
+          "page": null
+        },
+        {
+          "locator": "paragraph/5",
+          "heading": "Purpose and placement",
+          "text": "Purpose and placement",
+          "page": null
+        },
+        {
+          "locator": "paragraph/6",
+          "heading": "Purpose and placement",
+          "text": "[P01] The Production service portal has three trust tiers: Client · user devices; Z1 · application services; and Z2 · protected data. Every item below is a proposed part of this fictional design. Zone placement describes intended trust separation, not proof of firewall configuration. The model groups responsibility as User access, Portal services and Protected data.",
+          "page": null
+        },
+        {
+          "locator": "paragraph/7",
+          "heading": "Purpose and placement",
+          "text": "[P02] Client contains one physical Employee workstation and one physical Service desk workstation. They are user devices only. No application server or database is placed in Client.",
+          "page": null
+        },
+        {
+          "locator": "paragraph/8",
+          "heading": "Purpose and placement",
+          "text": "[P03] Z1 contains one virtual Portal web service and two virtual Request application instances operating active-active. Both services run on the two physical Application hosts in Z1. The host pair is specified as active-active; its hardware capacity is not yet sized. One virtual Zone firewall also runs on an Application host; firewall failover is undecided.",
+          "page": null
+        },
+        {
+          "locator": "paragraph/9",
+          "heading": "Purpose and placement",
+          "text": "[P04] Z2 contains two physical Request database servers operating active-passive. The database stores requests and application audit records. No Client device may connect directly to the database.",
+          "page": null
+        },
+        {
+          "locator": "paragraph/11",
+          "heading": "Interfaces",
+          "text": "Interfaces",
+          "page": null
+        },
+        {
+          "locator": "paragraph/12",
+          "heading": "Interfaces",
+          "text": "[P05] Each workstation initiates an HTTPS session to Portal web service on TCP 443 for service requests or service-desk actions. These are application sessions, not infrastructure administration sessions.",
+          "page": null
+        },
+        {
+          "locator": "paragraph/13",
+          "heading": "Interfaces",
+          "text": "[P06] Portal web service initiates HTTPS sessions to Request application on TCP 443. Request application initiates PostgreSQL sessions to Request database on TCP 5432. Zone firewall is the explicit enforcement reference for the Z1-to-Z2 database interface; its intended rule permits only the application service identity to that database service and denies other cross-tier traffic.",
+          "page": null
+        },
+        {
+          "locator": "paragraph/14",
+          "heading": "Operations and open decisions",
+          "text": "Operations and open decisions",
+          "page": null
+        },
+        {
+          "locator": "paragraph/15",
+          "heading": "Operations and open decisions",
+          "text": "[P07] The application is internal and has no required internet-hosted dependency. Data remains on premises. Application database and audit records are the only stores defined here; backups, audit retention, IP addresses, VLAN numbers, hardware capacity and infrastructure administration remain undecided.",
+          "page": null
+        },
+        {
+          "locator": "paragraph/16",
+          "heading": "Operations and open decisions",
+          "text": "[P08] A service availability requirement exists, but its end-to-end strategy is not yet approved: the application and database have the stated redundancy, while the web service and virtual firewall remain single instances. The service owner must choose a recovery target and resolve these remaining failure points before production acceptance.",
+          "page": null
+        }
+      ],
+      "processed": [
+        "paragraph/1",
+        "paragraph/2",
+        "paragraph/3",
+        "paragraph/4",
+        "paragraph/5",
+        "paragraph/6",
+        "paragraph/7",
+        "paragraph/8",
+        "paragraph/9",
+        "paragraph/11",
+        "paragraph/12",
+        "paragraph/13",
+        "paragraph/14",
+        "paragraph/15",
+        "paragraph/16"
+      ],
+      "unprocessed": [],
+      "unsupported_pages": []
+    }
+  ],
+  "claims": [
+    {
+      "id": "claim-portal-users",
+      "source_id": "demo-portal-source",
+      "source_version": "1.0",
+      "locator": "paragraph/6",
+      "excerpt": "[P01] The Production service portal has three trust tiers: Client · user devices; Z1 · application services; and Z2 · protected data. Every item below is a proposed part of this fictional design. Zone placement describes intended trust separation, not proof of firewall configuration. The model groups responsibility as User access, Portal services and Protected data.",
+      "target_id": "portal-users",
+      "field": "record",
+      "value": {
+        "id": "portal-users",
+        "name": "User access",
+        "scope": "internal"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-portal-services",
+      "source_id": "demo-portal-source",
+      "source_version": "1.0",
+      "locator": "paragraph/6",
+      "excerpt": "[P01] The Production service portal has three trust tiers: Client · user devices; Z1 · application services; and Z2 · protected data. Every item below is a proposed part of this fictional design. Zone placement describes intended trust separation, not proof of firewall configuration. The model groups responsibility as User access, Portal services and Protected data.",
+      "target_id": "portal-services",
+      "field": "record",
+      "value": {
+        "id": "portal-services",
+        "name": "Portal services",
+        "scope": "internal"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-portal-data",
+      "source_id": "demo-portal-source",
+      "source_version": "1.0",
+      "locator": "paragraph/6",
+      "excerpt": "[P01] The Production service portal has three trust tiers: Client · user devices; Z1 · application services; and Z2 · protected data. Every item below is a proposed part of this fictional design. Zone placement describes intended trust separation, not proof of firewall configuration. The model groups responsibility as User access, Portal services and Protected data.",
+      "target_id": "portal-data",
+      "field": "record",
+      "value": {
+        "id": "portal-data",
+        "name": "Protected data",
+        "scope": "internal"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-client",
+      "source_id": "demo-portal-source",
+      "source_version": "1.0",
+      "locator": "paragraph/6",
+      "excerpt": "[P01] The Production service portal has three trust tiers: Client · user devices; Z1 · application services; and Z2 · protected data. Every item below is a proposed part of this fictional design. Zone placement describes intended trust separation, not proof of firewall configuration. The model groups responsibility as User access, Portal services and Protected data.",
+      "target_id": "client",
+      "field": "record",
+      "value": {
+        "id": "client",
+        "name": "Client · user devices"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-z1",
+      "source_id": "demo-portal-source",
+      "source_version": "1.0",
+      "locator": "paragraph/6",
+      "excerpt": "[P01] The Production service portal has three trust tiers: Client · user devices; Z1 · application services; and Z2 · protected data. Every item below is a proposed part of this fictional design. Zone placement describes intended trust separation, not proof of firewall configuration. The model groups responsibility as User access, Portal services and Protected data.",
+      "target_id": "z1",
+      "field": "record",
+      "value": {
+        "id": "z1",
+        "name": "Z1 · application services"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-z2",
+      "source_id": "demo-portal-source",
+      "source_version": "1.0",
+      "locator": "paragraph/6",
+      "excerpt": "[P01] The Production service portal has three trust tiers: Client · user devices; Z1 · application services; and Z2 · protected data. Every item below is a proposed part of this fictional design. Zone placement describes intended trust separation, not proof of firewall configuration. The model groups responsibility as User access, Portal services and Protected data.",
+      "target_id": "z2",
+      "field": "record",
+      "value": {
+        "id": "z2",
+        "name": "Z2 · protected data"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-employee",
+      "source_id": "demo-portal-source",
+      "source_version": "1.0",
+      "locator": "paragraph/7",
+      "excerpt": "[P02] Client contains one physical Employee workstation and one physical Service desk workstation. They are user devices only. No application server or database is placed in Client.",
+      "target_id": "employee",
+      "field": "record",
+      "value": {
+        "id": "employee",
+        "name": "Employee workstation",
+        "role": "employee access",
+        "asset_id": "workstation",
+        "form_factor": "physical",
+        "system_id": "portal-users",
+        "status": "proposed",
+        "scope": "internal"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-service-desk",
+      "source_id": "demo-portal-source",
+      "source_version": "1.0",
+      "locator": "paragraph/7",
+      "excerpt": "[P02] Client contains one physical Employee workstation and one physical Service desk workstation. They are user devices only. No application server or database is placed in Client.",
+      "target_id": "service-desk",
+      "field": "record",
+      "value": {
+        "id": "service-desk",
+        "name": "Service desk workstation",
+        "role": "service desk access",
+        "asset_id": "workstation",
+        "form_factor": "physical",
+        "system_id": "portal-users",
+        "status": "proposed",
+        "scope": "internal"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-portal-web",
+      "source_id": "demo-portal-source",
+      "source_version": "1.0",
+      "locator": "paragraph/8",
+      "excerpt": "[P03] Z1 contains one virtual Portal web service and two virtual Request application instances operating active-active. Both services run on the two physical Application hosts in Z1. The host pair is specified as active-active; its hardware capacity is not yet sized. One virtual Zone firewall also runs on an Application host; firewall failover is undecided.",
+      "target_id": "portal-web",
+      "field": "record",
+      "value": {
+        "id": "portal-web",
+        "name": "Portal web service",
+        "role": "web frontend",
+        "asset_id": "web-server",
+        "form_factor": "virtual",
+        "system_id": "portal-services",
+        "status": "proposed",
+        "scope": "internal"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-portal-app",
+      "source_id": "demo-portal-source",
+      "source_version": "1.0",
+      "locator": "paragraph/8",
+      "excerpt": "[P03] Z1 contains one virtual Portal web service and two virtual Request application instances operating active-active. Both services run on the two physical Application hosts in Z1. The host pair is specified as active-active; its hardware capacity is not yet sized. One virtual Zone firewall also runs on an Application host; firewall failover is undecided.",
+      "target_id": "portal-app",
+      "field": "record",
+      "value": {
+        "id": "portal-app",
+        "name": "Request application",
+        "role": "request processing",
+        "asset_id": "application-server",
+        "form_factor": "virtual",
+        "system_id": "portal-services",
+        "status": "proposed",
+        "scope": "internal"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-app-host",
+      "source_id": "demo-portal-source",
+      "source_version": "1.0",
+      "locator": "paragraph/8",
+      "excerpt": "[P03] Z1 contains one virtual Portal web service and two virtual Request application instances operating active-active. Both services run on the two physical Application hosts in Z1. The host pair is specified as active-active; its hardware capacity is not yet sized. One virtual Zone firewall also runs on an Application host; firewall failover is undecided.",
+      "target_id": "app-host",
+      "field": "record",
+      "value": {
+        "id": "app-host",
+        "name": "Application hosts",
+        "role": "application compute host",
+        "asset_id": "server",
+        "form_factor": "physical",
+        "system_id": "portal-services",
+        "status": "proposed",
+        "scope": "internal"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-zone-firewall",
+      "source_id": "demo-portal-source",
+      "source_version": "1.0",
+      "locator": "paragraph/8",
+      "excerpt": "[P03] Z1 contains one virtual Portal web service and two virtual Request application instances operating active-active. Both services run on the two physical Application hosts in Z1. The host pair is specified as active-active; its hardware capacity is not yet sized. One virtual Zone firewall also runs on an Application host; firewall failover is undecided.",
+      "target_id": "zone-firewall",
+      "field": "record",
+      "value": {
+        "id": "zone-firewall",
+        "name": "Zone firewall",
+        "role": "zone enforcement",
+        "asset_id": "virtual-firewall",
+        "form_factor": "virtual",
+        "system_id": "portal-services",
+        "status": "proposed",
+        "scope": "internal"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-request-db",
+      "source_id": "demo-portal-source",
+      "source_version": "1.0",
+      "locator": "paragraph/9",
+      "excerpt": "[P04] Z2 contains two physical Request database servers operating active-passive. The database stores requests and application audit records. No Client device may connect directly to the database.",
+      "target_id": "request-db",
+      "field": "record",
+      "value": {
+        "id": "request-db",
+        "name": "Request database",
+        "role": "protected relational data and audit records",
+        "asset_id": "database",
+        "form_factor": "physical",
+        "system_id": "portal-data",
+        "status": "proposed",
+        "scope": "internal"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-deployment-employee",
+      "source_id": "demo-portal-source",
+      "source_version": "1.0",
+      "locator": "paragraph/7",
+      "excerpt": "[P02] Client contains one physical Employee workstation and one physical Service desk workstation. They are user devices only. No application server or database is placed in Client.",
+      "target_id": "deployment-employee",
+      "field": "record",
+      "value": {
+        "id": "deployment-employee",
+        "component_id": "employee",
+        "zone_id": "client",
+        "quantity": 1,
+        "redundancy_mode": "unknown",
+        "host_component_id": null
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-deployment-service-desk",
+      "source_id": "demo-portal-source",
+      "source_version": "1.0",
+      "locator": "paragraph/7",
+      "excerpt": "[P02] Client contains one physical Employee workstation and one physical Service desk workstation. They are user devices only. No application server or database is placed in Client.",
+      "target_id": "deployment-service-desk",
+      "field": "record",
+      "value": {
+        "id": "deployment-service-desk",
+        "component_id": "service-desk",
+        "zone_id": "client",
+        "quantity": 1,
+        "redundancy_mode": "unknown",
+        "host_component_id": null
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-deployment-portal-web",
+      "source_id": "demo-portal-source",
+      "source_version": "1.0",
+      "locator": "paragraph/8",
+      "excerpt": "[P03] Z1 contains one virtual Portal web service and two virtual Request application instances operating active-active. Both services run on the two physical Application hosts in Z1. The host pair is specified as active-active; its hardware capacity is not yet sized. One virtual Zone firewall also runs on an Application host; firewall failover is undecided.",
+      "target_id": "deployment-portal-web",
+      "field": "record",
+      "value": {
+        "id": "deployment-portal-web",
+        "component_id": "portal-web",
+        "zone_id": "z1",
+        "quantity": 1,
+        "redundancy_mode": "unknown",
+        "host_component_id": "app-host"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-deployment-portal-app",
+      "source_id": "demo-portal-source",
+      "source_version": "1.0",
+      "locator": "paragraph/8",
+      "excerpt": "[P03] Z1 contains one virtual Portal web service and two virtual Request application instances operating active-active. Both services run on the two physical Application hosts in Z1. The host pair is specified as active-active; its hardware capacity is not yet sized. One virtual Zone firewall also runs on an Application host; firewall failover is undecided.",
+      "target_id": "deployment-portal-app",
+      "field": "record",
+      "value": {
+        "id": "deployment-portal-app",
+        "component_id": "portal-app",
+        "zone_id": "z1",
+        "quantity": 2,
+        "redundancy_mode": "active_active",
+        "host_component_id": "app-host"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-deployment-app-host",
+      "source_id": "demo-portal-source",
+      "source_version": "1.0",
+      "locator": "paragraph/8",
+      "excerpt": "[P03] Z1 contains one virtual Portal web service and two virtual Request application instances operating active-active. Both services run on the two physical Application hosts in Z1. The host pair is specified as active-active; its hardware capacity is not yet sized. One virtual Zone firewall also runs on an Application host; firewall failover is undecided.",
+      "target_id": "deployment-app-host",
+      "field": "record",
+      "value": {
+        "id": "deployment-app-host",
+        "component_id": "app-host",
+        "zone_id": "z1",
+        "quantity": 2,
+        "redundancy_mode": "active_active",
+        "host_component_id": null
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-deployment-zone-firewall",
+      "source_id": "demo-portal-source",
+      "source_version": "1.0",
+      "locator": "paragraph/8",
+      "excerpt": "[P03] Z1 contains one virtual Portal web service and two virtual Request application instances operating active-active. Both services run on the two physical Application hosts in Z1. The host pair is specified as active-active; its hardware capacity is not yet sized. One virtual Zone firewall also runs on an Application host; firewall failover is undecided.",
+      "target_id": "deployment-zone-firewall",
+      "field": "record",
+      "value": {
+        "id": "deployment-zone-firewall",
+        "component_id": "zone-firewall",
+        "zone_id": "z1",
+        "quantity": 1,
+        "redundancy_mode": "unknown",
+        "host_component_id": "app-host"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-deployment-request-db",
+      "source_id": "demo-portal-source",
+      "source_version": "1.0",
+      "locator": "paragraph/9",
+      "excerpt": "[P04] Z2 contains two physical Request database servers operating active-passive. The database stores requests and application audit records. No Client device may connect directly to the database.",
+      "target_id": "deployment-request-db",
+      "field": "record",
+      "value": {
+        "id": "deployment-request-db",
+        "component_id": "request-db",
+        "zone_id": "z2",
+        "quantity": 2,
+        "redundancy_mode": "active_passive",
+        "host_component_id": null
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-employee-web",
+      "source_id": "demo-portal-source",
+      "source_version": "1.0",
+      "locator": "paragraph/12",
+      "excerpt": "[P05] Each workstation initiates an HTTPS session to Portal web service on TCP 443 for service requests or service-desk actions. These are application sessions, not infrastructure administration sessions.",
+      "target_id": "employee-web",
+      "field": "record",
+      "value": {
+        "id": "employee-web",
+        "source": "employee",
+        "target": "portal-web",
+        "purpose": "service requests",
+        "protocol": "HTTPS",
+        "port": 443,
+        "initiator": "employee",
+        "data_direction": "bidirectional",
+        "enforcement": [],
+        "delivery": null
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-desk-web",
+      "source_id": "demo-portal-source",
+      "source_version": "1.0",
+      "locator": "paragraph/12",
+      "excerpt": "[P05] Each workstation initiates an HTTPS session to Portal web service on TCP 443 for service requests or service-desk actions. These are application sessions, not infrastructure administration sessions.",
+      "target_id": "desk-web",
+      "field": "record",
+      "value": {
+        "id": "desk-web",
+        "source": "service-desk",
+        "target": "portal-web",
+        "purpose": "service desk actions",
+        "protocol": "HTTPS",
+        "port": 443,
+        "initiator": "service-desk",
+        "data_direction": "bidirectional",
+        "enforcement": [],
+        "delivery": null
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-web-app",
+      "source_id": "demo-portal-source",
+      "source_version": "1.0",
+      "locator": "paragraph/13",
+      "excerpt": "[P06] Portal web service initiates HTTPS sessions to Request application on TCP 443. Request application initiates PostgreSQL sessions to Request database on TCP 5432. Zone firewall is the explicit enforcement reference for the Z1-to-Z2 database interface; its intended rule permits only the application service identity to that database service and denies other cross-tier traffic.",
+      "target_id": "web-app",
+      "field": "record",
+      "value": {
+        "id": "web-app",
+        "source": "portal-web",
+        "target": "portal-app",
+        "purpose": "request processing",
+        "protocol": "HTTPS",
+        "port": 443,
+        "initiator": "portal-web",
+        "data_direction": "bidirectional",
+        "enforcement": [],
+        "delivery": null
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-app-database",
+      "source_id": "demo-portal-source",
+      "source_version": "1.0",
+      "locator": "paragraph/13",
+      "excerpt": "[P06] Portal web service initiates HTTPS sessions to Request application on TCP 443. Request application initiates PostgreSQL sessions to Request database on TCP 5432. Zone firewall is the explicit enforcement reference for the Z1-to-Z2 database interface; its intended rule permits only the application service identity to that database service and denies other cross-tier traffic.",
+      "target_id": "app-database",
+      "field": "record",
+      "value": {
+        "id": "app-database",
+        "source": "portal-app",
+        "target": "request-db",
+        "purpose": "database access",
+        "protocol": "PostgreSQL",
+        "port": 5432,
+        "initiator": "portal-app",
+        "data_direction": "bidirectional",
+        "enforcement": [
+          "zone-firewall"
+        ],
+        "delivery": null
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-portal-offline",
+      "source_id": "demo-portal-source",
+      "source_version": "1.0",
+      "locator": "paragraph/15",
+      "excerpt": "[P07] The application is internal and has no required internet-hosted dependency. Data remains on premises. Application database and audit records are the only stores defined here; backups, audit retention, IP addresses, VLAN numbers, hardware capacity and infrastructure administration remain undecided.",
+      "target_id": "portal-offline",
+      "field": "record",
+      "value": {
+        "id": "portal-offline",
+        "key": "no_internet",
+        "value": true
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-portal-resilience",
+      "source_id": "demo-portal-source",
+      "source_version": "1.0",
+      "locator": "paragraph/16",
+      "excerpt": "[P08] A service availability requirement exists, but its end-to-end strategy is not yet approved: the application and database have the stated redundancy, while the web service and virtual firewall remain single instances. The service owner must choose a recovery target and resolve these remaining failure points before production acceptance.",
+      "target_id": "portal-resilience",
+      "field": "record",
+      "value": {
+        "id": "portal-resilience",
+        "key": "resilience_required",
+        "value": true
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-portal-availability",
+      "source_id": "demo-portal-source",
+      "source_version": "1.0",
+      "locator": "paragraph/16",
+      "excerpt": "[P08] A service availability requirement exists, but its end-to-end strategy is not yet approved: the application and database have the stated redundancy, while the web service and virtual firewall remain single instances. The service owner must choose a recovery target and resolve these remaining failure points before production acceptance.",
+      "target_id": "portal-availability",
+      "field": "record",
+      "value": {
+        "id": "portal-availability",
+        "key": "availability_strategy",
+        "value": null
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-portal-sizing",
+      "source_id": "demo-portal-source",
+      "source_version": "1.0",
+      "locator": "paragraph/15",
+      "excerpt": "[P07] The application is internal and has no required internet-hosted dependency. Data remains on premises. Application database and audit records are the only stores defined here; backups, audit retention, IP addresses, VLAN numbers, hardware capacity and infrastructure administration remain undecided.",
+      "target_id": "portal-sizing",
+      "field": "record",
+      "value": {
+        "id": "portal-sizing",
+        "key": "equipment_sizing",
+        "value": null
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-portal-boundary",
+      "source_id": "demo-portal-source",
+      "source_version": "1.0",
+      "locator": "paragraph/9",
+      "excerpt": "[P04] Z2 contains two physical Request database servers operating active-passive. The database stores requests and application audit records. No Client device may connect directly to the database.",
+      "target_id": "portal-boundary",
+      "field": "record",
+      "value": {
+        "id": "portal-boundary",
+        "key": "client_direct_database_access",
+        "value": "forbidden"
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    },
+    {
+      "id": "claim-portal-availability-question",
+      "source_id": "demo-portal-source",
+      "source_version": "1.0",
+      "locator": "paragraph/16",
+      "excerpt": "[P08] A service availability requirement exists, but its end-to-end strategy is not yet approved: the application and database have the stated redundancy, while the web service and virtual firewall remain single instances. The service owner must choose a recovery target and resolve these remaining failure points before production acceptance.",
+      "target_id": "portal-availability-question",
+      "field": "record",
+      "value": {
+        "id": "portal-availability-question",
+        "question": "What end-to-end availability strategy should be used for the portal?",
+        "target_id": "portal-availability",
+        "field": "value",
+        "options": [
+          "Redundant web and firewall tiers with documented recovery",
+          "Document a single-site recovery plan",
+          "Not decided"
+        ]
+      },
+      "source_kind": "document",
+      "review": "confirmed"
+    }
+  ],
+  "constraints": [
+    {
+      "id": "portal-offline",
+      "scope": "project",
+      "key": "no_internet",
+      "value": true,
+      "evidence": [
+        "claim-portal-offline"
+      ]
+    },
+    {
+      "id": "portal-resilience",
+      "scope": "project",
+      "key": "resilience_required",
+      "value": true,
+      "evidence": [
+        "claim-portal-resilience"
+      ]
+    },
+    {
+      "id": "portal-availability",
+      "scope": "project",
+      "key": "availability_strategy",
+      "value": null,
+      "evidence": [
+        "claim-portal-availability"
+      ]
+    },
+    {
+      "id": "portal-sizing",
+      "scope": "project",
+      "key": "equipment_sizing",
+      "value": null,
+      "evidence": [
+        "claim-portal-sizing"
+      ]
+    },
+    {
+      "id": "portal-boundary",
+      "scope": "project",
+      "key": "client_direct_database_access",
+      "value": "forbidden",
+      "evidence": [
+        "claim-portal-boundary"
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "id": "portal-availability-question",
+      "question": "What end-to-end availability strategy should be used for the portal?",
+      "target_id": "portal-availability",
+      "field": "value",
+      "options": [
+        "Redundant web and firewall tiers with documented recovery",
+        "Document a single-site recovery plan",
+        "Not decided"
+      ],
+      "answer": null,
+      "state": "unknown",
+      "evidence": [
+        "claim-portal-availability-question"
+      ]
+    }
+  ],
+  "views": {
+    "logical": {
+      "type": "logical",
+      "revision": 0,
+      "placements": {
+        "client": {
+          "x": 20.0,
+          "y": 30.0,
+          "width": 225.0,
+          "height": 430.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "z1": {
+          "x": 265.0,
+          "y": 30.0,
+          "width": 420.0,
+          "height": 430.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "z2": {
+          "x": 705.0,
+          "y": 30.0,
+          "width": 225.0,
+          "height": 430.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "employee": {
+          "x": 20.0,
+          "y": 150.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "service-desk": {
+          "x": 20.0,
+          "y": 290.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "portal-web": {
+          "x": 15.0,
+          "y": 150.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "portal-app": {
+          "x": 220.0,
+          "y": 150.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "app-host": {
+          "x": 15.0,
+          "y": 290.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "zone-firewall": {
+          "x": 220.0,
+          "y": 290.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "request-db": {
+          "x": 20.0,
+          "y": 150.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        }
+      },
+      "routes": {
+        "employee-web": {
+          "style": "orthogonal",
+          "points": [
+            {
+              "x": 132.5,
+              "y": 110.0
+            },
+            {
+              "x": 372.5,
+              "y": 110.0
+            }
+          ],
+          "source_handle": "top",
+          "target_handle": "top",
+          "locked": true
+        },
+        "desk-web": {
+          "style": "orthogonal",
+          "points": [
+            {
+              "x": 255.0,
+              "y": 347.0
+            },
+            {
+              "x": 255.0,
+              "y": 207.0
+            }
+          ],
+          "source_handle": "right",
+          "target_handle": "left",
+          "locked": true
+        },
+        "web-app": {
+          "style": "orthogonal",
+          "points": [
+            {
+              "x": 372.5,
+              "y": 145.0
+            },
+            {
+              "x": 577.5,
+              "y": 145.0
+            }
+          ],
+          "source_handle": "top",
+          "target_handle": "top",
+          "locked": true
+        },
+        "app-database": {
+          "style": "orthogonal",
+          "points": [
+            {
+              "x": 577.5,
+              "y": 110.0
+            },
+            {
+              "x": 817.5,
+              "y": 110.0
+            }
+          ],
+          "source_handle": "top",
+          "target_handle": "top",
+          "locked": true
+        }
+      },
+      "mappings": {
+        "client": [
+          "client"
+        ],
+        "z1": [
+          "z1"
+        ],
+        "z2": [
+          "z2"
+        ],
+        "employee": [
+          "employee"
+        ],
+        "service-desk": [
+          "service-desk"
+        ],
+        "portal-web": [
+          "portal-web"
+        ],
+        "portal-app": [
+          "portal-app"
+        ],
+        "app-host": [
+          "app-host"
+        ],
+        "zone-firewall": [
+          "zone-firewall"
+        ],
+        "request-db": [
+          "request-db"
+        ],
+        "employee-web": [
+          "employee-web"
+        ],
+        "desk-web": [
+          "desk-web"
+        ],
+        "web-app": [
+          "web-app"
+        ],
+        "app-database": [
+          "app-database"
+        ]
+      }
+    },
+    "sv1": {
+      "type": "sv1",
+      "revision": 0,
+      "placements": {
+        "portal-users": {
+          "x": 25.0,
+          "y": 50.0,
+          "width": 320.0,
+          "height": 190.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "portal-services": {
+          "x": 375.0,
+          "y": 50.0,
+          "width": 320.0,
+          "height": 190.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "portal-data": {
+          "x": 725.0,
+          "y": 50.0,
+          "width": 320.0,
+          "height": 190.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        }
+      },
+      "routes": {
+        "aggregate:portal-users:portal-services": {
+          "style": "orthogonal",
+          "points": [
+            {
+              "x": 185.0,
+              "y": 280.0
+            },
+            {
+              "x": 535.0,
+              "y": 280.0
+            }
+          ],
+          "source_handle": "bottom",
+          "target_handle": "bottom",
+          "locked": true
+        },
+        "aggregate:portal-services:portal-data": {
+          "style": "orthogonal",
+          "points": [
+            {
+              "x": 535.0,
+              "y": 330.0
+            },
+            {
+              "x": 885.0,
+              "y": 330.0
+            }
+          ],
+          "source_handle": "bottom",
+          "target_handle": "bottom",
+          "locked": true
+        }
+      },
+      "mappings": {
+        "portal-users": [
+          "employee",
+          "service-desk"
+        ],
+        "portal-services": [
+          "portal-web",
+          "portal-app",
+          "app-host",
+          "zone-firewall"
+        ],
+        "portal-data": [
+          "request-db"
+        ],
+        "aggregate:portal-users:portal-services": [
+          "employee-web",
+          "desk-web"
+        ],
+        "aggregate:portal-services:portal-data": [
+          "app-database"
+        ]
+      }
+    },
+    "sv2": {
+      "type": "sv2",
+      "revision": 0,
+      "placements": {
+        "client": {
+          "x": 20.0,
+          "y": 30.0,
+          "width": 225.0,
+          "height": 430.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "z1": {
+          "x": 265.0,
+          "y": 30.0,
+          "width": 420.0,
+          "height": 430.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "z2": {
+          "x": 705.0,
+          "y": 30.0,
+          "width": 225.0,
+          "height": 430.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "employee": {
+          "x": 20.0,
+          "y": 150.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "service-desk": {
+          "x": 20.0,
+          "y": 290.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "portal-web": {
+          "x": 15.0,
+          "y": 150.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "portal-app": {
+          "x": 220.0,
+          "y": 150.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "app-host": {
+          "x": 15.0,
+          "y": 290.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "zone-firewall": {
+          "x": 220.0,
+          "y": 290.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        },
+        "request-db": {
+          "x": 20.0,
+          "y": 150.0,
+          "width": 185.0,
+          "height": 115.0,
+          "visible": true,
+          "locked": false,
+          "label": null
+        }
+      },
+      "routes": {
+        "employee-web": {
+          "style": "orthogonal",
+          "points": [
+            {
+              "x": 132.5,
+              "y": 110.0
+            },
+            {
+              "x": 372.5,
+              "y": 110.0
+            }
+          ],
+          "source_handle": "top",
+          "target_handle": "top",
+          "locked": true
+        },
+        "desk-web": {
+          "style": "orthogonal",
+          "points": [
+            {
+              "x": 255.0,
+              "y": 347.0
+            },
+            {
+              "x": 255.0,
+              "y": 207.0
+            }
+          ],
+          "source_handle": "right",
+          "target_handle": "left",
+          "locked": true
+        },
+        "web-app": {
+          "style": "orthogonal",
+          "points": [
+            {
+              "x": 372.5,
+              "y": 145.0
+            },
+            {
+              "x": 577.5,
+              "y": 145.0
+            }
+          ],
+          "source_handle": "top",
+          "target_handle": "top",
+          "locked": true
+        },
+        "app-database": {
+          "style": "orthogonal",
+          "points": [
+            {
+              "x": 577.5,
+              "y": 110.0
+            },
+            {
+              "x": 817.5,
+              "y": 110.0
+            }
+          ],
+          "source_handle": "top",
+          "target_handle": "top",
+          "locked": true
+        }
+      },
+      "mappings": {
+        "client": [
+          "client"
+        ],
+        "z1": [
+          "z1"
+        ],
+        "z2": [
+          "z2"
+        ],
+        "employee": [
+          "employee"
+        ],
+        "service-desk": [
+          "service-desk"
+        ],
+        "portal-web": [
+          "portal-web"
+        ],
+        "portal-app": [
+          "portal-app"
+        ],
+        "app-host": [
+          "app-host"
+        ],
+        "zone-firewall": [
+          "zone-firewall"
+        ],
+        "request-db": [
+          "request-db"
+        ],
+        "employee-web": [
+          "employee-web"
+        ],
+        "desk-web": [
+          "desk-web"
+        ],
+        "web-app": [
+          "web-app"
+        ],
+        "app-database": [
+          "app-database"
+        ]
+      }
+    }
+  },
+  "notes": "Synthetic authored example. Confirmed claims mean confirmed within this fictional reference; they are not organisational approval. See Sources for the complete specification and open decisions."
+}

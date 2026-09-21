@@ -34,6 +34,14 @@ def apply(project:Project,change:ChangeSet)->Project:
             touched.add(o.view); continue
         semantic=True
         if o.op=='notes': data['notes']=str(o.value.get('text','')); continue
+        if o.op=='project_name':
+            name=o.value.get('name')
+            if not isinstance(name,str) or not 1<=len(name.strip())<=160 or set(o.value)!={'name'}:
+                raise DomainError('invalid_input','Project name must contain 1–160 characters.')
+            data['name']=name.strip(); continue
+        if o.op=='policy_selection':
+            from ..policies.library import validate_selection
+            data['policy_ids']=validate_selection(o.value); continue
         if not o.entity: raise DomainError('invalid_input','Entity is required')
         records=data[o.entity]; existing=next((x for x in records if x['id']==o.id),None)
         if o.op=='add':
@@ -49,6 +57,8 @@ def apply(project:Project,change:ChangeSet)->Project:
             if o.entity=='components':
                 data['interfaces']=[x for x in data['interfaces'] if x not in refs]
                 data['deployments']=[x for x in data['deployments'] if x['component_id']!=o.id]
+                for deployment in data['deployments']:
+                    if deployment.get('host_component_id')==o.id: deployment['host_component_id']=None
                 for x in data['components']:
                     for field in ['audit_destination','storage_destination']:
                         if x.get(field)==o.id: x[field]=None

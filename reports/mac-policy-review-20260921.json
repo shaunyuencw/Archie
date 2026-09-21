@@ -1,0 +1,142 @@
+{
+  "scope": "Real application service call on the bundled synthetic portal; no browser or architecture generation claim.",
+  "provider": "openai",
+  "model": "gpt-5.6-terra",
+  "project_id": "40a96167-cdd5-4c4b-b1ba-89f88397dd33",
+  "limits": {
+    "requests": 1,
+    "usd": 0.075,
+    "output_tokens": 1500
+  },
+  "passed": true,
+  "architecture_unchanged": true,
+  "review": {
+    "summary": "Advisory review of the three selected fictional policy drafts only; findings are limited to the supplied facts and reviewed evidence and do not establish compliance or organisational approval.",
+    "assessments": [
+      {
+        "policy_id": "ARCH-SEG-01",
+        "status": "no_issue_identified",
+        "message": "Observed fact: the listed Client workstations interface with the Z1 Portal web service, and no listed interface directly connects a Client component to the Z2 database. This narrow observation does not establish compliance beyond the supplied interface list.",
+        "affected_ids": [
+          "employee",
+          "service-desk",
+          "portal-web",
+          "request-db",
+          "employee-web",
+          "desk-web"
+        ],
+        "citations": [
+          {
+            "source_id": "demo-portal-source",
+            "locator": "paragraph/9",
+            "excerpt": "[P04] Z2 contains two physical Request database servers operating active-passive. The database stores requests and application audit records. No Client device may connect directly to the database."
+          }
+        ],
+        "reference_check": "verified_references",
+        "title": "Keep protected services out of Client reach"
+      },
+      {
+        "policy_id": "ARCH-DAT-01",
+        "status": "no_issue_identified",
+        "message": "Observed fact: the recognised database asset Request database is deployed in Z2, and evidence states that no Client device may connect directly to it. This is not proof of enforced access controls.",
+        "affected_ids": [
+          "request-db",
+          "deployment-request-db",
+          "z2"
+        ],
+        "citations": [
+          {
+            "source_id": "demo-portal-source",
+            "locator": "paragraph/9",
+            "excerpt": "[P04] Z2 contains two physical Request database servers operating active-passive. The database stores requests and application audit records. No Client device may connect directly to the database."
+          }
+        ],
+        "reference_check": "verified_references",
+        "title": "Place databases in the protected tier"
+      },
+      {
+        "policy_id": "ARCH-BAK-01",
+        "status": "needs_human_review",
+        "message": "No supplied facts or reviewed evidence identify backup data, retention, storage, encryption, ownership, access separation, recovery targets, or restore-test planning and evidence. A person must review and record these manual-review items.",
+        "affected_ids": [
+          "request-db"
+        ],
+        "citations": [],
+        "reference_check": "no_source_citations",
+        "title": "Design backups that can be restored"
+      }
+    ],
+    "warnings": [],
+    "id": "policy-review:3f9c349a-0967-4893-a5ee-a2fd69c46c8e",
+    "project_id": "40a96167-cdd5-4c4b-b1ba-89f88397dd33",
+    "revision": 0,
+    "policy_ids": [
+      "ARCH-SEG-01",
+      "ARCH-DAT-01",
+      "ARCH-BAK-01"
+    ],
+    "policy_fingerprint": "6cfdebf279dc1c2f78ea",
+    "provider": "openai",
+    "model": "gpt-5.6-terra",
+    "created_at": "2026-09-21T13:46:26.430080+00:00",
+    "mode": "ai_advisory",
+    "coverage": {
+      "components": [
+        7,
+        7
+      ],
+      "interfaces": [
+        4,
+        4
+      ],
+      "constraints": [
+        5,
+        5
+      ],
+      "zones": [
+        3,
+        3
+      ],
+      "systems": [
+        3,
+        3
+      ],
+      "evidence": [
+        16,
+        30
+      ]
+    },
+    "cost_usd": 0.01538,
+    "cached": false,
+    "stale": false,
+    "current_revision": 0
+  },
+  "seconds": 6.98,
+  "usage": {
+    "total": 0.01538,
+    "calls": 1,
+    "records": [
+      {
+        "id": "39a52fd6-8e86-45f0-845f-01ca3d061281",
+        "project_id": "40a96167-cdd5-4c4b-b1ba-89f88397dd33",
+        "action_id": "policy-review:3f9c349a-0967-4893-a5ee-a2fd69c46c8e",
+        "day": "2026-09-21",
+        "provider": "openai",
+        "model": "gpt-5.6-terra",
+        "status": "completed",
+        "reserved": 0.0653,
+        "cost": 0.01538,
+        "details": {
+          "input_tokens": 3,
+          "cache_read_tokens": 0,
+          "cache_write_tokens": 4076,
+          "output_tokens": 432,
+          "reasoning_tokens": 0,
+          "latency_ms": 6942.143624997698
+        }
+      }
+    ]
+  },
+  "combined_requests": 8,
+  "combined_estimated_api_usd": 0.08977750000000001
+}
