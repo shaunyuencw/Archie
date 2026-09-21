@@ -66,6 +66,8 @@ Use **Cancel** on the activity row to stop an action. A queued action cancels be
 
 Job status and completed results are saved locally, so reloading the browser does not discard them. The backend must remain running for work to continue. If ARCHIE's server restarts before an action finishes, it marks that action interrupted and shows the failure message. It does not automatically replay the request; review the state before starting a new action yourself.
 
+You can reuse the same specification in a new project, including after deleting the old project. The shared cache only avoids reparsing the file. If Mock saved a document without an accepted design, select Ollama or OpenAI and upload it again to request a live proposal. If that document already has accepted facts in the current project, ARCHIE skips a duplicate model call; choose **Open project** on its notice to view **Sources**, then **Process next sections** if text remains.
+
 ## Global policies and project selection
 
 **Policies** opens the shared local library. Browse **Network & access**, **Cloud & hybrid connections**, **Data, secrets & backups**, **Resilience & monitoring**, **Devices & testbeds**, or **Ownership & operations**. Category counts reflect the current search and the number selected. Locally authored drafts join a category when their tags match; unmatched drafts appear under **Other local drafts**.

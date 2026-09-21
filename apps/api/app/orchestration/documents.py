@@ -13,8 +13,9 @@ def document_preflight(source,provider,settings):
     limit=700 if provider=='ollama' else 6000
     # Split oversized PDF pages into explicit ranges; never claim the omitted range was processed.
     passages=[]
+    remaining=set(source.unprocessed) if source.processed or source.unprocessed else None
     for p in source.passages:
-        if p.locator in source.processed:continue
+        if p.locator in source.processed or (remaining is not None and p.locator not in remaining):continue
         if len(p.text)<=limit:passages.append(p)
         else:
             for i in range(0,len(p.text),limit):passages.append(Passage(locator=f'{p.locator}/chars/{i}-{min(i+limit,len(p.text))}',text=p.text[i:i+limit],heading=p.heading,page=p.page))
@@ -31,6 +32,17 @@ def _check_cancel(cancel):
         raise DomainError('cancelled','This background action was cancelled before it could save a result.',409)
 
 
+def _has_accepted_facts(project,source):
+    records=project.systems+project.zones+project.components+project.deployments+project.interfaces+project.constraints
+    targets={record.id for record in records}
+    evidence={ident for record in records for ident in getattr(record,'evidence',[])}
+    # Mock saves source text and candidate claims before proposal acceptance.
+    # Neither that metadata nor a shared parse-cache entry is an accepted design.
+    return any(claim.source_id==source.id and claim.target_id in targets and
+               (claim.review=='confirmed' or (claim.review=='conflicting' and claim.id in evidence))
+               for claim in project.claims)
+
+
 def ingest_live(store,pid,data,name,provider,settings=None,adapter=None,source_id=None,live_run=None,deadline=None,cancel=None,job_id=None):
     _check_cancel(cancel)
     s=settings or Settings.environment()
@@ -40,13 +52,26 @@ def ingest_live(store,pid,data,name,provider,settings=None,adapter=None,source_i
     if not p.synthetic:raise DomainError('invalid_input','Live document interpretation currently requires synthetic material')
     source=next((x.model_copy(deep=True) for x in p.sources if x.id==source_id),None) if source_id else parse(data,name,'document',store)
     if source is None:raise DomainError('invalid_input','Source no longer exists')
-    if not source_id and any(x.canonical_id==source.canonical_id and x.version==source.version for x in p.sources):return {'proposal':None,'duplicate':True}
+    existing=next((x for x in p.sources if x.canonical_id==source.canonical_id and x.version==source.version),None) if not source_id else None
+    if existing and _has_accepted_facts(p,existing):
+        message='This document already has accepted facts in this project. Open Sources to review them.'
+        if existing.unprocessed:message+=' Use Process next sections for the remaining text.'
+        return {'proposal':None,'duplicate':True,'source_id':existing.id,'message':message,
+                'coverage':{'processed':existing.processed,'unprocessed':existing.unprocessed}}
+    if existing:
+        # Retry the saved document with the explicitly selected live provider.
+        # Keep its ID and original locators so prior candidate evidence still resolves.
+        source=existing.model_copy(deep=True)
     # Parser coverage describes local parsing, not live interpretation; new uploads start unprocessed.
-    if not source_id:source.processed=[]
+    if not source_id:
+        source.processed=[];source.unprocessed=[x.locator for x in source.passages]
     previous_processed=list(source.processed)
     previous_passages=[x for x in source.passages if x.locator in previous_processed]
     passages,groups,remainder=document_preflight(source,provider,s)
-    source.passages=previous_passages+passages;source.unprocessed=[x.locator for x in passages]
+    # Retain evidence passages, including original paragraphs when a live retry
+    # splits them into smaller ranges. Only explicit remaining ranges are revisited.
+    retained=source.passages if existing or source_id else previous_passages
+    source.passages=list({x.locator:x for x in retained+passages}.values());source.unprocessed=[x.locator for x in passages]
     if not groups:raise DomainError('unsupported_document','No text extracted. Scanned pages need OCR, which is out of scope.')
     a=adapter or (OpenAIAdapter(s) if provider=='openai' else OllamaAdapter(s));budget=BudgetedProvider(store,s,a);action=(live_run['id']+'-' if live_run else '')+uid()
     combined=Envelope(operations=[],claims=[],tool=None,message='Document extraction proposal');known=set();used=[]

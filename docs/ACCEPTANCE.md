@@ -1,6 +1,6 @@
 # Acceptance checkpoint — 22 September 2026
 
-This matrix records the Mac continuation. The full offline gate passes (133 backend, 33 frontend unit, 32 browser journeys, TypeScript and production build). New product scenarios and library are covered by `apps/web/tests/product.spec.ts`. Mac handover is ready; full native Visio acceptance remains conditional. Fixture version is 1.0; historical Windows results are retained separately.
+This matrix records the Mac continuation. The full offline gate passes (145 backend, 33 frontend unit, 33 browser journeys, TypeScript and production build). New product scenarios and library are covered by `apps/web/tests/product.spec.ts`. Mac handover is ready; full native Visio acceptance remains conditional. Fixture version is 1.0; historical Windows results are retained separately.
 
 ## Product requirements
 
@@ -36,7 +36,7 @@ This matrix records the Mac continuation. The full offline gate passes (133 back
 | --- | --- | --- |
 | T01 | Passed | `tests/test_ingest.py`: prompt baseline without invented sizing. |
 | T02 | Passed | DOCX/table locators; upload and review browser journey. |
-| T03 | Passed | PDF page evidence and equivalent-format deduplication. |
+| T03 | Passed | PDF page evidence and equivalent-format deduplication. `tests/test_document_reimport.py` verifies live retries after unaccepted Mock parsing, project-scoped duplicate checks and preflight/background import after Trash or purge; `apps/web/tests/document-duplicate.spec.ts` checks the explanatory notice and Sources navigation with provider actions intercepted. |
 | T04 | Passed | Null unknowns, bounded questions and persistent answers. |
 | T05 | Passed | Contradictory sources preserved. |
 | T06 | Passed | All implemented predicates run, independent of retrieval. |

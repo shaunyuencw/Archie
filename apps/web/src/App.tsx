@@ -54,7 +54,7 @@ export default function App(){
   if(next.revision>=current.revision&&Object.entries(next.views).every(([key,v])=>v.revision>=current.views[key].revision))setProject(next);
   if(job.result?.proposal?.state==='pending'){setProposal(job.result.proposal);if(job.kind!=='prompt')setPanel('Sources');}
   else if(job.kind==='policy_review'){setPanel('Findings');setNotice('Your policy review is ready.');}
-  else setNotice(job.result?.duplicate?'This source has already been processed.':job.result?.message||'Work finished.');
+  else setNotice(job.result?.message||(job.result?.duplicate?'This document already belongs to this project. Open Sources to review it.':'Work finished.'));
  };
  const activity=useBackgroundJobs(job=>{void receiveJob(job).catch(e=>{if(projectRef.current?.id===job.project_id)setError(e.message)})});
  const activeJob=activity.jobs.some(job=>job.project_id===project?.id&&jobRunning(job));
@@ -97,7 +97,7 @@ export default function App(){
  const assist=async()=>{const current=projectRef.current;if(!current)return;const job=await api<BackgroundJob>(`/projects/${current.id}/jobs`,{kind:'prompt',...change(current,[{op:'notes',value:{}}]),prompt:text,provider});setProposal(null);activity.add(job)};
  const upload=async(file:File,approved=false,chosenProvider=provider)=>{const current=projectRef.current;if(!current)return;const data=new FormData();data.append('file',file);data.append('provider',chosenProvider);if(chosenProvider!=='mock'&&!approved){const response=await fetch(`/api/projects/${current.id}/source-preflight`,{method:'POST',body:data});const plan=await response.json();if(!response.ok)throw new Error(plan.message||'Preflight failed');if(projectRef.current?.id===current.id)setUploadPlan({file,plan});return;}data.append('base_revision',String(current.revision));data.append('base_views',JSON.stringify(Object.fromEntries(Object.entries(current.views).map(([key,v])=>[key,v.revision]))));const response=await fetch(`/api/projects/${current.id}/source-jobs`,{method:'POST',body:data});const job=await response.json();if(!response.ok)throw new Error(job.message||'Upload failed');setUploadPlan(null);setProposal(null);activity.add(job)};
  const continueSource=async(sid:string)=>{const current=projectRef.current;if(!current)return;activity.add(await api<BackgroundJob>(`/projects/${current.id}/sources/${sid}/continue-jobs`,{...change(current,[{op:'notes',value:{}}]),provider}))};
- const openJob=async(job:BackgroundJob)=>{await open(job.project_id);if(job.result?.proposal?.state==='pending')setProposal(job.result.proposal);if(job.kind==='policy_review')setPanel('Findings');if(job.status==='failed')setError(job.error?.message||'The action could not finish.');};
+ const openJob=async(job:BackgroundJob)=>{await open(job.project_id);if(job.result?.proposal?.state==='pending')setProposal(job.result.proposal);if(job.result?.duplicate)setPanel('Sources');if(job.kind==='policy_review')setPanel('Findings');if(job.status==='failed')setError(job.error?.message||'The action could not finish.');};
  const dismissProposalJobs=async(id:string)=>{for(const job of jobsRef.current)if(job.result?.proposal?.id===id)await activity.dismiss(job.id)};
  const clearReviewedPrompt=(draft:ChangeSet)=>{
   setHistoryVersion(version=>version+1);

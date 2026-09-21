@@ -4,7 +4,7 @@ Updated: 22 September 2026, Mac continuation. **Presentable local prototype read
 
 ## Current checkpoint
 
-The Mac offline gate passes: **133 backend tests, 33 frontend unit tests, 32 browser journeys, TypeScript and production build**. Evidence: `reports/offline-gate.json`, `reports/m7-tests.xml`, `reports/browser-tests.json`. The application runs at <http://127.0.0.1:5173/>. No model calls occur in the offline gate.
+The Mac offline gate passes: **145 backend tests, 33 frontend unit tests, 33 browser journeys, TypeScript and production build**. Evidence: `reports/offline-gate.json`, `reports/m7-tests.xml`, `reports/browser-tests.json`. The application runs at <http://127.0.0.1:5173/>. No model calls occur in the offline gate.
 
 The restored checkpoint initially passed 25 backend tests, one frontend test and the build, but one browser journey failed due to a late view response. This was fixed alongside serialized local commands and captured file/project inputs, preventing rapid edits from using stale local state. External revision conflicts still reject. Baseline evidence is in `reports/mac-baseline`; earlier Windows reports and screenshots are preserved in `reports/windows-checkpoint` and historical live reports.
 
@@ -58,6 +58,8 @@ Mini-map follow-up (22 September): matched its SVG and panel dimensions to remov
 
 Browser branding (22 September): the existing robot mascot is also the favicon. TypeScript, production build, and browser checks of the favicon link, served PNG and decoded image pass in development and the production build (`reports/favicon-qa-20260922.json`). Its provenance remains in `apps/web/public/brand/README.md`.
 
+Document retry follow-up (22 September): a saved source alone no longer blocks live interpretation. Mock can save source text without producing an accepted design; explicitly uploading it with Ollama or OpenAI now prepares a reviewable proposal and reuses its source ID. Existing candidate evidence and original passage locators remain intact when local-model batches split long sections. Already accepted facts still avoid duplicate model calls within that project, with an explanation and a link through to Sources for remaining sections. Parsing-cache reuse never counts as another project's accepted design. Regression coverage uses mocked adapters; no fresh live Ollama reliability claim is made.
+
 ## Real provider evidence
 
 | Area | Actual result |
@@ -82,7 +84,7 @@ Previous Windows host: Windows 11, Python 3.12.4, Node 24.19.0, RTX 3080 Ti Lapt
 
 Laptop/workspace screenshots: `reports/archie-mac-1280.png`, `reports/archie-mac-laptop.png`, `reports/archie-mac-focus.png`, `reports/archie-workbench.png` (1280×800, 1440×900 and 1600×1000; no horizontal overflow at 1280). Export visual evidence: `reports/mac-export-qa/review.json` (three SVG views, three narrative DOCX pages, 12 source PDF pages, 12 source DOCX pages).
 
-Capacity: 50 components / 100 interfaces load, edit, drag and reopen with intact references and zero model calls. Latest full-gate sample: render about 1,110 ms, saved/rendered placement edits 1,592–2,022 ms, reopen 270 ms, 60 drag frame samples p95 16.8 ms / max 166.7 ms. Timings include Playwright/poll overhead and parallel-test contention; they are not INP or guaranteed performance. `reports/browser-capacity-darwin.json`.
+Capacity: 50 components / 100 interfaces load, edit, drag and reopen with intact references and zero model calls. Latest full-gate sample: render about 399 ms, saved/rendered placement edits 872–945 ms, reopen 271 ms, 60 drag frame samples p95 16.7 ms / max 66.7 ms. Timings include Playwright/poll overhead and parallel-test contention; they are not INP or guaranteed performance. `reports/browser-capacity-darwin.json`.
 
 ## Milestones
 

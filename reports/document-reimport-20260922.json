@@ -1,0 +1,34 @@
+{
+  "date": "2026-09-22",
+  "defect": "Live ingestion treated any matching source in the current project as already processed, including source metadata saved by Mock with no accepted architecture.",
+  "fix": "Deduplicate against accepted facts in this project. Explicit live retries reuse the source ID, preserve original evidence and preview changes. Existing accepted duplicates explain project scope and open Sources for continuation.",
+  "scope": "Shared parse cache is not an accepted-architecture cache. The user had already removed the affected project; prior Mock use was not confirmed. A reproducible metadata-only duplicate path was fixed and fresh-project/trash/purge cases were verified.",
+  "regressions": {
+    "backend_cases": 12,
+    "original_implementation": "All 12 cases failed with original HEAD documents module loaded in an isolated process by test agent.",
+    "current_implementation": "All 12 passed.",
+    "covers": [
+      "unsupported, pending and rejected Mock retries",
+      "confirmed or evidence-backed conflicting accepted facts suppress duplicate calls",
+      "unaccepted or missing-target conflicts permit retry",
+      "long source retry and continuation preserve original claim locators",
+      "failed/cancelled retry preserves accepted state",
+      "preflight and persisted source job after trash or permanent deletion"
+    ]
+  },
+  "full_gate": {
+    "backend": 145,
+    "frontend_unit": 33,
+    "browser_journeys": 33,
+    "typescript": "passed",
+    "production_build": "passed",
+    "evidence": "reports/offline-gate.json"
+  },
+  "live_provider_calls": 0,
+  "live_ollama_generation": "Not rerun; provider behavior exercised through mocked adapters.",
+  "running_app": {
+    "api_restarted": true,
+    "health": "ok",
+    "saved_project_snapshots_unchanged": 2
+  }
+}
