@@ -1,0 +1,1 @@
+{"small_local":{"model":"qwen3:4b","num_ctx":4096,"input_tokens":2500,"output_tokens":1024,"reserve":512,"parallel":1,"measured":false},"larger_local_explicit":{"num_ctx":8192,"input_tokens":5500,"output_tokens":1536,"reserve":768,"measured":false}}

@@ -1,0 +1,66 @@
+import json,time,threading
+from types import SimpleNamespace as NS
+import httpx,pytest
+from apps.api.app.providers.adapters import OllamaAdapter,OpenAIAdapter,MockAdapter
+from apps.api.app.providers.config import Settings
+from apps.api.app.providers.budget import BudgetedProvider,usage_summary
+from apps.api.app.providers.contracts import Envelope,ProviderResult,Usage,cost
+from apps.api.app.domain.commands import DomainError
+from apps.api.app.storage.store import Store
+
+EMPTY={'operations':[],'claims':[],'tool':None,'message':'No supported facts'}
+
+def test_openai_contract_transport():
+    captured={}
+    def create(**kwargs):
+        captured.update(kwargs)
+        return NS(status='completed',output_text=json.dumps(EMPTY),model='gpt-5.4-mini-2026-03-17',usage=NS(input_tokens=110,input_tokens_details=NS(cached_tokens=10),output_tokens=30,output_tokens_details=NS(reasoning_tokens=8)))
+    result=OpenAIAdapter(Settings(),NS(responses=NS(create=create))).generate_structured('task',300,time.monotonic()+10)
+    assert result.usage.input_tokens==100 and result.usage.cache_read_tokens==10
+    assert captured['store'] is False and captured['reasoning']=={'effort':'none'} and 'temperature' not in captured
+    assert captured['text']['format']['strict'] is True
+
+def test_ollama_contract_and_no_fallback():
+    captured=[]
+    def handler(request):
+        captured.append(json.loads(request.content));return httpx.Response(200,json={'done':True,'done_reason':'stop','model':'local','message':{'content':json.dumps(EMPTY)},'prompt_eval_count':50,'eval_count':20})
+    a=OllamaAdapter(Settings(),httpx.Client(base_url='http://127.0.0.1:11434',transport=httpx.MockTransport(handler)))
+    result=a.generate_structured('task',100,time.monotonic()+10)
+    assert result.model=='local' and captured[0]['options']['num_ctx']==4096 and captured[0]['think'] is False
+    assert len(captured)==1
+
+def test_T11_malformed_truncation_and_refusal():
+    for body in [{'done':False,'message':{'content':'{}'}},{'done':True,'message':{'content':'{"operations":'}}]:
+        a=OllamaAdapter(Settings(),httpx.Client(base_url='http://localhost',transport=httpx.MockTransport(lambda r:httpx.Response(200,json=body))))
+        with pytest.raises((DomainError,ValueError)):a.generate_structured('x',100,time.monotonic()+5)
+    a=OpenAIAdapter(Settings(),NS(responses=NS(create=lambda **k:NS(status='incomplete',output_text=''))))
+    with pytest.raises(DomainError):a.generate_structured('x',100,time.monotonic()+5)
+
+class Fake:
+    name='openai';model='gpt-5.4-mini'
+    def generate_structured(self,*args):
+        raise httpx.ReadTimeout('ambiguous timeout')
+
+def test_T12_reservations_restarts_and_call_limits(tmp_path):
+    db=tmp_path/'db';store=Store(db);settings=Settings(allow_cloud=True,action_usd=.02,day_usd=.03,project_usd=.04)
+    b=BudgetedProvider(store,settings,Fake())
+    with pytest.raises(DomainError):b.call('x','p','a')
+    spent=usage_summary(store,'p');assert spent['total']>0 and spent['records'][0]['status']=='unresolved'
+    with pytest.raises(DomainError):BudgetedProvider(Store(db),settings,Fake()).call('x','p','a')
+    assert usage_summary(Store(db),'p')['calls']==1
+    with pytest.raises(DomainError):BudgetedProvider(store,Settings(),Fake()).call('x','p','b')
+    assert usage_summary(store,'p')['calls']==1
+
+def test_atomic_concurrent_reservation(tmp_path):
+    store=Store(tmp_path/'db');b=BudgetedProvider(store,Settings(allow_cloud=True,action_usd=.02),Fake()); errors=[]
+    def call():
+        try:b.call('x','p','a')
+        except DomainError as e:errors.append(e.code)
+    ts=[threading.Thread(target=call) for _ in range(2)]
+    for t in ts:t.start()
+    for t in ts:t.join()
+    assert usage_summary(store,'p')['calls']==1
+    assert 'budget_exceeded' in errors
+
+def test_cost_reasoning_subset_not_double_counted():
+    assert cost(Usage(input_tokens=5000,output_tokens=2000,reasoning_tokens=500),{'input':.75,'cache_read':.075,'cache_write':.75,'output':4.5})==.01275
