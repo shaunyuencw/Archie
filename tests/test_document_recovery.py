@@ -108,6 +108,30 @@ def test_valid_batches_need_no_repair_request(tmp_path,monkeypatch):
     assert result['preflight']['requests']==2 and store.get(project.id)==project
 
 
+def test_numbered_connections_are_extracted_when_the_first_response_omits_them(tmp_path,monkeypatch):
+    store,project=setup(tmp_path,monkeypatch)
+    text='IF-01: Client sends requests to Application.'
+    spec=document();spec.passages=[Passage(locator='page/1',text=text)]
+    monkeypatch.setattr('apps.api.app.orchestration.documents.parse',lambda *args:spec)
+    parts=response([{'entity':'components','id':ident,'value':{'name':name,'role':'application'}} for ident,name in [('c','Client'),('a','Application')]],'page/1',text)
+    links=response([{'entity':'interfaces','id':'IF-01','value':{'source':'c','target':'a','purpose':'requests'}}],'page/1',text)
+    adapter=ScriptedAdapter([parts,links])
+    result=ingest_live(store,project.id,b'synthetic','spec.pdf','openai',settings(),adapter)
+    assert len(adapter.prompts)==2 and result['repairs']==0
+    assert 'EVERY numbered IF connection' in adapter.prompts[1]['task']
+    assert len(store.commit(result['proposal']).interfaces)==1
+
+
+def test_missing_numbered_connections_cannot_be_silently_accepted(tmp_path,monkeypatch):
+    store,project=setup(tmp_path,monkeypatch)
+    spec=document();spec.passages=[Passage(locator='page/1',text='IF-01: Client sends requests to Application. '+SYSTEM_TEXT)]
+    monkeypatch.setattr('apps.api.app.orchestration.documents.parse',lambda *args:spec)
+    adapter=ScriptedAdapter([systems()])
+    with pytest.raises(DomainError,match='source lists 1 connections'):
+        ingest_live(store,project.id,b'synthetic','spec.pdf','openai',settings(max_calls=1),adapter)
+    assert store.get(project.id)==project and len(adapter.prompts)==1
+
+
 def test_later_deployment_details_refine_core_boundary_and_preserve_declared_flow(tmp_path,monkeypatch):
     """Exercise the prompted refinement contract without asserting live-model quality."""
     store,project=setup(tmp_path,monkeypatch)

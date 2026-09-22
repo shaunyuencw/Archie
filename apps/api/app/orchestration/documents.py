@@ -1,5 +1,5 @@
 """Visible, bounded document action. Parsing stays local; selected passages go only to the chosen provider."""
-import json
+import json,re
 from ..providers.config import Settings
 from ..providers.adapters import OpenAIAdapter,OllamaAdapter
 from ..providers.budget import BudgetedProvider
@@ -13,8 +13,16 @@ from .zoning import ZONING_REQUIREMENT
 from ..providers.instructions import ZONING_GUIDANCE
 
 
-DOCUMENT_TASK=('Extract functional parts; reuse typed known_records. Connections/deployments need component IDs. '
-               'Refine boundaries as details emerge; preserve flows. Empty if nothing new.')
+DOCUMENT_TASK=('Extract parts AND stated flows as interfaces. Reuse typed known_records; connections/deployments need component IDs. '
+               'Refine boundaries; preserve flows. Empty if nothing new.')
+
+def connection_passages(passages):
+    return [p for p in passages if re.search(r'\bIF-\d+\b',p.text)]
+
+def connection_prompt(project,source,previous,passages):
+    return json.dumps({'task':'Extract EVERY numbered IF connection row as an interfaces operation. Preserve each IF ID, source, destination and stated data direction. Use existing component IDs. Add an endpoint component only if explicitly named in the supplied source and absent from known_records. Return no systems, zones or deployments. One exact row quote per connection; claim value=null is sufficient. Keep unknown protocol, port and initiator omitted. Do not omit connections because zoning already exists.',
+        'source':{'id':'S1','passages':[{'locator':p.locator,'text':p.text} for p in passages]},
+        'known_records':reference_catalog(project,previous,include_zoning=True)},separators=(',',':'))
 
 def document_preflight(source,provider,settings):
     limit=700 if provider=='ollama' else 6000
@@ -155,6 +163,20 @@ def ingest_live(store,pid,data,name,provider,settings=None,adapter=None,source_i
         requests+=1
         batches.append({'passages':group,'evidence_passages':group,'envelope':output.content})
         used.extend(x.locator for x in group)
+    # Numbered interface tables are an explicit coverage contract. A valid
+    # component-only JSON response must not silently count them as extracted.
+    flows=connection_passages([passage for group in groups for passage in group])
+    expected={ident for passage in flows for ident in re.findall(r'\bIF-\d+\b',passage.text)}
+    interfaces={i.id for i in p.interfaces}|{op.id for batch in batches for op in batch['envelope'].operations if op.entity=='interfaces' and op.op=='add'}
+    if expected and len(interfaces)<len(expected) and requests<s.max_calls:
+        _check_cancel(cancel)
+        prompt=connection_prompt(p,source,[batch['envelope'] for batch in batches],flows)
+        output=budget.call(prompt,pid,action,task='document',live_run=live_run,deadline=deadline,cancel=cancel)
+        requests+=1
+        batches.append({'passages':flows,'evidence_passages':flows,'envelope':output.content})
+        interfaces|={op.id for op in output.content.operations if op.entity=='interfaces' and op.op=='add'}
+    if expected and len(interfaces)<len(expected):
+        raise DomainError('provider_output',f'The source lists {len(expected)} connections but the draft contains only {len(interfaces)}. The incomplete draft was not accepted.')
     source.processed=previous_processed+used;source.unprocessed=[x.locator for x in passages if x.locator not in used]
     repaired=False
     try:

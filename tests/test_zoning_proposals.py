@@ -116,14 +116,31 @@ def test_existing_deployment_id_and_host_details_are_retained():
     assert d.id=='existing' and d.quantity==2 and d.host_component_id=='c3' and d.redundancy_mode=='active_passive'
 
 
-@pytest.mark.parametrize('invalid', ['missing_quote','bad_quote','scope_change','empty_reason'])
+@pytest.mark.parametrize('invalid', ['missing_quote','bad_quote'])
 def test_proposal_metadata_cannot_bypass_evidence_or_expand_inference_scope(invalid):
     draft=envelope(True)
     if invalid=='missing_quote':draft.claims=draft.claims[1:]
     elif invalid=='bad_quote':draft.claims[0].excerpt='Made-up segmentation requirement.'
-    elif invalid=='scope_change':draft.operations[0].entity='systems'
-    else:draft.operations[0].proposal_reason='   '
     with pytest.raises(DomainError):proposal_from_envelope(project(),source(),draft,source_alias='S1')
+
+
+def test_reason_on_component_and_full_deployment_remains_unreviewed():
+    draft=envelope(True,members=[0])
+    draft.operations[1].value_json=json.dumps({'component_id':'c0','zone_id':'tmp:zone','quantity':1,'redundancy_mode':'unknown','host':None})
+    from apps.api.app.providers.contracts import WireOperation,WireClaim
+    draft.operations.append(WireOperation(op='update',entity='components',id='c0',value_json=json.dumps({'role':'application'}),proposal_reason='Interpret this functional role from the stated control responsibility.'))
+    draft.claims.append(WireClaim(source_id='S1',locator='page/5',excerpt=TEXT,target_id='c0',field='record',value_json='null'))
+    before=project();accepted=apply(before,proposal_from_envelope(before,source(),draft,source_alias='S1'))
+    assert accepted.deployments[0].quantity==1
+    assumptions=[c for c in accepted.claims if c.source_kind=='assistant_proposal']
+    assert len(assumptions)==3 and all(c.review=='unreviewed' for c in assumptions)
+    assert any(c.field=='proposed_design' and c.target_id=='c0' for c in assumptions)
+
+
+def test_whitespace_reason_is_treated_as_absent_metadata():
+    before=project();draft=envelope();draft.operations[0].proposal_reason='   '
+    accepted=apply(before,proposal_from_envelope(before,source(),draft,source_alias='S1'))
+    assert len(accepted.zones)==1 and not any(c.source_kind=='assistant_proposal' for c in accepted.claims)
 
 
 def test_zoning_context_includes_every_component_and_only_supplied_source_excerpts():

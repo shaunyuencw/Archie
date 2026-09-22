@@ -4,6 +4,8 @@ Archie’s shared provider instructions now request zones and component assignme
 
 Stated zone names and assignments use document citations. When segmentation is required but an allocation is unspecified, the provider can propose a zone or assignment using `proposal_reason` on the operation. The backend retains the cited requirement separately from an `assistant_proposal` source containing the rationale. Proposed claims remain unreviewed after acceptance. The draft review, zone labels, Sources, Overview and narrative identify those assumptions.
 
+Rationales may also accompany functional parts and complete deployment records. These remain explicitly unreviewed design proposals; additional deployment fields are retained, not silently treated as confirmed source facts. A blank rationale is absent metadata. Exact source quotes and normal architecture validation still apply.
+
 For an existing project, use this prompt:
 
 > Use the uploaded specification’s deployment table and cybersecurity requirements to create the stated cyber zones. Propose any missing assignments and place every in-scope component in its zone. Keep external systems outside internal zones, preserve existing components and connections, and explain assumptions.

@@ -1,0 +1,53 @@
+{
+  "run": {
+    "id": "live-recovery-ccfce30e-7e90-4406-ad0c-bd3ccfaf08cc",
+    "max_calls": 6,
+    "budget_usd": 0.5
+  },
+  "provider": "openai",
+  "model": "gpt-5.6-terra",
+  "cases": [
+    {
+      "case": "Inventory",
+      "project_id": "63a28968-7f7f-49fa-8a24-d6e4a23f8584",
+      "status": "accepted",
+      "components": 4,
+      "zones": 2,
+      "deployments": 4,
+      "interfaces": 3,
+      "repairs": 0,
+      "coverage": {
+        "processed": [
+          "page/1"
+        ],
+        "unprocessed": []
+      },
+      "calls": 1,
+      "cost_or_reserved_usd": 0.0363975,
+      "seconds": 20.2
+    },
+    {
+      "case": "SSMS v1.5",
+      "project_id": "cb4735e8-49be-4670-99a1-f9bf3f3f921d",
+      "status": "accepted",
+      "components": 20,
+      "zones": 3,
+      "deployments": 14,
+      "interfaces": 0,
+      "repairs": 0,
+      "coverage": {
+        "processed": [
+          "page/1",
+          "page/2",
+          "page/3",
+          "page/4",
+          "page/5"
+        ],
+        "unprocessed": []
+      },
+      "calls": 2,
+      "cost_or_reserved_usd": 0.0796045,
+      "seconds": 42.9
+    }
+  ]
+}

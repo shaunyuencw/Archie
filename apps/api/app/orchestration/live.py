@@ -121,14 +121,15 @@ def proposal_from_envelope(p,source,envelope,source_alias=None,*,evidence_source
     claims=[]; ops=[naming] if naming else []; uncertainties=[]
     assumptions={}
     for w in envelope.operations:
-        if w.proposal_reason is not None:
-            allowed={'name'} if w.entity=='zones' else {'component_id','zone_id'} if w.entity=='deployments' else set()
-            value=operation_value(w)
-            field='name' if w.entity=='zones' else 'zone_id'
-            if w.op not in ('add','update') or not allowed or not isinstance(value,dict) or field not in value or not set(value)<=allowed or not w.proposal_reason.strip():
-                raise DomainError('provider_output','proposal_reason is only for proposed zone names or component zone assignments; keep unrelated details as separate evidenced changes.')
+        if w.proposal_reason is not None and w.proposal_reason.strip():
+            # A rationale can accompany a functional part or a complete
+            # deployment, not just a zone-only patch. Preserve the entire
+            # record as an unreviewed proposal instead of retrying a valid edit
+            # or silently promoting the inferred fields to confirmed facts.
+            if w.op not in ('add','update'):
+                continue
             if not any(c.target_id==w.id for c in envelope.claims):
-                raise DomainError('provider_output','A proposed zoning choice needs a direct source claim for its supporting requirement.')
+                raise DomainError('provider_output','A proposed design choice needs a direct source claim for its supporting requirement.')
             assumptions[w.id]=w
     supplied={s.id:s for s in evidence_sources}
     supplied.update({source.id:source})
@@ -143,10 +144,12 @@ def proposal_from_envelope(p,source,envelope,source_alias=None,*,evidence_source
     if assumptions:
         passages=[Passage(locator=f'proposal/{i+1}',text=w.proposal_reason.strip()) for i,w in enumerate(assumptions.values())]
         digest=hashlib.sha256('\n'.join(p.text for p in passages).encode()).hexdigest()
-        proposal_source=Source(id=uid(),name='Archie zoning design assumptions',kind='assistant_proposal',sha256=digest,canonical_id=uid(),passages=passages,processed=[p.locator for p in passages])
+        proposal_source=Source(id=uid(),name='Archie design assumptions',kind='assistant_proposal',sha256=digest,canonical_id=uid(),passages=passages,processed=[p.locator for p in passages])
         for w,passage in zip(assumptions.values(),passages):
-            claims.append(Claim(id=uid(),source_id=proposal_source.id,source_version=proposal_source.version,locator=passage.locator,excerpt=passage.text,target_id=w.id,field='proposed_zoning',value=operation_value(w),source_kind='assistant_proposal',review='unreviewed'))
-            uncertainties.append(f'{w.id}: proposed zoning — {passage.text}')
+            value=operation_value(w)
+            zoning=w.entity=='zones' or (w.entity=='deployments' and 'zone_id' in value)
+            claims.append(Claim(id=uid(),source_id=proposal_source.id,source_version=proposal_source.version,locator=passage.locator,excerpt=passage.text,target_id=w.id,field='proposed_zoning' if zoning else 'proposed_design',value=value,source_kind='assistant_proposal',review='unreviewed'))
+            uncertainties.append(f'{w.id}: proposed {"zoning" if zoning else "design"} — {passage.text}')
     for w in envelope.operations:
         value=operation_value(w)
         if w.entity=='interfaces' and 'port' in value:

@@ -1,0 +1,21 @@
+{
+  "api_restarted": true,
+  "settings_and_data_unchanged_by_restart": true,
+  "backend_tests": 258,
+  "graph_checks": {
+    "logical": {
+      "nodes": 23,
+      "edges": 22
+    },
+    "sv1": {
+      "nodes": 5,
+      "edges": 8
+    },
+    "sv2": {
+      "nodes": 23,
+      "edges": 22
+    }
+  },
+  "live_calls": 4,
+  "total_live_validation_usd": 0.17464849999999998
+}
