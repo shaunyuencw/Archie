@@ -123,7 +123,7 @@ def _safe_route(source,target,route,boxes,centers):
     # Retain the selected handles and a visible connector if no clearance path exists.
     return base.model_copy(update={'automatic':True,'points':[]})
 
-def view_graph(p:Project,kind:str):
+def view_graph(p:Project,kind:str,*,route_edges=True):
     view=p.views[kind]; nodes=[]; edges=[]; mappings={}; member={}
     def node(ident,label,asset,objects,parent=None,role='',default=None):
         place=view.placements.get(ident,default or Placement()); mappings[ident]=objects
@@ -158,7 +158,7 @@ def view_graph(p:Project,kind:str):
     # presentation only; a locked route remains literal through layout changes and exports.
     by_id={n['id']:n for n in nodes};boxes=_absolute_bounds(nodes)
     centers={ident:_center(node,by_id) for ident,node in by_id.items() if ident in boxes}
-    for edge in edges:
+    for edge in edges if route_edges else []:
         if edge['source'] in boxes and edge['target'] in boxes:
             edge['route']=_safe_route(edge['source'],edge['target'],edge['route'],boxes,centers)
     components={c.id:c for c in p.components}; deployments={d.component_id:d for d in p.deployments}
@@ -177,10 +177,33 @@ def view_graph(p:Project,kind:str):
 
 def initialise_views(p:Project):
     for kind,view in p.views.items():
-        graph=view_graph(p,kind); view.mappings=graph['mappings']
+        graph=view_graph(p,kind,route_edges=False); view.mappings=graph['mappings']
+        # Fresh document designs get content-sized zones. Reopening or adding to
+        # an existing view never silently rearranges saved presentation geometry.
+        if not view.placements and any(n['role']=='zone' for n in graph['nodes']):
+            from .layout import compact_geometry
+            geometry=compact_geometry(graph['nodes'],graph['edges'])
+            for n in graph['nodes']:n.update(geometry[n['id']])
         for n in graph['nodes']:
             if n['id'] not in view.placements: view.placements[n['id']]=Placement(**{k:n[k] for k in Placement.model_fields if k!='label'})
     return p
+
+def arrange_plan(p:Project,kind:str,aspect_ratio=1.5):
+    from .commands import command
+    from .layout import compact_geometry,GEOMETRY,bounds
+    graph=view_graph(p,kind,route_edges=False)
+    geometry=compact_geometry(graph['nodes'],graph['edges'],aspect_ratio)
+    operations=[];absolute=[]
+    for node in graph['nodes']:
+        value=geometry[node['id']]
+        patch={key:value[key] for key in GEOMETRY if value[key]!=node[key]}
+        if patch:operations.append(dict(op='placement',id=node['id'],view=kind,value=patch))
+        parent=geometry.get(node.get('parentId'),{'x':0,'y':0})
+        absolute.append(dict(value,x=value['x']+parent['x'],y=value['y']+parent['y']))
+    for route in p.views[kind].routes.values():
+        if route.locked or (route.points and not route.automatic):
+            absolute.extend(dict(x=point.x,y=point.y,width=0,height=0) for point in route.points)
+    return {'change':command(p,operations) if operations else None,'bounds':bounds(absolute)}
 
 def narrative(p:Project):
     names={c.id:c.name for c in p.components}; zone_names={z.id:z.name for z in p.zones}

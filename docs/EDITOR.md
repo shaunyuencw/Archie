@@ -22,7 +22,11 @@ Typing fields retain their native shortcuts. Delete asks before removing selecte
 
 Copy/paste is an internal, same-project clipboard, available in Architecture and Connection details. Selecting a zone copies its contained components; connectors between copied components retain remapped references. Copies are proposed, have no asserted original source evidence, and have unknown quantities. System overview aggregates are edited through their individual components in another view.
 
-Dragging a component across a zone changes its **layout only**. Use **Deployment zone** in the Inspector to propose an architectural reassignment, then review and accept it. Arrangement preserves locked manual placements and uses ELK for unlocked top-level objects. It is not a full obstacle-avoiding router.
+Dragging a component across a zone changes its **layout only**. Use **Deployment zone** in the Inspector to propose an architectural reassignment, then review and accept it. **Arrange view** fits unlocked zones to their contents and packs them for the current canvas shape. A pinned zone or child keeps its whole group fixed; endpoints with manual connector bends also stay fixed. Component sizes and diagram styles survive, and one Undo restores the previous arrangement. New document designs start with compact zones; reopening saved designs does not rearrange them. Routing still has limits on dense diagrams.
+
+AI drafts use functional icons when the provider omits a symbol or supplies a generic server default: clients, cameras, data stores, APIs and analytics are distinct. Specific catalogue choices and explicitly physical servers are preserved. Change any component's **Icon** in the Inspector without a model call. Symbols describe function; they do not establish hardware or instance counts.
+
+Draft warnings group repeated issues into named checklists. **Architecture boundary** in the Inspector lets you confirm whether a component or system is inside or outside the architecture; unverified membership stays **Not specified**. Original diagnostics remain in the review dialog's technical details.
 
 Select a right-angle connector to reveal handles along its segments. Drag a segment sideways: both of its corners move together. Arrow keys move a focused segment handle; Option/Alt bypasses snapping. Right-click the line for **Straight line**, **Right-angle line** or **Reset route**. Straight line clears its previous bends and can run at any angle. The Inspector also exposes line style and exact route coordinates. Reconnecting clears only that connector's manual route. Unrelated prompt edits preserve manual routes and node positions.
 
@@ -73,6 +77,8 @@ You can reuse the same specification in a new project, including after deleting 
 **Policies** opens the shared local library. Browse **Network & access**, **Cloud & hybrid connections**, **Data, secrets & backups**, **Resilience & monitoring**, **Devices & testbeds**, or **Ownership & operations**. Category counts reflect the current search and the number selected. Locally authored drafts join a category when their tags match; unmatched drafts appear under **Other local drafts**.
 
 Search and category changes preserve your pending checkbox selections. **Selected only** narrows the list, while **All categories** removes the category filter. Click **Apply to project** to save the selection for this project, or **Discard selection changes** to return to its saved choices. Saving a new local policy draft adds it to the shared library but does not apply it to any project. The optional AI policy review is separate from these relevance suggestions and from the automated fact checks.
+
+The suggested-policy checklist has **Select all** and **Clear all**, with individual opt-out. In an AI draft, this only changes the checklist; the selected policies are saved together with the architecture when you choose **Accept changes**.
 
 The prepared portal and robotics diagrams now occupy about half their previous area, making labels larger when fitting the whole architecture on screen. Open a fresh worked example to see the compact layout; saved project placements are preserved. **Arrange** also uses tighter spacing and retains locked placements.
 

@@ -1,0 +1,25 @@
+{
+  "source": "SSMS_Technical_System_Description_Simplified_v1.4.pdf",
+  "pages": 3,
+  "verification": "Scripted provider response over the actual parsed PDF; not live model quality evidence",
+  "provider_network_calls": 0,
+  "scripted_calls": 1,
+  "repairs": 0,
+  "systems": 5,
+  "components": 8,
+  "zones": 4,
+  "interfaces": 11,
+  "claims": 33,
+  "view_node_counts": {
+    "logical": 12,
+    "sv1": 5,
+    "sv2": 12
+  },
+  "preview_then_accept_and_reopen": true,
+  "protocols_ports_initiators_and_physical_deployment_unknown": true,
+  "source_coverage": [
+    "page/1",
+    "page/2",
+    "page/3"
+  ]
+}

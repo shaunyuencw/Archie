@@ -7,7 +7,13 @@ from ..providers.contracts import Envelope
 from ..domain.commands import DomainError
 from ..domain.models import Passage,uid
 from ..ingest.parser import parse
-from .live import context,proposal_from_envelope
+from .live import context,proposal_from_envelope,source_excerpt
+from .references import reference_catalog
+
+
+DOCUMENT_TASK=('Extract functional parts. Reuse typed known_records; connections/deployments use components, not systems. '
+               'Refine earlier boundaries if internals emerge; preserve flows and ambiguous endpoints. '
+               'Fallback role: "system boundary". Empty if nothing new.')
 
 def document_preflight(source,provider,settings):
     limit=700 if provider=='ollama' else 6000
@@ -24,7 +30,9 @@ def document_preflight(source,provider,settings):
         if group and size+len(p.text)>limit:groups.append(group);group=[];size=0
         group.append(p);size+=len(p.text)
     if group:groups.append(group)
-    selected=groups[:min(6,settings.max_calls)]
+    # Leave room for one repair inside the existing action limit. A one-call
+    # profile still processes one group, but cannot automatically repair it.
+    selected=groups[:min(6,max(1,settings.max_calls-1))]
     return passages,selected,groups[len(selected):]
 
 def _check_cancel(cancel):
@@ -41,6 +49,64 @@ def _has_accepted_facts(project,source):
     return any(claim.source_id==source.id and claim.target_id in targets and
                (claim.review=='confirmed' or (claim.review=='conflicting' and claim.id in evidence))
                for claim in project.claims)
+
+
+def _document_proposal(project,source,batches):
+    combined=Envelope(operations=[],claims=[],tool=None,message='Document extraction proposal')
+    additions={}
+    for index,batch in enumerate(batches):
+        envelope=batch['envelope']
+        try:
+            if envelope.tool:raise DomainError('provider_output','Document extraction must return a proposal, not a tool request.')
+            supplied=source.model_copy(update={'passages':batch['evidence_passages']})
+            for claim in envelope.claims:
+                if claim.source_id not in ('S1',source.id):raise DomainError('provider_output','Evidence was not in the supplied source context')
+                source_excerpt(supplied,claim)
+            if combined.project_name is None:combined.project_name=envelope.project_name
+            for op in envelope.operations:
+                value=json.loads(op.value_json)
+                if not isinstance(value,dict):raise DomainError('provider_output','Operation value must be an object')
+                if op.op=='add':
+                    signature=(op.entity,value)
+                    if op.id in additions:
+                        if additions[op.id]==signature:continue  # Identical repeated declarations add no new fact.
+                        raise DomainError('provider_output',f'Record “{op.id[:160]}” was added twice with different definitions. Reuse its existing ID in an update, or keep distinct source-supported IDs.')
+                    additions[op.id]=signature
+                combined.operations.append(op)
+            combined.claims.extend(envelope.claims)
+        except (DomainError,ValueError) as error:
+            error.batch_index=index
+            raise
+    try:
+        return proposal_from_envelope(project,source,combined,source_alias='S1')
+    except (DomainError,ValueError) as error:
+        ids=getattr(error,'operation_ids',set())
+        indexes=[index for index,batch in enumerate(batches) if any(op.id in ids for op in batch['envelope'].operations)]
+        error.batch_index=indexes[-1] if indexes else len(batches)-1
+        raise
+
+
+def _repair_prompt(project,source,batches,index,error):
+    batch=batches[index]
+    selected=list(batch['passages'])
+    locators={p.locator for p in selected}
+    # Retrieve only already-processed supporting text, for identifiers mentioned
+    # in the error. This can supply an earlier system definition to a later flow.
+    message=getattr(error,'message',str(error))
+    references=[part for part in message.split('“')[1:] if '”' in part]
+    references=[part.split('”')[0] for part in references]
+    extra=0
+    used={p.locator for item in batches for p in item['passages']}
+    for passage in source.passages:
+        if passage.locator not in used or passage.locator in locators:continue
+        if not any(reference and reference in passage.text for reference in references):continue
+        if extra+len(passage.text)>6000:continue
+        selected.append(passage);locators.add(passage.locator);extra+=len(passage.text)
+    others=[item['envelope'] for i,item in enumerate(batches) if i!=index]
+    payload={'task':DOCUMENT_TASK,'repair':'Correct this section response using the validation error. Return its complete replacement; other section responses are retained.',
+             'validation_error':message,'source':{'id':'S1','passages':[{'locator':p.locator,'text':p.text} for p in selected]},
+             'known_records':reference_catalog(project,others),'previous_response':batch['envelope'].model_dump()}
+    return json.dumps(payload,separators=(',',':')),selected
 
 
 def ingest_live(store,pid,data,name,provider,settings=None,adapter=None,source_id=None,live_run=None,deadline=None,cancel=None,job_id=None):
@@ -74,18 +140,38 @@ def ingest_live(store,pid,data,name,provider,settings=None,adapter=None,source_i
     source.passages=list({x.locator:x for x in retained+passages}.values());source.unprocessed=[x.locator for x in passages]
     if not groups:raise DomainError('unsupported_document','No text extracted. Scanned pages need OCR, which is out of scope.')
     a=adapter or (OpenAIAdapter(s) if provider=='openai' else OllamaAdapter(s));budget=BudgetedProvider(store,s,a);action=(live_run['id']+'-' if live_run else '')+uid()
-    combined=Envelope(operations=[],claims=[],tool=None,message='Document extraction proposal');known=set();used=[]
+    batches=[];used=[];requests=0
+    draft_context={key:value for key,value in context(p,'').items() if key in ('revision','project_name','suggest_project_name','decisions')}
     for group in groups:
         _check_cancel(cancel)
-        prompt=json.dumps({'task':'Extract source facts into proposed architecture records. Reuse IDs already listed; do not repeat an existing add operation.','source':{'id':'S1','passages':[{'locator':x.locator,'text':x.text} for x in group]},'context':context(p,''),'previous_proposed_ids':sorted(known)},separators=(',',':'))
+        previous=[batch['envelope'] for batch in batches]
+        prompt=json.dumps({'task':DOCUMENT_TASK,'source':{'id':'S1','passages':[{'locator':x.locator,'text':x.text} for x in group]},'context':draft_context,
+                           'known_records':reference_catalog(p,previous),
+                           'previous_proposed_ids':sorted({op.id for output in previous for op in output.operations})},separators=(',',':'))
         output=budget.call(prompt,pid,action,task='document',live_run=live_run,deadline=deadline,cancel=cancel)
-        if output.content.tool:raise DomainError('insufficient_context','Document extraction requested more context; narrow the document selection.')
-        if combined.project_name is None:combined.project_name=output.content.project_name
-        for op in output.content.operations:
-            if op.op=='add' and op.id in known:raise DomainError('provider_output','Repeated proposed ID; no document changes were committed.')
-            known.add(op.id);combined.operations.append(op)
-        combined.claims.extend(output.content.claims);used.extend(x.locator for x in group)
+        requests+=1
+        batches.append({'passages':group,'evidence_passages':group,'envelope':output.content})
+        used.extend(x.locator for x in group)
     source.processed=previous_processed+used;source.unprocessed=[x.locator for x in passages if x.locator not in used]
-    c=proposal_from_envelope(p,source,combined,source_alias='S1')
+    repaired=False
+    try:
+        c=_document_proposal(p,source,batches)
+    except (DomainError,ValueError) as error:
+        if isinstance(error,DomainError) and error.code=='insufficient_context':raise
+        if requests>=s.max_calls:
+            message=getattr(error,'message',str(error))
+            raise DomainError('provider_output',message+' No repair request remains within this action’s call limit.') from error
+        _check_cancel(cancel)
+        index=error.batch_index
+        prompt,evidence_passages=_repair_prompt(p,source,batches,index,error)
+        output=budget.call(prompt,pid,action,task='document',live_run=live_run,deadline=deadline,cancel=cancel)
+        requests+=1;repaired=True
+        batches[index]['envelope']=output.content;batches[index]['evidence_passages']=evidence_passages
+        try:
+            c=_document_proposal(p,source,batches)
+        except (DomainError,ValueError) as repair_error:
+            message=getattr(repair_error,'message',str(repair_error))
+            raise DomainError('provider_output',message+' The single automatic repair did not produce a valid draft; no further requests were made.') from repair_error
     _check_cancel(cancel)
-    return {'proposal':store.preview(c,job_id=job_id),'mode':'schema_action_envelope','preflight':{'requests':len(groups),'unprocessed_groups':len(remainder),'input_limit':s.max_input},'coverage':{'processed':used,'unprocessed':source.unprocessed}}
+    return {'proposal':store.preview(c,job_id=job_id),'mode':'schema_action_envelope','repairs':int(repaired),
+            'preflight':{'requests':requests,'unprocessed_groups':len(remainder),'input_limit':s.max_input},'coverage':{'processed':used,'unprocessed':source.unprocessed}}

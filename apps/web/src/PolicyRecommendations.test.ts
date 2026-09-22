@@ -27,3 +27,27 @@ test('proposal mode only updates the review checklist until the parent accepts',
  expect(add).not.toHaveBeenCalled();
  expect(screen.getByText(/added when you accept this draft/)).toBeTruthy();
 });
+
+test('select all and clear all change only the checklist, with individual opt-out and busy protection',()=>{
+ const second={...items[0],policy_id:'ARCH-TLS-01',title:'Protect connections'};
+ const add=vi.fn();
+ const {rerender}=render(createElement(PolicyRecommendations,{items:[...items,second],onAdd:add}));
+ fireEvent.click(screen.getByRole('button',{name:'Select all'}));
+ expect(screen.getAllByRole('checkbox').every(n=>(n as HTMLInputElement).checked)).toBe(true);
+ expect(add).not.toHaveBeenCalled();
+ fireEvent.click(screen.getByRole('checkbox',{name:'Suggest ARCH-BAK-01'}));
+ expect(screen.getByText('1 of 2 selected')).toBeTruthy();
+ fireEvent.click(screen.getByRole('button',{name:'Clear all'}));
+ expect(screen.getAllByRole('checkbox').every(n=>!(n as HTMLInputElement).checked)).toBe(true);
+ rerender(createElement(PolicyRecommendations,{items:[...items,second],onAdd:add,busy:true}));
+ expect((screen.getByRole('button',{name:'Select all'}) as HTMLButtonElement).disabled).toBe(true);
+});
+
+test('select all in draft review reports every suggested policy without accepting or applying',()=>{
+ const change=vi.fn(),add=vi.fn();
+ const second={...items[0],policy_id:'ARCH-TLS-01',title:'Protect connections'};
+ render(createElement(PolicyRecommendations,{items:[...items,second],selection:[],onSelectionChange:change,onAdd:add,hideApply:true}));
+ fireEvent.click(screen.getByRole('button',{name:'Select all'}));
+ expect(change).toHaveBeenCalledWith(['ARCH-BAK-01','ARCH-TLS-01']);
+ expect(add).not.toHaveBeenCalled();
+});

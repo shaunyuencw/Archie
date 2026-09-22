@@ -1,13 +1,13 @@
 import json
 from pathlib import Path
-from fastapi import FastAPI, UploadFile, File,Form
+from fastapi import FastAPI, UploadFile, File,Form,Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse,Response
 from starlette.concurrency import run_in_threadpool
 from pydantic import BaseModel,Field,ValidationError
 from .domain.models import Project, ChangeSet, uid
 from .domain.commands import DomainError
-from .domain.views import view_graph,narrative
+from .domain.views import view_graph,narrative,arrange_plan
 from .domain.catalogue import catalogue as asset_catalogue
 from .storage.store import Store
 from .orchestration.service import ingest,answer
@@ -132,6 +132,12 @@ def view(pid:str,kind:str):
     if kind not in p.views: raise DomainError('invalid_input','Unknown view')
     return view_graph(p,kind)
 
+@app.get('/api/projects/{pid}/views/{kind}/arrange')
+def arrange(pid:str,kind:str,aspect_ratio:float=Query(default=1.5,ge=.5,le=3)):
+    p=store.get(pid)
+    if kind not in p.views: raise DomainError('invalid_input','Unknown view')
+    return arrange_plan(p,kind,aspect_ratio)
+
 @app.get('/api/projects/{pid}/narrative')
 def get_narrative(pid:str):
     p=store.get(pid);key=f'narrative-v2:{pid}:{p.revision}'
@@ -172,7 +178,8 @@ async def source_preflight(pid:str,file:UploadFile=File(...),provider:str=Form('
         if provider not in ['mock','openai','ollama']:raise DomainError('unavailable_provider','Unknown provider')
         source.processed=[]
         settings=Settings.environment();_,groups,remainder=document_preflight(source,provider,settings)
-        return {'provider':provider,'requests':len(groups),'unprocessed_batches':len(remainder),'max_cost_usd':settings.document_usd if provider=='openai' else 0,'unsupported_pages':source.unsupported_pages}
+        return {'provider':provider,'requests':len(groups),'repair_requests':int(provider!='mock' and bool(groups) and settings.max_calls>len(groups)),
+                'unprocessed_batches':len(remainder),'max_cost_usd':settings.document_usd if provider=='openai' else 0,'unsupported_pages':source.unsupported_pages}
     return await run_in_threadpool(preflight)
 
 class ContinueRequest(ChangeSet):

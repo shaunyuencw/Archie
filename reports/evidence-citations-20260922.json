@@ -1,0 +1,91 @@
+{
+  "date": "2026-09-22",
+  "observed_error": "Design: Unresolvable evidence excerpt/locator. Your current design was not changed.",
+  "diagnosis": "Failed inventory PDF imports reached strict evidence validation. Raw provider responses are not retained, so their exact failing claims are unavailable. A mocked response quoting a PDF sentence with flattened line breaks reproduces the same error.",
+  "fix": "Match whitespace-only differences within the explicitly cited passage and store its exact original substring. Words, case, punctuation, source IDs and locators remain strict. Invalid provider citations identify the affected target and section instead of a generic Design error.",
+  "regressions": {
+    "new_cases": 18,
+    "before_fix": {
+      "failed": 13,
+      "passed": 5
+    },
+    "focused_cases_passed": 56,
+    "test_files": [
+      "tests/test_evidence_citations.py",
+      "tests/test_live_documents.py",
+      "tests/test_document_reimport.py",
+      "tests/test_provider_normalization.py",
+      "tests/test_live_orchestrator.py"
+    ],
+    "coverage": [
+      "Actual inventory PDF parse, preview, acceptance and reopen using a mocked adapter",
+      "Whitespace, line breaks, CRLF, tabs and non-breaking spaces",
+      "Exact stored source characters and unchanged accepted state before review",
+      "Altered words, case, ports, source IDs and locators rejected",
+      "No joining separate passages",
+      "Manual canonical evidence validation unchanged"
+    ]
+  },
+  "full_offline_gate": {
+    "offline": true,
+    "platform": "darwin",
+    "checks": [
+      {
+        "check": "backend",
+        "exit_code": 0,
+        "seconds": 7.327
+      },
+      {
+        "check": "typescript",
+        "exit_code": 0,
+        "seconds": 2.235
+      },
+      {
+        "check": "frontend-unit",
+        "exit_code": 0,
+        "seconds": 1.189
+      },
+      {
+        "check": "browser",
+        "exit_code": 1,
+        "seconds": 36.124
+      }
+    ]
+  },
+  "backend_passed": 163,
+  "frontend_unit_passed": 33,
+  "browser_initial": {
+    "startTime": "2026-09-22T01:30:37.194Z",
+    "duration": 35648.526,
+    "expected": 32,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "browser_pointer_recheck": {
+    "startTime": "2026-09-22T01:33:43.736Z",
+    "duration": 9441.984,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "browser_failure": {
+    "test": "apps/web/tests/pointer.spec.ts:15",
+    "message": "The VMS node width stayed at 185 after dragging the resize corner; expected greater than 185. The same assertion failed on the isolated rerun. No pointer code or tests were changed."
+  },
+  "production_build": "passed with the supported Node runtime; existing ELK chunk-size warning",
+  "live_provider_calls": 0,
+  "real_openai_and_ollama": "Not rerun. Provider output was exercised through mocked adapters; the next live import remains unverified.",
+  "running_app": {
+    "health": {
+      "status": "ok",
+      "provider": "mock",
+      "synthetic": true
+    },
+    "pid": 9037,
+    "project_snapshots_unchanged": true,
+    "usage_records_unchanged": true,
+    "saved_project_count": 1
+  }
+}

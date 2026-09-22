@@ -3,6 +3,7 @@ from pathlib import Path
 from ..domain.models import Operation,Claim,uid
 from ..domain.naming import name_operation,can_suggest_name,explicit_name_request
 from ..domain.commands import command,apply,DomainError
+from ..domain.catalogue import component_asset
 from ..ingest.parser import parse
 from ..policies.engine import lookup
 from ..policies.library import selected_ids
@@ -10,6 +11,7 @@ from ..providers.adapters import OpenAIAdapter,OllamaAdapter,MockAdapter
 from ..providers.budget import BudgetedProvider
 from ..providers.config import Settings
 from .service import question_ops
+from .references import normalize_references
 
 ROOT=Path(__file__).resolve().parents[4]
 CANCELLATIONS={}
@@ -61,7 +63,9 @@ def context(p,query):
     ids={c.id for c in selected}
     deployments=[d for d in p.deployments if d.component_id in ids]
     zone_ids={d.zone_id for d in deployments}
-    return {'revision':p.revision,'project_name':p.name,'suggest_project_name':can_suggest_name(p),'components':[c.model_dump(exclude={'evidence'}) for c in selected],
+    return {'revision':p.revision,'project_name':p.name,'suggest_project_name':can_suggest_name(p),
+            'systems':[s.model_dump() for s in p.systems if s.id in {c.system_id for c in selected}],
+            'components':[c.model_dump(exclude={'evidence'}) for c in selected],
             'deployments':[d.model_dump() for d in deployments],
             'zones':[z.model_dump() for z in p.zones if z.id in zone_ids],
             'interfaces':[i.model_dump(exclude={'evidence'}) for i in p.interfaces if i.source in ids and i.target in ids][:8],
@@ -82,7 +86,29 @@ def dispatch(tool,p):
         return views[tool.query]
     raise DomainError('invalid_input','Tool is not allowed')
 
+def source_excerpt(source,claim):
+    """Restore whitespace from the cited passage; never repair words or locators."""
+    passages=[p for p in source.passages if p.locator==claim.locator]
+    if claim.excerpt.strip():
+        for passage in passages:
+            if claim.excerpt in passage.text:
+                return claim.excerpt
+        # PDFs wrap lines and use non-breaking spaces. Match only a contiguous
+        # quote in the stated passage, then store the exact original characters
+        # so the canonical model's strict evidence validation still applies.
+        pattern=r'\s+'.join(re.escape(word) for word in claim.excerpt.split())
+        for passage in passages:
+            match=re.search(pattern,passage.text)
+            if match:
+                return match.group(0)
+    reason=('that section was not in the supplied source' if not passages else
+            'the quoted words could not be found together in that section')
+    raise DomainError('provider_output',
+        f'The AI citation for “{claim.target_id[:160]}” at “{claim.locator[:160]}” could not be verified: {reason}. '
+        'Retry the import or prompt so the AI can supply an exact source quote. Your current design was not changed.')
+
 def proposal_from_envelope(p,source,envelope,source_alias=None):
+    envelope=normalize_references(p,envelope)
     naming=name_operation(p,source,envelope.project_name)
     if not envelope.operations and (naming is None or not explicit_name_request(source)):
         raise DomainError('insufficient_context',envelope.message or 'No architecture changes proposed')
@@ -90,7 +116,7 @@ def proposal_from_envelope(p,source,envelope,source_alias=None):
     component_ids=({c.id for c in p.components}|{w.id for w in envelope.operations if w.entity=='components' and w.op=='add'})-{w.id for w in envelope.operations if w.entity=='components' and w.op=='remove'}
     for w in envelope.claims:
         if w.source_id not in {source.id,source_alias}: raise DomainError('provider_output','Evidence was not in the supplied source context')
-        claims.append(Claim(id=uid(),source_id=source.id,source_version=source.version,locator=w.locator,excerpt=w.excerpt,target_id=w.target_id,field=w.field,value=json.loads(w.value_json),source_kind=source.kind,review='confirmed'))
+        claims.append(Claim(id=uid(),source_id=source.id,source_version=source.version,locator=w.locator,excerpt=source_excerpt(source,w),target_id=w.target_id,field=w.field,value=json.loads(w.value_json),source_kind=source.kind,review='confirmed'))
     for w in envelope.operations:
         value=json.loads(w.value_json)
         if not isinstance(value,dict):raise DomainError('provider_output','Operation value must be an object')
@@ -112,7 +138,9 @@ def proposal_from_envelope(p,source,envelope,source_alias=None):
                 uncertainties.append(f'{w.id}: scope kept unknown because no matching scope claim was supplied.')
                 value['scope']='unknown'
         if w.entity=='components':
-            if value.get('asset_id','') is None:value['asset_id']='generic-role-a'
+            if w.op=='add' or 'asset_id' in value:
+                existing=next((c.model_dump() for c in p.components if c.id==w.id),{})
+                value['asset_id']=component_asset({**existing,**value})
             if value.get('scope','') is None:value['scope']='unknown'
         evidence=[c.id for c in claims if c.target_id in [w.id,value.get('component_id')]]
         if not evidence:raise DomainError('provider_output','Proposed semantic change lacks source evidence')
@@ -143,6 +171,7 @@ def assisted_run(store,pid,req,settings=None,adapter=None,live_run=None,deadline
     budget=BudgetedProvider(store,s,a); repaired=False; result=None
     try:
         for step in range(min(3,s.max_calls)):
+            output=None
             try:
                 output=budget.call(prompt,pid,run_id,'edit' if p.components else 'draft',active_cancel,deadline=deadline,live_run=live_run)
                 if output.content.tool:
@@ -157,7 +186,9 @@ def assisted_run(store,pid,req,settings=None,adapter=None,live_run=None,deadline
                 if isinstance(error,DomainError) and (error.code in ['budget_exceeded','insufficient_context','cancelled','unavailable_provider','provider_timeout','stale_revision','project_trashed','not_found'] or getattr(error,'terminal',False)):raise
                 if repaired:raise
                 repaired=True
-                prompt=json.dumps({'initial':json.loads(prompt),'repair':'Previous response was not a valid reference-safe proposal. Return valid schema and exact source citations.'},separators=(',',':'))
+                prompt=json.dumps({'initial':json.loads(prompt),'repair':'Correct the validation error. Return a complete replacement proposal with exact source citations.',
+                                   'validation_error':getattr(error,'message',str(error)),
+                                   'previous_response':output.content.model_dump() if output else None},separators=(',',':'))
         if result is None:raise DomainError('budget_exceeded','Bounded action finished without an acceptable proposal.')
         with store.connect() as db:db.execute("UPDATE runs SET status='completed',result=? WHERE id=?",(json.dumps(result),run_id))
         return result

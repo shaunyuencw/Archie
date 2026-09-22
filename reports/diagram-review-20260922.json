@@ -1,0 +1,31 @@
+{
+  "backend_tests": {
+    "passed": 220,
+    "report": "compact-layout-tests.xml"
+  },
+  "frontend_unit_tests": {
+    "passed": 37
+  },
+  "typescript": "passed",
+  "production_build": "passed",
+  "focused_browser_tests": {
+    "passed": 2,
+    "suites": [
+      "compact-layout.spec.ts",
+      "review-clarity.spec.ts"
+    ]
+  },
+  "screenshots_visually_inspected": [
+    "compact-layout-browser.png",
+    "review-clarity-browser.png"
+  ],
+  "live_canvas_verified": "Sentinel Security Management, revision 3, 20 components and 22 interfaces; distinct functional symbols visible",
+  "api_restart": {
+    "pid": 19111,
+    "active_jobs": 0,
+    "project_snapshots_and_usage_unchanged": true
+  },
+  "provider_network_calls_by_verification": 0,
+  "live_model_quality": "unverified; PDF replay uses scripted responses",
+  "known_unrelated_failure": "Prior full browser run: pointer resize width remained 185. Not rerun or altered in this follow-up."
+}

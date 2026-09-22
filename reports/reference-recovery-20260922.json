@@ -1,0 +1,58 @@
+{
+  "date": "2026-09-22",
+  "observed_error": "Design: Unresolved reference: SYS-VAS. Your current design was not changed.",
+  "diagnosis": "The supplied PDF defines SYS-VAS and uses system IDs as interface endpoints. Canonical interfaces require component IDs. Document extraction previously carried only untyped IDs between batches and had no proposal-repair step. System-as-component references reproduce the error; the original failed model payload was not retained, so its exact field cannot be reconstructed.",
+  "changes": [
+    "Carry compact typed records, names and relationships between document batches.",
+    "Resolve only unique ID aliases or names within the required entity type. Reject ambiguous and wrong-type references; preserve the strict canonical model.",
+    "Explain the affected record and field when a reference cannot resolve.",
+    "Request source-backed logical boundary components when the document specifies system-level flows, without choosing unspecified internal endpoints or hardware.",
+    "Reserve at most one repair request within the existing action call and spending limits. Replace only the offending section response and retain the others.",
+    "Verify citations against the passages actually supplied for each response. A repair may retrieve supporting passages already included in this action.",
+    "Deduplicate identical repeated additions. Conflicting additions and malformed record data require validation or repair.",
+    "Report partial document coverage when the call allowance cannot cover all groups. Cancellation, transport errors, exhausted budgets and stale projects do not trigger extra retries."
+  ],
+  "verification": {
+    "new_regression_cases": 29,
+    "backend_passed": 192,
+    "frontend_unit_passed": 33,
+    "typescript": "passed",
+    "production_build": "passed; existing ELK bundle-size warning",
+    "browser": {"passed": 32, "failed": 1},
+    "browser_failure": "The previously observed pointer resize test still fails at apps/web/tests/pointer.spec.ts:15: node width remains 185. No pointer code or existing tests were changed.",
+    "test_files": ["tests/test_reference_recovery.py", "tests/test_document_recovery.py"],
+    "evidence": ["reports/m7-tests.xml", "reports/offline-gate.json", "reports/browser-tests.json"]
+  },
+  "supplied_pdf_replay": {
+    "filename": "SSMS_Mock_Technical_System_Description.pdf",
+    "sha256": "46318e37d017614c147764f802a1e9e4a3ed1d04c8060fab43e453ec313292b4",
+    "mode": "Real local PDF parsing with authored, scripted provider responses; not a live model extraction or an independent accuracy benchmark.",
+    "pages_processed": 13,
+    "pages_unprocessed": 0,
+    "mocked_extraction_requests": 5,
+    "mocked_repair_requests": 1,
+    "systems": 3,
+    "components": 18,
+    "logical_boundary_components": 3,
+    "zones": 4,
+    "deployments": 15,
+    "interfaces": 7,
+    "views": {
+      "logical": {"nodes": 22, "edges": 7},
+      "sv1": {"nodes": 3, "edges": 5},
+      "sv2": {"nodes": 22, "edges": 7}
+    },
+    "all_rendered_endpoints_resolve": true,
+    "project_unchanged_before_acceptance": true,
+    "acceptance_and_reopen": "passed in an isolated temporary database"
+  },
+  "live_provider_calls": 0,
+  "real_openai_and_ollama": "Fresh live imports remain unverified. All provider responses in this verification were mocked.",
+  "running_app": {
+    "api_restarted_while_idle": true,
+    "health": "ok",
+    "saved_project_count": 5,
+    "project_snapshots_unchanged": true,
+    "usage_records_unchanged": true
+  }
+}
