@@ -43,11 +43,12 @@ def proposed_records(project,envelopes,unreadable=None):
     return records
 
 
-def reference_catalog(project,envelopes=()):
+def reference_catalog(project,envelopes=(),*,include_zoning=False):
     """Compact typed symbols for every record; budget checks bound transmission."""
     unreadable=[]
     records=proposed_records(project,envelopes,unreadable)
     fields=('name','role','system_id','component_id','zone_id','source','target','key')
+    if include_zoning:fields+=('scope','value')
     catalog={entity:[{'id':ident,**{key:record[key] for key in fields if key in record}}
                      for ident,record in group.items()] for entity,group in records.items() if group}
     if unreadable:catalog['unreadable_operations']=unreadable

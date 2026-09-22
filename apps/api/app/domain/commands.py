@@ -33,13 +33,16 @@ def validation_message(error:ValidationError)->str:
     if error.error_count()>3:details.append(f'{error.error_count()-3} more fields need correction.')
     return ' '.join(details)+' Your current design was not changed.'
 
+def temporary_id_map(change:ChangeSet):
+    return {o.id:str(uuid5(NAMESPACE_URL,change.id+':'+o.id)) for o in change.operations if o.op=='add' and o.id.startswith('tmp:')}
+
 def apply(project:Project,change:ChangeSet)->Project:
     if change.project_id!=project.id: raise DomainError('invalid_input','Project mismatch')
     if change.base_revision!=project.revision or change.base_views!={k:v.revision for k,v in project.views.items()}:
         raise DomainError('stale_revision','The project changed. Review a fresh proposal.',409)
     data=project.model_dump(); semantic=False; touched=set()
     # Allocate temporary IDs once across the whole transaction, including references.
-    mapping={o.id:str(uuid5(NAMESPACE_URL,change.id+':'+o.id)) for o in change.operations if o.op=='add' and o.id.startswith('tmp:')}
+    mapping=temporary_id_map(change)
     def resolve(v):
         if isinstance(v,str): return mapping.get(v,v)
         if isinstance(v,list): return [resolve(x) for x in v]

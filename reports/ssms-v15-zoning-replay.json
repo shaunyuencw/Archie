@@ -1,0 +1,17 @@
+{
+  "mode": "offline scripted replay of SSMS v1.5 page 5 from the earlier local checkpoint; not live-model accuracy evidence",
+  "zones": 4,
+  "internal_assignments": 14,
+  "external_components_left_outside_internal_zones": 6,
+  "proposed_assignments_with_separate_rationale": 5,
+  "components_and_interfaces_unchanged": [
+    20,
+    22
+  ],
+  "live_project_mutations": 0,
+  "provider_calls": 0,
+  "claims_have_exact_page_5_citations": true,
+  "new_zone_children_fit": true,
+  "reopen_passed": true,
+  "zoning_prompt_context_components": 20
+}

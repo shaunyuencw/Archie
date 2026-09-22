@@ -3,10 +3,10 @@ import type {Project,ChangeSet} from './api';
 export type ReviewWarning={title:string;message:string;items:string[]};
 export function proposalWarnings(project:Project,proposal:ChangeSet):ReviewWarning[]{
  const records=new Map<string,Record<string,unknown>>();
- for(const record of [...project.systems,...project.components,...project.zones,...project.interfaces])records.set(record.id,{...record});
- for(const op of proposal.operations)if(op.id&&['systems','components','zones','interfaces'].includes(op.entity||''))records.set(op.id,{...records.get(op.id),...op.value});
+ for(const record of [...project.systems,...project.components,...project.zones,...project.interfaces,...project.deployments])records.set(record.id,{...record});
+ for(const op of proposal.operations)if(op.id&&['systems','components','zones','interfaces','deployments'].includes(op.entity||''))records.set(op.id,{...records.get(op.id),...op.value});
  const name=(id:string)=>typeof records.get(id)?.name==='string'?String(records.get(id)!.name):'Unnamed item';
- const label=(id:string)=>{const record=records.get(id);return record?.source&&record?.target?`${name(String(record.source))} → ${name(String(record.target))}`:name(id)};
+ const label=(id:string)=>{const record=records.get(id);return record?.component_id?`${name(String(record.component_id))} → ${name(String(record.zone_id))}`:record?.source&&record?.target?`${name(String(record.source))} → ${name(String(record.target))}`:name(id)};
  const groups=new Map<string,ReviewWarning>();
  const definitions={
   scope:{title:'Confirm what belongs inside the architecture',message:'The draft could not verify whether these items are inside or outside the system boundary. Check the source, then set Architecture boundary in the Inspector. Until confirmed, this stays “Not specified”.'},
@@ -14,6 +14,11 @@ export function proposalWarnings(project:Project,proposal:ChangeSet):ReviewWarni
   enforcement:{title:'Confirm which security controls protect these connections',message:'The firewall or other control is not fully specified. Check the intended security control for each connection and record it in Connections. No extra control has been assumed.'},
  };
  for(const finding of proposal.findings||[]){
+  const zoning=finding.match(/^(.+?): proposed zoning — (.+)$/s);
+  if(zoning){
+   const group=groups.get('zoning')||{title:'Review proposed zoning',message:'These zone choices are Archie’s design assumptions. The cited requirements support the proposal, but do not state these exact choices. Accepting creates the zones and assignments in the design; it does not configure network security.',items:[]};
+   group.items.push(`${label(zoning[1])}: ${zoning[2]}`);groups.set('zoning',group);continue;
+  }
   const match=finding.match(/^(.+?): (scope kept unknown because no matching scope claim was supplied\.|port was left unknown because|enforcement is not fully specified\.)/);
   if(match){
    const kind=match[2].startsWith('scope')?'scope':match[2].startsWith('port')?'port':'enforcement';

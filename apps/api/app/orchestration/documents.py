@@ -9,11 +9,12 @@ from ..domain.models import Passage,uid
 from ..ingest.parser import parse
 from .live import context,proposal_from_envelope,source_excerpt
 from .references import reference_catalog
+from .zoning import ZONING_REQUIREMENT
+from ..providers.instructions import ZONING_GUIDANCE
 
 
-DOCUMENT_TASK=('Extract functional parts. Reuse typed known_records; connections/deployments use components, not systems. '
-               'Refine earlier boundaries if internals emerge; preserve flows and ambiguous endpoints. '
-               'Fallback role: "system boundary". Empty if nothing new.')
+DOCUMENT_TASK=('Extract functional parts; reuse typed known_records. Connections/deployments need component IDs. '
+               'Refine boundaries as details emerge; preserve flows. Empty if nothing new.')
 
 def document_preflight(source,provider,settings):
     limit=700 if provider=='ollama' else 6000
@@ -67,7 +68,7 @@ def _document_proposal(project,source,batches):
                 value=json.loads(op.value_json)
                 if not isinstance(value,dict):raise DomainError('provider_output','Operation value must be an object')
                 if op.op=='add':
-                    signature=(op.entity,value)
+                    signature=(op.entity,value,op.proposal_reason)
                     if op.id in additions:
                         if additions[op.id]==signature:continue  # Identical repeated declarations add no new fact.
                         raise DomainError('provider_output',f'Record “{op.id[:160]}” was added twice with different definitions. Reuse its existing ID in an update, or keep distinct source-supported IDs.')
@@ -103,9 +104,10 @@ def _repair_prompt(project,source,batches,index,error):
         if extra+len(passage.text)>6000:continue
         selected.append(passage);locators.add(passage.locator);extra+=len(passage.text)
     others=[item['envelope'] for i,item in enumerate(batches) if i!=index]
-    payload={'task':DOCUMENT_TASK,'repair':'Correct this section response using the validation error. Return its complete replacement; other section responses are retained.',
+    task=DOCUMENT_TASK+(' '+ZONING_GUIDANCE if any(ZONING_REQUIREMENT.search(p.text) for p in selected) else '')
+    payload={'task':task,'repair':'Correct this section response using the validation error. Return its complete replacement; other section responses are retained.',
              'validation_error':message,'source':{'id':'S1','passages':[{'locator':p.locator,'text':p.text} for p in selected]},
-             'known_records':reference_catalog(project,others),'previous_response':batch['envelope'].model_dump()}
+             'known_records':reference_catalog(project,others,include_zoning=True),'previous_response':batch['envelope'].model_dump()}
     return json.dumps(payload,separators=(',',':')),selected
 
 
@@ -145,8 +147,9 @@ def ingest_live(store,pid,data,name,provider,settings=None,adapter=None,source_i
     for group in groups:
         _check_cancel(cancel)
         previous=[batch['envelope'] for batch in batches]
-        prompt=json.dumps({'task':DOCUMENT_TASK,'source':{'id':'S1','passages':[{'locator':x.locator,'text':x.text} for x in group]},'context':draft_context,
-                           'known_records':reference_catalog(p,previous),
+        task=DOCUMENT_TASK+(' '+ZONING_GUIDANCE if any(ZONING_REQUIREMENT.search(x.text) for x in group) else '')
+        prompt=json.dumps({'task':task,'source':{'id':'S1','passages':[{'locator':x.locator,'text':x.text} for x in group]},'context':draft_context,
+                           'known_records':reference_catalog(p,previous,include_zoning=True),
                            'previous_proposed_ids':sorted({op.id for output in previous for op in output.operations})},separators=(',',':'))
         output=budget.call(prompt,pid,action,task='document',live_run=live_run,deadline=deadline,cancel=cancel)
         requests+=1

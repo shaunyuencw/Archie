@@ -32,3 +32,17 @@ it('names connection endpoints and retains unknown findings for review',()=>{
  expect(warnings[2].message).toBe('An unusual warning must remain visible.');
  expect(JSON.stringify(warnings)).not.toContain('tmp:');
 });
+
+it('groups inferred zoning separately and names deployment choices',()=>{
+ const proposal:ChangeSet={project_id:project.id,base_revision:project.revision,base_views:{},operations:[
+  {op:'add',entity:'zones',id:'tmp:zone',value:{name:'Application zone'}},
+  {op:'add',entity:'deployments',id:'tmp:deploy',value:{component_id:project.components[0].id,zone_id:'tmp:zone'}},
+ ],findings:['tmp:zone: proposed zoning — Isolate application processing.',
+             'tmp:deploy: proposed zoning — Assign the service by its responsibility.']};
+ const warnings=proposalWarnings(project,proposal);
+ expect(warnings).toHaveLength(1);expect(warnings[0].title).toBe('Review proposed zoning');
+ expect(warnings[0].message).toContain('does not configure network security');
+ expect(warnings[0].items).toEqual(['Application zone: Isolate application processing.',
+  `${project.components[0].name} → Application zone: Assign the service by its responsibility.`]);
+ expect(JSON.stringify(warnings)).not.toContain('tmp:');
+});

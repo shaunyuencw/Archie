@@ -125,9 +125,12 @@ def _safe_route(source,target,route,boxes,centers):
 
 def view_graph(p:Project,kind:str,*,route_edges=True):
     view=p.views[kind]; nodes=[]; edges=[]; mappings={}; member={}
+    proposed_zones={c.target_id for c in p.claims if c.source_kind=='assistant_proposal' and c.field=='proposed_zoning' and c.review!='rejected'}
     def node(ident,label,asset,objects,parent=None,role='',default=None):
         place=view.placements.get(ident,default or Placement()); mappings[ident]=objects
-        if place.visible: nodes.append(dict(id=ident,label=place.label or label,asset_id=asset,object_ids=objects,parentId=parent,role=role,**place.model_dump(exclude={'label'})))
+        text=place.label or label
+        if role=='zone' and ident in proposed_zones:text+=' (proposed)'
+        if place.visible: nodes.append(dict(id=ident,label=text,asset_id=asset,object_ids=objects,parentId=parent,role=role,**place.model_dump(exclude={'label'})))
     if kind=='sv1':
         groups={}
         for c in p.components: groups.setdefault(c.system_id or c.id,[]).append(c)
@@ -209,6 +212,7 @@ def arrange_plan(p:Project,kind:str,aspect_ratio=1.5):
 def narrative(p:Project):
     names={c.id:c.name for c in p.components}; zone_names={z.id:z.name for z in p.zones}
     deployments={d.component_id:d for d in p.deployments}
+    proposed_zoning={c.target_id for c in p.claims if c.source_kind=='assistant_proposal' and c.field=='proposed_zoning' and c.review!='rejected'}
     lines=[f'# {p.name}', '', 'SYNTHETIC — DEMONSTRATION ONLY' if p.synthetic else 'User-supplied project',
            f'Accepted semantic revision: {p.revision}', '', '## Design at a glance',
            f'This design contains {len(p.components)} components and {len(p.interfaces)} connections. The sections below describe the accepted model; unspecified facts stay undecided.']
@@ -218,6 +222,7 @@ def narrative(p:Project):
         d=deployments.get(c.id);zone=zone_names.get(d.zone_id,'an unspecified deployment zone') if d else 'an unspecified deployment zone'
         count=f'{d.quantity} declared instance'+('s' if d.quantity!=1 else '') if d and d.quantity is not None else 'instance count undecided'
         text=f'- {c.name} [{c.id}] is a {c.role.replace("_"," ")} in {zone}. Status: {c.status}; {count}.'
+        if d and (d.id in proposed_zoning or d.zone_id in proposed_zoning):text+=' Zoning is an Archie design proposal, not a source-stated deployment or proof of implemented segmentation.'
         if d and d.redundancy_mode!='unknown':text+=f' Redundancy: {d.redundancy_mode.replace("_"," ")}.'
         if c.form_factor!='unknown':text+=f' Form: {c.form_factor}.'
         if d and d.host_component_id:text+=f' Runs on {names[d.host_component_id]}.'

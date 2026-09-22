@@ -8,6 +8,7 @@ class WireOperation(Record):
     entity:Literal['systems','zones','components','deployments','interfaces','constraints']
     id:str
     value_json:str
+    proposal_reason:str|None=Field(default=None,min_length=1,max_length=600)
 
 class WireClaim(Record):
     source_id:str
@@ -47,6 +48,9 @@ def schema():
     # Live strict schemas require every property, including nullable metadata.
     result['required']=list(result['properties'])
     result['properties']['project_name'].pop('default',None)
+    operation=result['$defs']['WireOperation']
+    operation['required']=list(operation['properties'])
+    operation['properties']['proposal_reason'].pop('default',None)
     return result
 def estimate(text):
     # Conservative byte upper bound. May reject long local requests early; never truncates context.
