@@ -1,0 +1,14 @@
+{
+  "input_limit_before": 32000,
+  "input_limit_after": 50000,
+  "output_limit": 6000,
+  "other_settings_unchanged": true,
+  "project_and_usage_rows_unchanged": true,
+  "live_provider_calls": 0,
+  "backend_tests_passed": 240,
+  "request_bounds_tested": [
+    34166,
+    50000,
+    50001
+  ]
+}

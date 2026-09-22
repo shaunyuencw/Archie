@@ -4,7 +4,8 @@ import httpx,pytest
 from apps.api.app.providers.adapters import OllamaAdapter,OpenAIAdapter,MockAdapter
 from apps.api.app.providers.config import Settings
 from apps.api.app.providers.budget import BudgetedProvider,usage_summary,LOCAL_LOCK,LOCAL_TIMEOUT_CAP_SECONDS,local_limits
-from apps.api.app.providers.contracts import Envelope,ProviderResult,Usage,cost
+from apps.api.app.providers.contracts import Envelope,ProviderResult,Usage,cost,estimate,schema
+from apps.api.app.providers.instructions import SYSTEM_PROMPT
 from apps.api.app.domain.commands import DomainError
 from apps.api.app.storage.store import Store
 
@@ -80,7 +81,7 @@ def test_local_default_deadline_scales_to_capped_output_and_explicit_deadline_is
 
 
 def test_8k_local_profile_uses_the_request_context_budget_without_exceeding_it():
-    settings=Settings(ollama_num_ctx=8192,max_input=32000,max_output=6000)
+    settings=Settings(ollama_num_ctx=8192,max_input=50000,max_output=6000)
     max_input,max_output=local_limits(settings,3984)
     assert max_input==5500 and max_output==3696
     assert 3984+max_output+512==8192
@@ -158,8 +159,29 @@ def test_cost_reasoning_subset_not_double_counted():
     assert cost(Usage(input_tokens=5000,output_tokens=2000,reasoning_tokens=500),{'input':.75,'cache_read':.075,'cache_write':.75,'output':4.5})==.01275
 
 def test_requested_development_ceilings_leave_safe_defaults():
-    configured=Settings(max_input=32000,max_output=6000,max_calls=6)
-    assert configured.max_input==32000 and configured.max_output==6000
+    configured=Settings(max_input=50000,max_output=6000,max_calls=6)
+    assert configured.max_input==50000 and configured.max_output==6000
     assert Settings().provider=='mock' and not Settings().allow_cloud
-    for overrides in [{'max_input':32001},{'max_output':6001}]:
+    for overrides in [{'max_input':50001},{'max_output':6001}]:
         with pytest.raises(ValueError):Settings(**overrides)
+
+
+@pytest.mark.parametrize('request_bound',[34166,50000,50001])
+def test_cloud_50k_input_limit_checks_full_request_before_sending(tmp_path,request_bound):
+    class CapturingCloud(CapturingLocal):
+        name='openai';model='gpt-5.6-terra'
+    overhead=estimate(SYSTEM_PROMPT+json.dumps(schema(),separators=(',',':')))+128
+    prompt='x'*(request_bound-overhead)
+    adapter=CapturingCloud();store=Store(tmp_path/'db')
+    settings=Settings(allow_cloud=True,max_input=50000,max_output=6000,document_usd=1)
+    provider=BudgetedProvider(store,settings,adapter)
+    if request_bound>settings.max_input:
+        with pytest.raises(DomainError,match='50001 tokens exceeds 50000') as error:
+            provider.call(prompt,'p','document-import',task='document')
+        assert error.value.code=='insufficient_context'
+        assert not adapter.called and usage_summary(store,'p')['calls']==0
+    else:
+        provider.call(prompt,'p','document-import',task='document')
+        assert len(adapter.called)==1 and adapter.max_outputs==[6000]
+        record=usage_summary(store,'p')['records'][0]
+        assert record['status']=='completed' and record['reserved']>0
