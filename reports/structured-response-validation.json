@@ -1,0 +1,12 @@
+{
+  "verified_at": "2026-09-22T06:34:34.840040+00:00",
+  "backend_tests_passed": 256,
+  "api_restarted": true,
+  "settings_unchanged": true,
+  "project_usage_job_rows_unchanged": true,
+  "max_input": 50000,
+  "max_output": 6000,
+  "live_provider_calls": 0,
+  "live_openai_generation": "unverified",
+  "structured_schema_bytes": 2513
+}
