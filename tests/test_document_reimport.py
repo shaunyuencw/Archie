@@ -200,13 +200,17 @@ def test_failed_or_cancelled_live_retry_preserves_saved_source(tmp_path, outcome
             return result
 
     adapter = InterruptedAdapter()
-    with pytest.raises(DomainError) as error:
-        ingest_live(store, project.id, data, 'synthetic-spec.docx', 'ollama', settings(), adapter, cancel=cancel)
-    assert error.value.code == ('unavailable_provider' if outcome == 'failed' else 'cancelled')
+    if outcome=='cancelled':
+        with pytest.raises(DomainError) as error:
+            ingest_live(store, project.id, data, 'synthetic-spec.docx', 'ollama', settings(), adapter, cancel=cancel)
+        assert error.value.code=='cancelled'
+    else:
+        result=ingest_live(store, project.id, data, 'synthetic-spec.docx', 'ollama', settings(), adapter, cancel=cancel)
+        assert any('Provider failed' in f for f in result['proposal'].findings)
     assert adapter.calls == 1 and usage_summary(store, project.id)['calls'] == 1
     assert store.get(project.id) == before
     with store.connect() as db:
-        assert db.execute('SELECT COUNT(*) FROM changes').fetchone()[0] == 0
+        assert db.execute('SELECT COUNT(*) FROM changes').fetchone()[0] == (0 if outcome=='cancelled' else 1)
 
 
 @pytest.mark.parametrize('purge', [False, True], ids=['trashed', 'emptied-trash'])

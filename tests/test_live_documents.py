@@ -37,8 +37,10 @@ def test_document_failure_preserves_accepted_state_and_preflight_is_local(tmp_pa
     monkeypatch.setattr('apps.api.app.orchestration.documents.parse',lambda *args:source())
     _,groups,remainder=document_preflight(source(),'ollama',settings)
     assert len(groups)==1 and len(remainder)==2 and adapter.calls==0
-    with pytest.raises(Exception):ingest_live(store,p.id,b'fixture','fixture.pdf','ollama',settings,adapter)
+    result=ingest_live(store,p.id,b'fixture','fixture.pdf','ollama',settings,adapter)
     assert store.get(p.id)==p
+    accepted=store.commit(result['proposal'])
+    assert len(accepted.components)==1 and all(c.review=='unreviewed' for c in accepted.claims)
 
 
 def test_openai_document_without_zones_accepts_a_compact_layout(tmp_path,monkeypatch):

@@ -1,7 +1,8 @@
 from pathlib import Path
 import pytest
 from apps.api.app.domain.commands import apply,command,DomainError
-from apps.api.app.domain.models import Project
+from apps.api.app.domain.models import Project,Component,Source,Passage
+from apps.api.app.domain.naming import name_operation,can_suggest_name
 from apps.api.app.ingest.parser import parse
 from apps.api.app.orchestration.live import proposal_from_envelope
 from apps.api.app.orchestration.service import ingest
@@ -42,3 +43,20 @@ def test_mock_document_names_initial_draft_and_mock_prompt_can_rename_it(tmp_pat
     p=store.commit(draft['proposal']);assert p.name=='Portal web service architecture'
     draft=ingest(store,p.id,b'Rename this project to Employee services','Prompt','prompt')
     p=store.commit(draft['proposal']);assert p.name=='Employee services'
+
+
+def test_default_name_can_be_filled_after_a_partial_architecture_exists():
+    project=Project(name='New architecture',components=[Component(id='a',name='Client',role='client')])
+    assert can_suggest_name(project)
+    source=Source(id='s',name='techspec.pdf',kind='document',sha256='s',canonical_id='s',
+        passages=[Passage(locator='page/1',text='Production service portal technical specification\nSYNTHETIC — DEMONSTRATION ONLY')])
+    op=name_operation(project,source,None)
+    assert op.value['name']=='Production service portal'
+    project.name='My chosen name'
+    assert name_operation(project,source,None) is None
+
+
+def test_ssms_document_title_beats_repeated_pdf_header():
+    source=Source(id='s',name='ssms.pdf',kind='document',sha256='s',canonical_id='s',
+        passages=[Passage(locator='page/1',text='SSMS - Simplified Technical System Description\nPage 1\nSentinel Security Management System\n(SSMS)\nSystem\nSentinel Security Management System (SSMS)')])
+    assert name_operation(Project(),source,None).value['name']=='Sentinel Security Management System (SSMS)'

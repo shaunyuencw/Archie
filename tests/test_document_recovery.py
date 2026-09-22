@@ -127,8 +127,9 @@ def test_missing_numbered_connections_cannot_be_silently_accepted(tmp_path,monke
     spec=document();spec.passages=[Passage(locator='page/1',text='IF-01: Client sends requests to Application. '+SYSTEM_TEXT)]
     monkeypatch.setattr('apps.api.app.orchestration.documents.parse',lambda *args:spec)
     adapter=ScriptedAdapter([systems()])
-    with pytest.raises(DomainError,match='source lists 1 connections'):
-        ingest_live(store,project.id,b'synthetic','spec.pdf','openai',settings(max_calls=1),adapter)
+    result=ingest_live(store,project.id,b'synthetic','spec.pdf','openai',settings(max_calls=1),adapter)
+    assert any('source lists 1 connections' in f for f in result['proposal'].findings)
+    assert result['coverage']['unprocessed']==['page/1']
     assert store.get(project.id)==project and len(adapter.prompts)==1
 
 
@@ -171,13 +172,14 @@ def test_later_deployment_details_refine_core_boundary_and_preserve_declared_flo
     assert len(accepted.claims)==10 and all(c.excerpt for c in accepted.claims)
 
 
-def test_second_invalid_repair_fails_atomically_without_third_attempt(tmp_path,monkeypatch):
+def test_second_invalid_repair_returns_partial_draft_without_third_attempt(tmp_path,monkeypatch):
     store,project=setup(tmp_path,monkeypatch)
     adapter=ScriptedAdapter([systems(),flow(),flow()])
-    with pytest.raises(DomainError,match='SYS-VAS'):
-        ingest_live(store,project.id,b'synthetic','spec.pdf','openai',settings(max_calls=8),adapter)
+    result=ingest_live(store,project.id,b'synthetic','spec.pdf','openai',settings(max_calls=8),adapter)
     assert len(adapter.prompts)==3 and store.get(project.id)==project
-    with store.connect() as db:assert db.execute('SELECT count(*) FROM changes').fetchone()[0]==0
+    assert any('Omitted IF-01' in f for f in result['proposal'].findings)
+    accepted=store.commit(result['proposal'])
+    assert len(accepted.systems)==2 and not accepted.interfaces
 
 
 def test_preflight_reserves_repair_and_reports_unprocessed_sections():
@@ -192,8 +194,8 @@ def test_one_call_profile_never_spends_on_repair(tmp_path,monkeypatch):
     store,project=setup(tmp_path,monkeypatch)
     invalid=response([{'entity':'components','id':'processor','value':{'name':'Processor','role':'application','system_id':'missing'}}])
     adapter=ScriptedAdapter([invalid])
-    with pytest.raises(DomainError,match='missing'):
-        ingest_live(store,project.id,b'synthetic','spec.pdf','openai',settings(max_calls=1),adapter)
+    result=ingest_live(store,project.id,b'synthetic','spec.pdf','openai',settings(max_calls=1),adapter)
+    assert any('Omitted processor' in f for f in result['proposal'].findings)
     assert len(adapter.prompts)==1 and store.get(project.id)==project
 
 
@@ -202,8 +204,8 @@ def test_repair_stays_inside_remaining_spending_budget(tmp_path,monkeypatch):
     def exhaust_spending(call):
         if call==2:config.document_usd=0.000001
     adapter=ScriptedAdapter([systems(),flow()],exhaust_spending)
-    with pytest.raises(DomainError,match='spending reservation limit'):
-        ingest_live(store,project.id,b'synthetic','spec.pdf','openai',config,adapter)
+    result=ingest_live(store,project.id,b'synthetic','spec.pdf','openai',config,adapter)
+    assert any('spending reservation limit' in f for f in result['proposal'].findings)
     assert len(adapter.prompts)==2 and store.get(project.id)==project
     assert usage_summary(store,project.id)['calls']==2
 
@@ -212,9 +214,15 @@ def test_repair_stays_inside_remaining_spending_budget(tmp_path,monkeypatch):
 def test_transport_failure_never_starts_schema_repair(tmp_path,monkeypatch,code):
     store,project=setup(tmp_path,monkeypatch)
     adapter=ScriptedAdapter([DomainError(code,'Transport stopped')])
-    with pytest.raises(DomainError) as error:
-        ingest_live(store,project.id,b'synthetic','spec.pdf','openai',settings(),adapter)
-    assert error.value.code==code and len(adapter.prompts)==1 and store.get(project.id)==project
+    if code=='cancelled':
+        with pytest.raises(DomainError) as error:
+            ingest_live(store,project.id,b'synthetic','spec.pdf','openai',settings(),adapter)
+        assert error.value.code==code
+    else:
+        result=ingest_live(store,project.id,b'synthetic','spec.pdf','openai',settings(),adapter)
+        assert any('Transport stopped' in f for f in result['proposal'].findings)
+        assert result['coverage']['processed']==[]
+    assert len(adapter.prompts)==1 and store.get(project.id)==project
 
 
 def test_cancel_before_repair_preserves_project_and_usage(tmp_path,monkeypatch):
@@ -238,13 +246,15 @@ def test_concurrent_edit_is_not_repaired_or_overwritten(tmp_path,monkeypatch):
     assert store.get(project.id).notes=='Keep my manual note' and not store.get(project.id).components
 
 
-def test_unseen_page_citation_rejects_even_if_parse_cache_contains_text(tmp_path,monkeypatch):
+def test_unseen_page_citation_is_not_verified_even_if_parse_cache_contains_text(tmp_path,monkeypatch):
     store,project=setup(tmp_path,monkeypatch)
     adapter=ScriptedAdapter([response([{'entity':'systems','id':'SYS-VAS','value':{'name':'Video Analytics System'}}],
                                      'page/2',FLOW_TEXT)])
-    with pytest.raises(DomainError,match='section was not in the supplied source'):
-        ingest_live(store,project.id,b'synthetic','spec.pdf','openai',settings(max_calls=1),adapter)
+    result=ingest_live(store,project.id,b'synthetic','spec.pdf','openai',settings(max_calls=1),adapter)
     assert store.get(project.id)==project
+    accepted=store.commit(result['proposal'])
+    assert not any(c.review=='confirmed' for c in accepted.claims)
+    assert any('citation could not be verified' in f for f in result['proposal'].findings)
 
 
 def test_identical_repeated_declaration_is_deduplicated_locally(tmp_path,monkeypatch):
@@ -257,47 +267,47 @@ def test_identical_repeated_declaration_is_deduplicated_locally(tmp_path,monkeyp
     assert len(accepted.systems)==2 and len(accepted.claims)==4
 
 
-def test_malformed_record_json_repairs_its_original_section(tmp_path,monkeypatch):
+def test_malformed_record_json_is_omitted_without_a_paid_repair(tmp_path,monkeypatch):
     store,project=setup(tmp_path,monkeypatch)
     invalid=systems();invalid.operations[0].value_json='{"name":'
     adapter=ScriptedAdapter([invalid,flow(repaired=True),systems()])
     result=ingest_live(store,project.id,b'synthetic','spec.pdf','openai',settings(),adapter)
-    assert result['repairs']==1 and len(adapter.prompts)==3
+    assert result['repairs']==0 and len(adapter.prompts)==2
     assert adapter.prompts[1]['known_records']['unreadable_operations']==[{'entity':'systems','id':'SYS-VAS'}]
-    assert adapter.prompts[2]['previous_response']==invalid.model_dump()
-    assert 'Record “SYS-VAS” contains malformed JSON' in adapter.prompts[2]['validation_error']
-    assert len(store.commit(result['proposal']).interfaces)==1
+    assert any('Omitted SYS-VAS' in f for f in result['proposal'].findings)
+    accepted=store.commit(result['proposal'])
+    assert [s.id for s in accepted.systems]==['SYS-C2']
+    assert len(accepted.components)==1 and not accepted.interfaces
 
 
-def test_malformed_claim_repairs_its_own_batch_instead_of_the_last_batch(tmp_path,monkeypatch):
+def test_malformed_claim_keeps_its_record_unverified_without_a_paid_repair(tmp_path,monkeypatch):
     store,project=setup(tmp_path,monkeypatch)
     invalid=systems();invalid.claims[0].value_json='{"name":"Video Analytics",}'
     adapter=ScriptedAdapter([invalid,flow(repaired=True),systems()])
     result=ingest_live(store,project.id,b'synthetic','spec.pdf','openai',settings(),adapter)
-    assert result['repairs']==1 and len(adapter.prompts)==3
-    assert adapter.prompts[2]['previous_response']==invalid.model_dump()
-    assert 'Source claim “SYS-VAS” contains malformed JSON' in adapter.prompts[2]['validation_error']
-    assert len(store.commit(result['proposal']).interfaces)==1
+    assert result['repairs']==0 and len(adapter.prompts)==2
+    accepted=store.commit(result['proposal'])
+    assert len(accepted.interfaces)==1
+    assert not any(c.target_id=='SYS-VAS' and c.review=='confirmed' for c in accepted.claims)
 
 
-def test_failed_json_repair_names_the_record_without_exposing_parser_trace(tmp_path,monkeypatch):
+def test_omitted_json_record_is_named_without_exposing_parser_trace(tmp_path,monkeypatch):
     store,project=setup(tmp_path,monkeypatch)
     invalid=systems();invalid.operations[0].value_json='{"name":"Video Analytics",}'
     adapter=ScriptedAdapter([invalid,flow(repaired=True),invalid])
-    with pytest.raises(DomainError) as error:
-        ingest_live(store,project.id,b'synthetic','spec.pdf','openai',settings(),adapter)
-    assert 'Record “SYS-VAS” contains malformed JSON' in error.value.message
-    assert 'single automatic repair' in error.value.message
-    assert 'Expecting property name' not in error.value.message
-    assert len(adapter.prompts)==3 and store.get(project.id)==project
+    result=ingest_live(store,project.id,b'synthetic','spec.pdf','openai',settings(),adapter)
+    assert any('Omitted SYS-VAS' in f for f in result['proposal'].findings)
+    assert all('Expecting property name' not in f for f in result['proposal'].findings)
+    assert len(adapter.prompts)==2 and store.get(project.id)==project
 
 
-def test_conflicting_repeated_add_requires_repair_instead_of_overwrite(tmp_path,monkeypatch):
+def test_conflicting_repeated_add_keeps_first_definition_with_warning(tmp_path,monkeypatch):
     store,project=setup(tmp_path,monkeypatch)
     duplicate=flow(repaired=True)
     conflicting=response([{'entity':'systems','id':'SYS-VAS','value':{'name':'Wrong system'}}],'page/2',FLOW_TEXT)
     duplicate.operations.extend(conflicting.operations);duplicate.claims.extend(conflicting.claims)
     adapter=ScriptedAdapter([systems(),duplicate,flow(repaired=True)])
     result=ingest_live(store,project.id,b'synthetic','spec.pdf','openai',settings(),adapter)
-    assert result['repairs']==1 and 'added twice' in adapter.prompts[2]['validation_error']
+    assert result['repairs']==0 and len(adapter.prompts)==2
+    assert any('conflicting duplicate SYS-VAS' in f for f in result['proposal'].findings)
     assert store.commit(result['proposal']).systems[0].name=='Video Analytics System'

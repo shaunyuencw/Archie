@@ -1,5 +1,5 @@
 import {useEffect,useState} from 'react';
-import {Trash2,RotateCcw} from 'lucide-react';
+import {Trash2,RotateCcw,Pencil} from 'lucide-react';
 import {api,type Project} from './api';
 import './ProjectsControl.css';
 
@@ -11,12 +11,23 @@ type Props={
  disabled?:boolean;
  workingIds?:string[];
  onOpen:(id:string)=>unknown;
+ onRename:(name:string)=>Promise<unknown>;
  onTrashed:(id:string)=>Promise<unknown>|void;
  onRestored:(project:Project)=>Promise<unknown>|void;
 };
 
-export default function ProjectsControl({project,projects,disabled=false,workingIds=[],onOpen,onTrashed,onRestored}:Props){
+export default function ProjectsControl({project,projects,disabled=false,workingIds=[],onOpen,onRename,onTrashed,onRestored}:Props){
  const [trash,setTrash]=useState<TrashedProject[]>([]),[working,setWorking]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState('');
+ const [renaming,setRenaming]=useState(false),[name,setName]=useState('');
+ useEffect(()=>{setRenaming(false);setName(project?.name||'');setNotice('');setError('')},[project?.id]);
+ const rename=async()=>{
+  if(!project||working)return;
+  const nextName=name.trim();
+  if(!nextName){setError('Enter a project name.');return;}
+  setWorking(true);setError('');setNotice('');
+  try{if(nextName!==project.name)await onRename(nextName);setRenaming(false);setNotice(`Renamed project to “${nextName}”.`)}
+  catch(e){setError((e as Error).message)}finally{setWorking(false)}
+ };
  const loadTrash=async()=>{setTrash(await api<TrashedProject[]>('/projects/trash'))};
  useEffect(()=>{let active=true;api<TrashedProject[]>('/projects/trash').then(items=>{if(active)setTrash(items)}).catch(e=>{if(active)setError(e.message)});return()=>{active=false}},[]);
  // A new accepted project may be ready before the refreshed project list arrives.
@@ -46,7 +57,8 @@ export default function ProjectsControl({project,projects,disabled=false,working
   }catch(e){setError((e as Error).message)}finally{setWorking(false)}
  };
  return <div className="projects-control">
-  <div className="project-select-row"><select aria-label="Open project" value={project?.id||''} disabled={disabled||working} onChange={event=>{if(event.target.value)onOpen(event.target.value)}}><option value="">Open a saved project…</option>{options.map(item=><option key={item.id} value={item.id}>{item.name}{workingIds.includes(item.id)?' · Working…':''}</option>)}</select><button aria-label="Delete project" title="Move selected project to Trash" disabled={!project||disabled||working} onClick={remove}><Trash2 size={15}/></button></div>
+  <div className="project-select-row"><select aria-label="Open project" value={project?.id||''} disabled={disabled||working} onChange={event=>{if(event.target.value)onOpen(event.target.value)}}><option value="">Open a saved project…</option>{options.map(item=><option key={item.id} value={item.id}>{item.name}{workingIds.includes(item.id)?' · Working…':''}</option>)}</select><button aria-label="Rename project" title="Rename project" disabled={!project||disabled||working} onClick={()=>{setName(project!.name);setError('');setNotice('');setRenaming(true)}}><Pencil size={15}/></button><button aria-label="Delete project" title="Move selected project to Trash" disabled={!project||disabled||working} onClick={remove}><Trash2 size={15}/></button></div>
+  {renaming&&project&&<form className="project-rename" onSubmit={event=>{event.preventDefault();void rename()}}><label htmlFor="project-name">Project name</label><input id="project-name" autoFocus maxLength={160} value={name} disabled={disabled||working} onChange={event=>setName(event.target.value)} onKeyDown={event=>{if(event.key==='Escape'&&!working){event.preventDefault();setRenaming(false);setError('')}}}/><div className="button-row"><button type="submit" disabled={disabled||working||!name.trim()}>{working?'Saving…':'Save name'}</button><button type="button" disabled={working} onClick={()=>{setRenaming(false);setError('')}}>Cancel</button></div></form>}
   {project&&workingIds.includes(project.id)&&<p className="project-working" role="status"><span className="job-spinner" aria-hidden="true"/>Archie is working. You can open another project.</p>}
   {error&&<p role="alert" className="error">{error}</p>}{notice&&<p role="status" className="project-notice">{notice}</p>}
   <details className="project-trash" onToggle={event=>{if(event.currentTarget.open)loadTrash().catch(e=>setError(e.message))}}><summary>Trash ({trash.length})</summary><p>Restore a project to keep its sources and edit history, or empty Trash to permanently remove that project content. Spending records are retained for budget limits.</p><button className="empty-trash" disabled={!trash.length||disabled||working} onClick={empty}>Empty Trash</button>

@@ -1,0 +1,14 @@
+{
+  "project_id": "6d366181-3c63-49ea-a613-1c14a3324b86",
+  "job_id": "cf00738c-0dd9-4cab-85ea-c78d933ed826",
+  "proposal_id": "29b33ee2-99ab-4d17-a9bd-931da02d28ca",
+  "source_sha256": "b916ea0999e6b08314cda79544d12b7788d6d075fbf30b07be7823a88e73b333",
+  "recovered_from_change": "8dac2e47-c724-46cf-baca-e82692d5a17d",
+  "proposed_name": "Production service portal",
+  "components": 7,
+  "zones": 3,
+  "interfaces": 4,
+  "graph_edges": 4,
+  "state": "pending_review",
+  "new_provider_calls": 0
+}

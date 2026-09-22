@@ -50,8 +50,8 @@ def test_live_journey_ceiling_spans_separate_actions_and_projects(tmp_path):
         req=RunRequest(**c.model_dump(),prompt='Add New node workstation.',provider='ollama')
         if index==0:assisted_run(store,p.id,req,settings,adapter,live_run=limit)
         else:
-            with pytest.raises(DomainError,match='Live smoke run ceiling'):
-                assisted_run(store,p.id,req,settings,adapter,live_run=limit)
+            result=assisted_run(store,p.id,req,settings,adapter,live_run=limit)
+            assert result['partial'] and any('Live smoke run ceiling' in f for f in result['proposal']['findings'])
         assert not store.get(p.id).components
 
 def test_document_port_text_is_normalized_without_choosing_ambiguous_ports():
@@ -82,13 +82,13 @@ def test_timed_out_local_run_is_not_replayed(tmp_path):
             raise DomainError('provider_timeout','Ollama did not finish within the local response window.',504)
     store=Store(tmp_path/'db');project=store.create(Project());adapter=TimedOutAdapter()
     req=RunRequest(**command(project,[{'op':'notes','value':{}}]).model_dump(),prompt='Add a workstation.',provider='ollama')
-    with pytest.raises(DomainError) as error:
-        assisted_run(store,project.id,req,Settings(),adapter)
-    assert error.value.code=='provider_timeout' and adapter.calls==1
+    result=assisted_run(store,project.id,req,Settings(),adapter)
+    assert result['partial'] and adapter.calls==1
+    assert any('response window' in f for f in result['proposal']['findings'])
     assert store.get(project.id)==project
     with store.connect() as db:
         run=db.execute('SELECT status,result FROM runs WHERE id=?',(req.request_id,)).fetchone()
-    assert run['status']=='failed' and json.loads(run['result'])['code']=='provider_timeout'
+    assert run['status']=='completed' and json.loads(run['result'])['partial']
 
 
 def test_ollama_response_limit_is_not_repaired_or_replayed(tmp_path):
@@ -99,12 +99,12 @@ def test_ollama_response_limit_is_not_repaired_or_replayed(tmp_path):
     store=Store(tmp_path/'db');project=store.create(Project())
     request=RunRequest(**command(project,[{'op':'notes','value':{}}]).model_dump(),prompt='Add a workstation.',provider='ollama')
     adapter=OllamaAdapter(Settings(),httpx.Client(base_url='http://localhost',transport=httpx.MockTransport(length)))
-    with pytest.raises(DomainError,match='response limit'):
-        assisted_run(store,project.id,request,Settings(),adapter)
+    result=assisted_run(store,project.id,request,Settings(),adapter)
+    assert result['partial'] and any('response limit' in f for f in result['proposal']['findings'])
     assert len(calls)==1 and store.get(project.id)==project
     assert usage_summary(store,project.id)['records'][0]['status']=='truncated'
     with store.connect() as db:run=db.execute('SELECT status,result FROM runs WHERE id=?',(request.request_id,)).fetchone()
-    assert run['status']=='failed' and json.loads(run['result'])['code']=='provider_output'
+    assert run['status']=='completed' and json.loads(run['result'])['partial']
 
 
 def test_background_stale_preview_is_terminal_and_preserves_the_manual_edit(tmp_path):

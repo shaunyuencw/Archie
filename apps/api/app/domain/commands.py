@@ -111,7 +111,16 @@ def apply(project:Project,change:ChangeSet)->Project:
     try:
         from .views import initialise_views
         return initialise_views(Project.model_validate(data))
-    except ValidationError as e: raise DomainError('invalid_input',validation_message(e)) from e
+    except ValidationError as e:
+        error=DomainError('invalid_input',validation_message(e))
+        reverse={value:key for key,value in mapping.items()}
+        error.operation_ids=set()
+        for issue in e.errors():
+            loc=issue.get('loc',())
+            if len(loc)>1 and isinstance(loc[1],int) and isinstance(data.get(loc[0]),list) and loc[1]<len(data[loc[0]]):
+                ident=data[loc[0]][loc[1]].get('id')
+                if ident:error.operation_ids.add(reverse.get(ident,ident))
+        raise error from e
     except ValueError as e: raise DomainError('invalid_input',str(e)) from e
 
 def command(project,operations,**kwargs):

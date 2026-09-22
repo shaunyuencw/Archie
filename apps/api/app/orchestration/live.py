@@ -10,7 +10,8 @@ from ..policies.library import selected_ids
 from ..providers.adapters import OpenAIAdapter,OllamaAdapter,MockAdapter
 from ..providers.budget import BudgetedProvider
 from ..providers.config import Settings
-from ..providers.contracts import operation_value,claim_value
+from ..providers.contracts import Envelope,operation_value,claim_value
+from .recovery import recover_proposal,STOP_CODES
 from .service import question_ops
 from .references import normalize_references
 from .zoning import ZONING_QUERY,supporting_sources,new_zone_layout
@@ -113,12 +114,30 @@ def source_excerpt(source,claim):
         f'The AI citation for “{claim.target_id[:160]}” at “{claim.locator[:160]}” could not be verified: {reason}. '
         'Retry the import or prompt so the AI can supply an exact source quote. Your current design was not changed.')
 
-def proposal_from_envelope(p,source,envelope,source_alias=None,*,evidence_sources=()):
+def proposal_from_envelope(p,source,envelope,source_alias=None,*,evidence_sources=(),allow_unverified=False):
     envelope=normalize_references(p,envelope)
     naming=name_operation(p,source,envelope.project_name)
-    if not envelope.operations and (naming is None or not explicit_name_request(source)):
+    if not allow_unverified and not envelope.operations and (naming is None or not explicit_name_request(source)):
         raise DomainError('insufficient_context',envelope.message or 'No architecture changes proposed')
     claims=[]; ops=[naming] if naming else []; uncertainties=[]
+    supplied={s.id:s for s in evidence_sources}
+    supplied.update({source.id:source})
+    if source_alias:supplied[source_alias]=source
+    if allow_unverified:
+        verified=[]
+        for claim in envelope.claims:
+            try:
+                cited=supplied.get(claim.source_id)
+                if cited is None:raise ValueError('source was not supplied')
+                source_excerpt(cited,claim);claim_value(claim)
+                verified.append(claim)
+            except (DomainError,ValueError):
+                uncertainties.append(f'{claim.target_id}: unverified citation omitted; the original source remains available for review.')
+        envelope.claims=verified
+        for op in envelope.operations:
+            if not any(c.target_id==op.id for c in verified) and op.op in ('add','update'):
+                reason=(op.proposal_reason or '').strip()
+                op.proposal_reason=('Unverified: no matching source citation. '+reason)[:600]
     assumptions={}
     for w in envelope.operations:
         if w.proposal_reason is not None and w.proposal_reason.strip():
@@ -128,12 +147,9 @@ def proposal_from_envelope(p,source,envelope,source_alias=None,*,evidence_source
             # or silently promoting the inferred fields to confirmed facts.
             if w.op not in ('add','update'):
                 continue
-            if not any(c.target_id==w.id for c in envelope.claims):
+            if not allow_unverified and not any(c.target_id==w.id for c in envelope.claims):
                 raise DomainError('provider_output','A proposed design choice needs a direct source claim for its supporting requirement.')
             assumptions[w.id]=w
-    supplied={s.id:s for s in evidence_sources}
-    supplied.update({source.id:source})
-    if source_alias:supplied[source_alias]=source
     component_ids=({c.id for c in p.components}|{w.id for w in envelope.operations if w.entity=='components' and w.op=='add'})-{w.id for w in envelope.operations if w.entity=='components' and w.op=='remove'}
     for w in envelope.claims:
         cited=supplied.get(w.source_id)
@@ -216,18 +232,21 @@ def assisted_run(store,pid,req,settings=None,adapter=None,live_run=None,deadline
                         evidence_sources.extend(supporting_sources(p,output.content.tool.query))
                     prompt=json.dumps({'initial':json.loads(prompt),'tool_result':tool_result},separators=(',',':'))
                     continue
-                proposed=proposal_from_envelope(p,source,output.content,source_alias='S1',evidence_sources=evidence_sources)
+                proposed=recover_proposal(p,source,output.content,source_alias='S1',evidence_sources=evidence_sources)
                 if active_cancel.is_set():raise DomainError('cancelled','Response received after cancellation; no proposal was saved.')
                 result={'run_id':run_id,'proposal':store.preview(proposed,job_id=job_id).model_dump(),'mode':'schema_action_envelope','model':output.model,'repairs':int(repaired)}
                 break
             except (ValueError,DomainError) as error:
-                if isinstance(error,DomainError) and (error.code in ['budget_exceeded','insufficient_context','cancelled','unavailable_provider','provider_timeout','stale_revision','project_trashed','not_found'] or getattr(error,'terminal',False)):raise
-                if repaired:raise
-                repaired=True
-                prompt=json.dumps({'initial':json.loads(prompt),'repair':'Correct the validation error. Return a complete replacement proposal with exact source citations.',
-                                   'validation_error':getattr(error,'message',str(error)),
-                                   'previous_response':output.content.model_dump() if output else None},separators=(',',':'))
-        if result is None:raise DomainError('budget_exceeded','Bounded action finished without an acceptable proposal.')
+                if isinstance(error,DomainError) and error.code in STOP_CODES:raise
+                partial=output.content if output else Envelope(operations=[],claims=[],tool=None,message='No complete model draft was returned')
+                proposed=recover_proposal(p,source,partial,source_alias='S1',evidence_sources=evidence_sources,
+                    warnings=['Generation was incomplete: '+getattr(error,'message',str(error))])
+                result={'run_id':run_id,'proposal':store.preview(proposed,job_id=job_id).model_dump(),'mode':'schema_action_envelope','model':a.model,'repairs':0,'partial':True}
+                break
+        if result is None:
+            proposed=recover_proposal(p,source,Envelope(operations=[],claims=[],tool=None,message=''),
+                warnings=['The bounded action ended without a usable model draft.'])
+            result={'run_id':run_id,'proposal':store.preview(proposed,job_id=job_id).model_dump(),'mode':'schema_action_envelope','model':a.model,'repairs':0,'partial':True}
         with store.connect() as db:db.execute("UPDATE runs SET status='completed',result=? WHERE id=?",(json.dumps(result),run_id))
         return result
     except Exception as e:

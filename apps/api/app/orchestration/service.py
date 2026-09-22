@@ -49,7 +49,7 @@ def ingest(store,pid,data,name,kind='document',source_id=None,cancel=None,job_id
     if suggestion is None and not p.components:
         primary=next((o.value.get('name') for o in ops if o.entity=='components' and o.op=='add' and o.value.get('asset_id') in {'application','web-server','application-server','api-service','analytics-engine','event-broker'}),None)
         if primary:suggestion=f'{primary} architecture'
-    naming=name_operation(p,source,suggestion)
+    naming=name_operation(p,source,suggestion) if ops or suggestion else None
     if naming:ops=[naming]+ops
     processed=source.processed+[s.locator for s in passages]; remaining=[s for s in source.unprocessed if s not in processed]
     source.processed=processed;source.unprocessed=remaining

@@ -8,7 +8,8 @@ from ..domain.commands import DomainError
 from ..domain.models import Passage,uid
 from ..ingest.parser import parse
 from .live import context,proposal_from_envelope,source_excerpt
-from .references import reference_catalog
+from .references import reference_catalog,ProposalReferenceError
+from .recovery import recover_document,STOP_CODES
 from .zoning import ZONING_REQUIREMENT
 from ..providers.instructions import ZONING_GUIDANCE
 
@@ -114,6 +115,7 @@ def _repair_prompt(project,source,batches,index,error):
     others=[item['envelope'] for i,item in enumerate(batches) if i!=index]
     task=DOCUMENT_TASK+(' '+ZONING_GUIDANCE if any(ZONING_REQUIREMENT.search(p.text) for p in selected) else '')
     payload={'task':task,'repair':'Correct this section response using the validation error. Return its complete replacement; other section responses are retained.',
+             'context':{'project_name':project.name,'suggest_project_name':context(project,'')['suggest_project_name']},
              'validation_error':message,'source':{'id':'S1','passages':[{'locator':p.locator,'text':p.text} for p in selected]},
              'known_records':reference_catalog(project,others,include_zoning=True),'previous_response':batch['envelope'].model_dump()}
     return json.dumps(payload,separators=(',',':')),selected
@@ -150,7 +152,7 @@ def ingest_live(store,pid,data,name,provider,settings=None,adapter=None,source_i
     source.passages=list({x.locator:x for x in retained+passages}.values());source.unprocessed=[x.locator for x in passages]
     if not groups:raise DomainError('unsupported_document','No text extracted. Scanned pages need OCR, which is out of scope.')
     a=adapter or (OpenAIAdapter(s) if provider=='openai' else OllamaAdapter(s));budget=BudgetedProvider(store,s,a);action=(live_run['id']+'-' if live_run else '')+uid()
-    batches=[];used=[];requests=0
+    batches=[];used=[];requests=0;warnings=[]
     draft_context={key:value for key,value in context(p,'').items() if key in ('revision','project_name','suggest_project_name','decisions')}
     for group in groups:
         _check_cancel(cancel)
@@ -159,44 +161,61 @@ def ingest_live(store,pid,data,name,provider,settings=None,adapter=None,source_i
         prompt=json.dumps({'task':task,'source':{'id':'S1','passages':[{'locator':x.locator,'text':x.text} for x in group]},'context':draft_context,
                            'known_records':reference_catalog(p,previous,include_zoning=True),
                            'previous_proposed_ids':sorted({op.id for output in previous for op in output.operations})},separators=(',',':'))
-        output=budget.call(prompt,pid,action,task='document',live_run=live_run,deadline=deadline,cancel=cancel)
+        try:output=budget.call(prompt,pid,action,task='document',live_run=live_run,deadline=deadline,cancel=cancel)
+        except (DomainError,ValueError) as error:
+            if isinstance(error,DomainError) and error.code in STOP_CODES:raise
+            warnings.append('Remaining sections were not generated: '+getattr(error,'message',str(error)))
+            break
         requests+=1
         batches.append({'passages':group,'evidence_passages':group,'envelope':output.content})
         used.extend(x.locator for x in group)
     # Numbered interface tables are an explicit coverage contract. A valid
     # component-only JSON response must not silently count them as extracted.
-    flows=connection_passages([passage for group in groups for passage in group])
+    flows=connection_passages([passage for batch in batches for passage in batch['passages']])
     expected={ident for passage in flows for ident in re.findall(r'\bIF-\d+\b',passage.text)}
     interfaces={i.id for i in p.interfaces}|{op.id for batch in batches for op in batch['envelope'].operations if op.entity=='interfaces' and op.op=='add'}
-    if expected and len(interfaces)<len(expected) and requests<s.max_calls:
+    if expected and len(interfaces)<len(expected) and requests<s.max_calls and not warnings:
         _check_cancel(cancel)
         prompt=connection_prompt(p,source,[batch['envelope'] for batch in batches],flows)
-        output=budget.call(prompt,pid,action,task='document',live_run=live_run,deadline=deadline,cancel=cancel)
-        requests+=1
-        batches.append({'passages':flows,'evidence_passages':flows,'envelope':output.content})
-        interfaces|={op.id for op in output.content.operations if op.entity=='interfaces' and op.op=='add'}
+        try:
+            output=budget.call(prompt,pid,action,task='document',live_run=live_run,deadline=deadline,cancel=cancel)
+            requests+=1
+            batches.append({'passages':flows,'evidence_passages':flows,'envelope':output.content})
+            interfaces|={op.id for op in output.content.operations if op.entity=='interfaces' and op.op=='add'}
+        except (DomainError,ValueError) as error:
+            if isinstance(error,DomainError) and error.code in STOP_CODES:raise
+            warnings.append('Connection extraction was incomplete: '+getattr(error,'message',str(error)))
     if expected and len(interfaces)<len(expected):
-        raise DomainError('provider_output',f'The source lists {len(expected)} connections but the draft contains only {len(interfaces)}. The incomplete draft was not accepted.')
+        warnings.append(f'The source lists {len(expected)} connections; this partial draft contains {len(interfaces)}. Missing connections require review.')
+        incomplete={p.locator for p in flows}
+        used=[locator for locator in used if locator not in incomplete]
     source.processed=previous_processed+used;source.unprocessed=[x.locator for x in passages if x.locator not in used]
     repaired=False
     try:
         c=_document_proposal(p,source,batches)
     except (DomainError,ValueError) as error:
-        if isinstance(error,DomainError) and error.code=='insufficient_context':raise
-        if requests>=s.max_calls:
-            message=getattr(error,'message',str(error))
-            raise DomainError('provider_output',message+' No repair request remains within this action’s call limit.') from error
-        _check_cancel(cancel)
-        index=error.batch_index
-        prompt,evidence_passages=_repair_prompt(p,source,batches,index,error)
-        output=budget.call(prompt,pid,action,task='document',live_run=live_run,deadline=deadline,cancel=cancel)
-        requests+=1;repaired=True
-        batches[index]['envelope']=output.content;batches[index]['evidence_passages']=evidence_passages
-        try:
-            c=_document_proposal(p,source,batches)
-        except (DomainError,ValueError) as repair_error:
-            message=getattr(repair_error,'message',str(repair_error))
-            raise DomainError('provider_output',message+' The single automatic repair did not produce a valid draft; no further requests were made.') from repair_error
+        if isinstance(error,DomainError) and error.code in STOP_CODES:raise
+        # Evidence/metadata gaps are local warnings, not reasons to pay for a
+        # replacement draft. One reference repair may retain useful edges.
+        if isinstance(error,ProposalReferenceError) and requests<s.max_calls and not warnings:
+            _check_cancel(cancel)
+            index=error.batch_index
+            prompt,evidence_passages=_repair_prompt(p,source,batches,index,error)
+            try:
+                output=budget.call(prompt,pid,action,task='document',live_run=live_run,deadline=deadline,cancel=cancel)
+                requests+=1;repaired=True
+                previous=batches[index]['envelope']
+                replacements={op.id:op for op in previous.operations}
+                replacements.update({op.id:op for op in output.content.operations})
+                replaced={op.id for op in output.content.operations}
+                batches[index]['envelope']=output.content.model_copy(update={'operations':list(replacements.values()),'claims':[c for c in previous.claims if c.target_id not in replaced]+output.content.claims,'project_name':output.content.project_name or previous.project_name})
+                batches[index]['evidence_passages']=evidence_passages
+            except (DomainError,ValueError) as repair_error:
+                if isinstance(repair_error,DomainError) and repair_error.code in STOP_CODES:raise
+                warnings.append('The reference repair did not finish; retained the usable draft. '+getattr(repair_error,'message',str(repair_error)))
+        c=recover_document(p,source,batches,warnings)
+        warnings=[]  # Already included by recovery.
+    if warnings:c.findings=list(dict.fromkeys(['Partial draft: review the incomplete sections below.']+warnings+c.findings))
     _check_cancel(cancel)
     return {'proposal':store.preview(c,job_id=job_id),'mode':'schema_action_envelope','repairs':int(repaired),
             'preflight':{'requests':requests,'unprocessed_groups':len(remainder),'input_limit':s.max_input},'coverage':{'processed':used,'unprocessed':source.unprocessed}}

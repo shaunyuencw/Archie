@@ -1,0 +1,38 @@
+import {test,expect} from '@playwright/test';
+
+test('manual project rename persists, cancels and undoes without a provider',async({page})=>{
+ const calls:string[]=[];
+ page.on('request',r=>{if(r.method()==='POST'&&/\/(runs|sources|jobs|source-jobs|continue|continue-jobs|policy-review-jobs)(?:\?|$)/.test(r.url()))calls.push(r.url())});
+ await page.goto('/');
+ await page.getByRole('button',{name:'Production portal',exact:false}).click();
+ const title=page.getByRole('heading',{level:1});
+ await expect(title).toHaveText('Production service portal');
+ const id=await page.getByLabel('Open project').inputValue();
+ const original=await (await page.request.get(`/api/projects/${id}`)).json();
+ await page.getByRole('button',{name:'Rename project',exact:true}).click();
+ await page.getByLabel('Project name',{exact:true}).fill('   ');
+ await expect(page.getByRole('button',{name:'Save name',exact:true})).toBeDisabled();
+ await page.getByLabel('Project name',{exact:true}).fill('SSMS — Security architecture');
+ await page.getByRole('button',{name:'Save name',exact:true}).click();
+ await expect(title).toHaveText('SSMS — Security architecture');
+ await expect(page.getByLabel('Open project').locator('option:checked')).toHaveText('SSMS — Security architecture');
+ await page.getByRole('button',{name:'Save / reopen',exact:true}).click();
+ await expect(title).toHaveText('SSMS — Security architecture');
+ const renamed=await (await page.request.get(`/api/projects/${id}`)).json();
+ for(const field of ['components','interfaces','zones','deployments','sources','claims'])expect(renamed[field]).toEqual(original[field]);
+ await page.getByRole('button',{name:'Rename project',exact:true}).click();
+ await page.getByLabel('Project name',{exact:true}).fill('Discard this edit');
+ await page.getByLabel('Project name',{exact:true}).press('Escape');
+ await expect(page.getByLabel('Project name',{exact:true})).toHaveCount(0);
+ await expect(title).toHaveText('SSMS — Security architecture');
+ await page.getByRole('button',{name:'Undo',exact:true}).click();
+ await expect(title).toHaveText('Production service portal');
+ await expect(page.getByLabel('Open project').locator('option:checked')).toHaveText('Production service portal');
+ await page.getByRole('button',{name:'Redo',exact:true}).click();
+ await expect(title).toHaveText('SSMS — Security architecture');
+ await page.getByRole('button',{name:'Rename project',exact:true}).click();
+ await page.screenshot({path:'../../reports/project-name-browser.png',fullPage:true});
+ expect(calls).toEqual([]);
+ const usage=await (await page.request.get(`/api/projects/${id}/usage`)).json();
+ expect(usage.calls).toBe(0);
+});

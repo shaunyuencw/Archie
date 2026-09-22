@@ -1,0 +1,26 @@
+{
+  "activated": true,
+  "pid": 36646,
+  "health": {
+    "status": "ok",
+    "provider": "mock",
+    "synthetic": true
+  },
+  "settings_unchanged": true,
+  "data_unchanged": true,
+  "max_input": 50000,
+  "tables": {
+    "projects": {
+      "rows": 12,
+      "sha256": "52723ae4c4d91bf9f1c00c047acbb7403d1911893f14fb7d5e41cb76edceb45a"
+    },
+    "usage": {
+      "rows": 95,
+      "sha256": "b12c9c94beb90ce01ed65033f06d66067fc712364610e616e1d8218519286cce"
+    },
+    "jobs": {
+      "rows": 9,
+      "sha256": "8c76efb7032ebf27dbc4624b76d37465ce112e53607b10b93f68871fadf97880"
+    }
+  }
+}
