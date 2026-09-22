@@ -5,6 +5,8 @@ from apps.api.app.orchestration.documents import ingest_live,document_preflight
 from apps.api.app.providers.config import Settings
 from apps.api.app.providers.contracts import Envelope,ProviderResult,Usage
 from apps.api.app.storage.store import Store
+from apps.api.app.domain.layout import bounds
+from apps.api.app.domain.views import view_graph
 
 class DocumentAdapter:
     name='ollama';model='mocked-document'
@@ -37,3 +39,47 @@ def test_document_failure_preserves_accepted_state_and_preflight_is_local(tmp_pa
     assert len(groups)==1 and len(remainder)==2 and adapter.calls==0
     with pytest.raises(Exception):ingest_live(store,p.id,b'fixture','fixture.pdf','ollama',settings,adapter)
     assert store.get(p.id)==p
+
+
+def test_openai_document_without_zones_accepts_a_compact_layout(tmp_path,monkeypatch):
+    """Scripted provider output reproduces the 20-component SSMS layout shape."""
+    from types import SimpleNamespace as NS
+    from apps.api.app.providers.adapters import OpenAIAdapter
+
+    operations=[];claims=[];quotes=[]
+    def add(entity,ident,value,quote):
+        operations.append(dict(op='add',entity=entity,id=ident,value_json=json.dumps(value)))
+        claims.append(dict(source_id='S1',locator='page/1',excerpt=quote,target_id=ident,
+                           field='record',value_json='null'))
+        quotes.append(quote)
+    for i in range(20):
+        add('components',f'tmp:c{i}',dict(name=f'Service {i}',role='application'),
+            f'Service {i} is an application.')
+    for i in range(22):
+        a,b=i%20,(i+1 if i<20 else i+4)%20
+        add('interfaces',f'tmp:e{i}',dict(source=f'tmp:c{a}',target=f'tmp:c{b}',purpose='events'),
+            f'Service {a} sends events to Service {b}.')
+    spec=Source(id='spec',name='Synthetic functional specification',kind='document',sha256='no-zones',
+                canonical_id='no-zones',passages=[Passage(locator='page/1',text='\n'.join(quotes))])
+    monkeypatch.setattr('apps.api.app.orchestration.documents.parse',lambda *args:spec)
+    calls=[]
+    def create(**kwargs):
+        calls.append(kwargs)
+        return NS(status='completed',model='gpt-5.4-mini',
+                  usage=NS(input_tokens=100,output_tokens=100,input_tokens_details=NS(),output_tokens_details=NS()),
+                  output_text=Envelope(operations=operations,claims=claims,tool=None,message='Review').model_dump_json())
+    settings=Settings(allow_cloud=True,max_calls=1)
+    adapter=OpenAIAdapter(settings,NS(responses=NS(create=create)))
+    store=Store(tmp_path/'no-zones.sqlite');p=store.create(Project())
+    result=ingest_live(store,p.id,b'synthetic','spec.pdf','openai',settings,adapter)
+    assert len(calls)==1 and store.get(p.id)==p
+    accepted=store.commit(result['proposal'])
+    assert len(accepted.components)==20 and len(accepted.interfaces)==22
+    assert not accepted.zones and not accepted.deployments
+    assert len(accepted.claims)==42 and accepted.sources[0].processed==['page/1']
+    for kind in ('logical','sv2'):
+        nodes=view_graph(accepted,kind,route_edges=False)['nodes'];box=bounds(nodes)
+        assert len({node['x'] for node in nodes})>1
+        assert .75<=box['width']/box['height']<=2.5
+        assert all(node['parentId'] is None for node in nodes)
+    assert store.get(p.id)==accepted

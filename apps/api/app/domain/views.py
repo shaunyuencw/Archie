@@ -178,9 +178,10 @@ def view_graph(p:Project,kind:str,*,route_edges=True):
 def initialise_views(p:Project):
     for kind,view in p.views.items():
         graph=view_graph(p,kind,route_edges=False); view.mappings=graph['mappings']
-        # Fresh document designs get content-sized zones. Reopening or adding to
-        # an existing view never silently rearranges saved presentation geometry.
-        if not view.placements and any(n['role']=='zone' for n in graph['nodes']):
+        # Fresh detailed views need compact placement even when deployment zones
+        # are unspecified. The system overview already has its own grid defaults.
+        # Reopening or adding to an existing view preserves saved geometry.
+        if not view.placements and kind != 'sv1':
             from .layout import compact_geometry
             geometry=compact_geometry(graph['nodes'],graph['edges'])
             for n in graph['nodes']:n.update(geometry[n['id']])

@@ -121,6 +121,35 @@ def test_fresh_zones_fit_contents_without_rearranging_saved_views():
     assert p.views['logical'].model_dump() == before
 
 
+@pytest.mark.parametrize('count', [20, 50])
+@pytest.mark.parametrize('deployments', [False, True])
+def test_fresh_design_without_zones_is_compact_and_saved_geometry_survives(count, deployments):
+    p = Project(components=[dict(id=f'c{i}', name=f'Service {i}', role='application') for i in range(count)],
+                deployments=[dict(id=f'd{i}', component_id=f'c{i}', zone_id=None)
+                             for i in range(count)] if deployments else [],
+                interfaces=[dict(id=f'e{i}', source=f'c{i}', target=f'c{i+1}') for i in range(count-1)])
+    original = p.model_dump()
+    p = initialise_views(p)
+    for kind in ('logical', 'sv2'):
+        nodes = graph_nodes(p, kind)
+        box = bounds(nodes)
+        assert len({node['x'] for node in nodes}) > 1
+        assert len({node['y'] for node in nodes}) > 1
+        assert .75 <= box['width']/box['height'] <= 2.5
+        assert box['height'] < count*130/2
+        assert all(node['parentId'] is None for node in nodes)
+        check_clear(p, kind)
+    for field in ('components', 'deployments', 'interfaces', 'zones'):
+        assert p.model_dump()[field] == original[field]
+    # Even an unlocked saved position is intentional on reopen or a later edit.
+    p.views['logical'].placements['c0'].x = 1700
+    p.views['sv2'].placements['c0'].y = 1800
+    saved = {kind: view.model_dump() for kind, view in p.views.items()}
+    p = initialise_views(Project.model_validate_json(p.model_dump_json()))
+    p = apply(p, command(p, [dict(op='notes', value={'text': 'Keep saved geometry.'})]))
+    assert {kind: view.model_dump() for kind, view in p.views.items()} == saved
+
+
 @pytest.mark.parametrize('grouped', [True, False])
 def test_capacity_and_custom_component_sizes(grouped):
     p = Project(zones=[dict(id='z', name='A large deployment')],

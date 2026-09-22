@@ -1,0 +1,62 @@
+{
+  "project_id": "77b1a999-749a-4a5c-bc19-186bede4eac2",
+  "source_filename": "SSMS_Technical_System_Description_Simplified_v1.5.pdf",
+  "semantic_revision": 1,
+  "components": 20,
+  "interfaces": 22,
+  "zones": 0,
+  "change_id": "7e480999-3c98-4f13-9be1-c0571033be3d",
+  "undoable_transactions": 1,
+  "provider_network_calls": 0,
+  "usage_unchanged": true,
+  "architecture_facts_and_evidence_unchanged": true,
+  "system_overview_unchanged": true,
+  "views": {
+    "logical": {
+      "presentation_revision": 1,
+      "distinct_x_before": 1,
+      "distinct_x_after": 4,
+      "bounds": {
+        "x": 40,
+        "y": 60,
+        "width": 932.0,
+        "height": 706.0
+      }
+    },
+    "sv2": {
+      "presentation_revision": 1,
+      "distinct_x_before": 1,
+      "distinct_x_after": 4,
+      "bounds": {
+        "x": 40,
+        "y": 60,
+        "width": 932.0,
+        "height": 706.0
+      }
+    }
+  },
+  "api_restart": {
+    "pid": 27819,
+    "active_jobs_before": 0,
+    "project_snapshots_and_usage_unchanged": true,
+    "settings_unchanged": true,
+    "input_limit_environment_override": 32000,
+    "note": "Existing .env specifies 64000, beyond the supported 32000 maximum. Restart retained the already-running API limit without editing .env."
+  },
+  "validation": {
+    "backend_passed": 225,
+    "backend_report": "no-zone-layout-tests.xml",
+    "focused_browser_passed": 2,
+    "browser_report": "no-zone-layout-browser.json",
+    "screenshot": "no-zone-layout-browser.png",
+    "mocked_openai_transport": true,
+    "live_openai_generation": "not run",
+    "live_ollama_generation": "not run",
+    "live_saved_project_visual_check": "four columns, 20 components and 22 interfaces visible",
+    "full_browser_suite": "not rerun; previously recorded pointer-resize failure remains separate",
+    "initial_test_environment_failures": [
+      ".env input limit 64000 exceeds supported 32000; rerun with current API limit 32000.",
+      "Default zsh failed the bash runtime helper; rerun under bash using supported Node."
+    ]
+  }
+}
