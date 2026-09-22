@@ -45,6 +45,7 @@ def test_openai_document_without_zones_accepts_a_compact_layout(tmp_path,monkeyp
     """Scripted provider output reproduces the 20-component SSMS layout shape."""
     from types import SimpleNamespace as NS
     from apps.api.app.providers.adapters import OpenAIAdapter
+    from apps.api.app.providers.structured import structured_envelope
 
     operations=[];claims=[];quotes=[]
     def add(entity,ident,value,quote):
@@ -67,7 +68,7 @@ def test_openai_document_without_zones_accepts_a_compact_layout(tmp_path,monkeyp
         calls.append(kwargs)
         return NS(status='completed',model='gpt-5.4-mini',
                   usage=NS(input_tokens=100,output_tokens=100,input_tokens_details=NS(),output_tokens_details=NS()),
-                  output_text=Envelope(operations=operations,claims=claims,tool=None,message='Review').model_dump_json())
+                  output_text=json.dumps(structured_envelope(Envelope(operations=operations,claims=claims,tool=None,message='Review'))))
     settings=Settings(allow_cloud=True,max_calls=1)
     adapter=OpenAIAdapter(settings,NS(responses=NS(create=create)))
     store=Store(tmp_path/'no-zones.sqlite');p=store.create(Project())

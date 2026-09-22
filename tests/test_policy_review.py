@@ -28,7 +28,7 @@ def transport(body, calls, fail=False, mutate=False, title=False):
         calls.append(kwargs)
         if fail:raise httpx.ReadTimeout('Ambiguous transport failure')
         envelope={'operations':[],'claims':[],'tool':None,'message':json.dumps(body),'project_name':None}
-        if mutate:envelope['operations']=[{'op':'remove','entity':'components','id':'db','value_json':'{}'}]
+        if mutate:envelope['operations']=[{'op':'remove','entity':'components','id':'db','value':{'fields':[]},'proposal_reason':None}]
         if title:envelope['project_name']='Unexpected rename'
         return NS(status='completed',output_text=json.dumps(envelope),model='gpt-5.4-mini',usage=NS(input_tokens=200,input_tokens_details=NS(cached_tokens=0),output_tokens=150,output_tokens_details=NS(reasoning_tokens=0)))
     return NS(responses=NS(create=create))

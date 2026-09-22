@@ -49,7 +49,9 @@ class BudgetedProvider:
         rates=pricing()['models'].get(a.model) if a.name=='openai' else None
         if a.name=='openai' and rates is None: raise DomainError('budget_exceeded','Unknown billing model price; configure it before a paid request.')
         local=a.name=='ollama'
-        byte_bound=estimate(SYSTEM_PROMPT+prompt+json.dumps(schema(),separators=(',',':')))+128
+        system_prompt=getattr(a,'system_prompt',SYSTEM_PROMPT)
+        response_schema=getattr(a,'response_schema',schema)()
+        byte_bound=estimate(system_prompt+prompt+json.dumps(response_schema,separators=(',',':')))+128
         # Local tokenizer is model-specific. Estimate 2 UTF-8 bytes/token and reserve context for response framing.
         token_bound=(byte_bound+1)//2 if local else byte_bound
         max_input,max_output=local_limits(s,token_bound) if local else (s.max_input,s.max_output)
@@ -108,9 +110,9 @@ class BudgetedProvider:
             known_usage=getattr(e,'usage',None)
             if known_usage is not None:
                 actual=cost(known_usage,rates) if rates else 0
-                details=json.dumps({**known_usage.model_dump(mode='json'),'error_code':getattr(e,'code','provider_output'),'finish_reason':'length'},separators=(',',':'))
+                details=json.dumps({**known_usage.model_dump(mode='json'),'error_code':getattr(e,'code','provider_output'),'finish_reason':getattr(e,'finish_reason','length')},separators=(',',':'))
                 with self.store.connect() as db:
-                    db.execute("UPDATE usage SET status='truncated',cost=?,model=?,details=? WHERE id=? AND status='reserved'",(actual,getattr(e,'model',a.model),details,ident))
+                    db.execute("UPDATE usage SET status=?,cost=?,model=?,details=? WHERE id=? AND status='reserved'",(getattr(e,'usage_status','truncated'),actual,getattr(e,'model',a.model),details,ident))
             status=getattr(e,'status_code',None)
             if status is None and getattr(e,'response',None) is not None:status=e.response.status_code
             if status in [400,401,403,404,422,429]:

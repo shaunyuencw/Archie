@@ -4,9 +4,12 @@ from openai import OpenAI
 from .contracts import Envelope,ProviderResult,Usage,schema,ToolRequest
 from ..domain.commands import DomainError
 from .instructions import SYSTEM_PROMPT
+from .structured import STRUCTURED_SYSTEM_PROMPT,structured_schema,parse_structured
 
 class OpenAIAdapter:
     name='openai'
+    system_prompt=STRUCTURED_SYSTEM_PROMPT
+    response_schema=staticmethod(structured_schema)
     def __init__(self,settings,client=None):
         self.model=settings.openai_model
         self.client=client or OpenAI(api_key=os.getenv('OPENAI_API_KEY'),max_retries=0)
@@ -14,12 +17,17 @@ class OpenAIAdapter:
     def generate_structured(self,prompt,max_output,deadline,cancel=None):
         if cancel and cancel.is_set(): raise DomainError('cancelled','Cancelled before transmission')
         started=time.monotonic()
-        r=self.client.responses.create(model=self.model,input=[{'role':'system','content':SYSTEM_PROMPT},{'role':'user','content':prompt}],text={'format':{'type':'json_schema','name':'architecture_action','schema':schema(),'strict':True}},max_output_tokens=max_output,store=False,timeout=max(.1,deadline-time.monotonic()),**({'reasoning':{'effort':'none'}} if self.model.startswith(('gpt-5.4-mini','gpt-5.6-terra')) else {}))
+        r=self.client.responses.create(model=self.model,input=[{'role':'system','content':self.system_prompt},{'role':'user','content':prompt}],text={'format':{'type':'json_schema','name':'architecture_action','schema':self.response_schema(),'strict':True}},max_output_tokens=max_output,store=False,timeout=max(.1,deadline-time.monotonic()),**({'reasoning':{'effort':'none'}} if self.model.startswith(('gpt-5.4-mini','gpt-5.6-terra')) else {}))
         if r.status!='completed' or not r.output_text: raise DomainError('provider_output','Provider refused or truncated its response')
         u=r.usage; cached=getattr(u.input_tokens_details,'cached_tokens',0) or 0
         writes=getattr(u.input_tokens_details,'cache_write_tokens',0) or getattr(u.input_tokens_details,'cache_creation_tokens',0) or 0
         usage=Usage(input_tokens=max(0,u.input_tokens-cached-writes),cache_read_tokens=cached,cache_write_tokens=writes,output_tokens=u.output_tokens,reasoning_tokens=getattr(u.output_tokens_details,'reasoning_tokens',0) or 0,latency_ms=(time.monotonic()-started)*1000)
-        return ProviderResult(content=Envelope.model_validate_json(r.output_text),finish_status='completed',model=r.model,usage=usage)
+        try:content=parse_structured(r.output_text)
+        except ValueError as cause:
+            error=DomainError('provider_output','OpenAI returned an invalid structured draft. No changes were applied.')
+            error.usage=usage;error.model=r.model;error.usage_status='invalid_output';error.finish_reason='invalid_schema';error.terminal=True
+            raise error from cause
+        return ProviderResult(content=content,finish_status='completed',model=r.model,usage=usage)
     def invoke_tools(self,prompt,max_output,deadline,cancel=None):
         # Explicit capability probe uses a native function; runtime defaults to labelled envelopes.
         started=time.monotonic()

@@ -2,6 +2,7 @@ import json,time
 from typing import Literal
 from pydantic import Field
 from ..domain.models import Record
+from ..domain.commands import DomainError
 
 class WireOperation(Record):
     op:Literal['add','update','remove']
@@ -42,6 +43,22 @@ class ProviderResult(Record):
     finish_status:Literal['completed']
     model:str
     usage:Usage
+
+def operation_value(operation):
+    return _record_json(operation.value_json,operation.id,'Record',object_only=True)
+
+def claim_value(claim):
+    return _record_json(claim.value_json,claim.target_id,'Source claim')
+
+def _record_json(text,ident,label,object_only=False):
+    try:
+        value=json.loads(text)
+        if object_only and not isinstance(value,dict):raise ValueError('Expected an object')
+        return value
+    except ValueError as cause:
+        error=DomainError('provider_output',f'{label} “{ident[:160]}” contains malformed JSON data from the provider. Your current design was not changed.')
+        error.operation_ids={ident}
+        raise error from cause
 
 def schema():
     result=Envelope.model_json_schema()

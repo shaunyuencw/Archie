@@ -2,6 +2,7 @@
 import json
 
 from ..domain.commands import DomainError
+from ..providers.contracts import operation_value
 
 
 ENTITIES=('systems','zones','components','deployments','interfaces','constraints')
@@ -28,15 +29,12 @@ def proposed_records(project,envelopes,unreadable=None):
     for envelope in envelopes:
         for op in envelope.operations:
             try:
-                value=json.loads(op.value_json)
-                if not isinstance(value,dict):raise ValueError('Operation value must be an object')
-            except ValueError as error:
+                value=operation_value(op)
+            except DomainError:
                 if unreadable is not None:
                     unreadable.append({'entity':op.entity,'id':op.id})
                     continue
-                invalid=DomainError('provider_output',f'Record “{op.id[:160]}” has invalid JSON object data. Your current design was not changed.')
-                invalid.operation_ids={op.id}
-                raise invalid from error
+                raise
             group=records[op.entity]
             if op.op=='remove':group.pop(op.id,None)
             else:group[op.id]={**group.get(op.id,{}),**value,'id':op.id}
@@ -88,7 +86,7 @@ def normalize_references(project,envelope):
 
     for op in result.operations:
         if op.op=='remove':continue
-        value=json.loads(op.value_json)
+        value=operation_value(op)
         for field,expected in REFERENCE_FIELDS.get(op.entity,{}).items():
             if field not in value:continue
             if field=='enforcement':

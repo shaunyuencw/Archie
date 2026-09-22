@@ -1,0 +1,13 @@
+# OpenAI document response format — 22 September 2026
+
+The reported document job failed with `Expecting property name enclosed in double quotes` after its single repair. The saved error identifies a nested JSON decode failure; the original response text was not retained, so its exact malformed characters cannot be replayed.
+
+Archie's strict response envelope declared each operation and claim's `value_json` as a string. The outer schema therefore permitted malformed JSON inside that string. A second defect assigned malformed claim values to the last document batch, potentially repairing a different section from the one containing the error.
+
+OpenAI now returns native values in a closed, recursive field-list schema. The adapter converts them to the existing internal envelope using the JSON serializer. It preserves sparse edits, explicit nulls, booleans, numbers, arrays, nested objects and exact text. Duplicate keys reject; there is no permissive JSON repair, guessed content, or code execution. Ollama retains its existing compact wire format and context limits. The format follows the supported recursive schemas and closed-object requirements in the [official OpenAI Structured Outputs documentation](https://developers.openai.com/api/docs/guides/structured-outputs#recursive-schemas-are-supported).
+
+Budget checks include the actual OpenAI schema and instructions. Known usage from an invalid response is retained as `invalid_output`; it is not incorrectly recorded as a successful draft or a truncation. Internal/legacy parse failures identify the affected record, and malformed claim values are checked in their own batch before document responses are combined. The existing one-repair and spending limits remain in effect.
+
+Validation: **256 backend tests passed**, with three existing deprecation warnings. Mocked transport exercises the real OpenAI adapter through document preview/acceptance, quoted names, zones and connections; sparse prompt edits; nested data and type preservation; duplicate/malformed response rejection and cost accounting; the 50,000/50,001 input boundary; and repair targeting for malformed evidence in an earlier batch. Existing no-zone and policy-review transport fixtures were updated to the new wire format while retaining their behavioral assertions. Evidence: `structured-response-tests.xml` and `structured-response-validation.json`.
+
+No live provider calls or document uploads were made by this fix. New live OpenAI generation remains unverified. The configured 50,000 input limit and 6,000 output limit are unchanged. Frontend code was not changed and browser tests were not rerun; the previously documented full-browser pointer-resize failure remains separate.

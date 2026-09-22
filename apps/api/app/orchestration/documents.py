@@ -3,7 +3,7 @@ import json
 from ..providers.config import Settings
 from ..providers.adapters import OpenAIAdapter,OllamaAdapter
 from ..providers.budget import BudgetedProvider
-from ..providers.contracts import Envelope
+from ..providers.contracts import Envelope,operation_value,claim_value
 from ..domain.commands import DomainError
 from ..domain.models import Passage,uid
 from ..ingest.parser import parse
@@ -63,10 +63,10 @@ def _document_proposal(project,source,batches):
             for claim in envelope.claims:
                 if claim.source_id not in ('S1',source.id):raise DomainError('provider_output','Evidence was not in the supplied source context')
                 source_excerpt(supplied,claim)
+                claim_value(claim)
             if combined.project_name is None:combined.project_name=envelope.project_name
             for op in envelope.operations:
-                value=json.loads(op.value_json)
-                if not isinstance(value,dict):raise DomainError('provider_output','Operation value must be an object')
+                value=operation_value(op)
                 if op.op=='add':
                     signature=(op.entity,value,op.proposal_reason)
                     if op.id in additions:

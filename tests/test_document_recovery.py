@@ -241,7 +241,31 @@ def test_malformed_record_json_repairs_its_original_section(tmp_path,monkeypatch
     assert result['repairs']==1 and len(adapter.prompts)==3
     assert adapter.prompts[1]['known_records']['unreadable_operations']==[{'entity':'systems','id':'SYS-VAS'}]
     assert adapter.prompts[2]['previous_response']==invalid.model_dump()
+    assert 'Record “SYS-VAS” contains malformed JSON' in adapter.prompts[2]['validation_error']
     assert len(store.commit(result['proposal']).interfaces)==1
+
+
+def test_malformed_claim_repairs_its_own_batch_instead_of_the_last_batch(tmp_path,monkeypatch):
+    store,project=setup(tmp_path,monkeypatch)
+    invalid=systems();invalid.claims[0].value_json='{"name":"Video Analytics",}'
+    adapter=ScriptedAdapter([invalid,flow(repaired=True),systems()])
+    result=ingest_live(store,project.id,b'synthetic','spec.pdf','openai',settings(),adapter)
+    assert result['repairs']==1 and len(adapter.prompts)==3
+    assert adapter.prompts[2]['previous_response']==invalid.model_dump()
+    assert 'Source claim “SYS-VAS” contains malformed JSON' in adapter.prompts[2]['validation_error']
+    assert len(store.commit(result['proposal']).interfaces)==1
+
+
+def test_failed_json_repair_names_the_record_without_exposing_parser_trace(tmp_path,monkeypatch):
+    store,project=setup(tmp_path,monkeypatch)
+    invalid=systems();invalid.operations[0].value_json='{"name":"Video Analytics",}'
+    adapter=ScriptedAdapter([invalid,flow(repaired=True),invalid])
+    with pytest.raises(DomainError) as error:
+        ingest_live(store,project.id,b'synthetic','spec.pdf','openai',settings(),adapter)
+    assert 'Record “SYS-VAS” contains malformed JSON' in error.value.message
+    assert 'single automatic repair' in error.value.message
+    assert 'Expecting property name' not in error.value.message
+    assert len(adapter.prompts)==3 and store.get(project.id)==project
 
 
 def test_conflicting_repeated_add_requires_repair_instead_of_overwrite(tmp_path,monkeypatch):

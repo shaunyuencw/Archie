@@ -10,6 +10,7 @@ from ..policies.library import selected_ids
 from ..providers.adapters import OpenAIAdapter,OllamaAdapter,MockAdapter
 from ..providers.budget import BudgetedProvider
 from ..providers.config import Settings
+from ..providers.contracts import operation_value,claim_value
 from .service import question_ops
 from .references import normalize_references
 from .zoning import ZONING_QUERY,supporting_sources,new_zone_layout
@@ -122,7 +123,7 @@ def proposal_from_envelope(p,source,envelope,source_alias=None,*,evidence_source
     for w in envelope.operations:
         if w.proposal_reason is not None:
             allowed={'name'} if w.entity=='zones' else {'component_id','zone_id'} if w.entity=='deployments' else set()
-            value=json.loads(w.value_json)
+            value=operation_value(w)
             field='name' if w.entity=='zones' else 'zone_id'
             if w.op not in ('add','update') or not allowed or not isinstance(value,dict) or field not in value or not set(value)<=allowed or not w.proposal_reason.strip():
                 raise DomainError('provider_output','proposal_reason is only for proposed zone names or component zone assignments; keep unrelated details as separate evidenced changes.')
@@ -137,18 +138,17 @@ def proposal_from_envelope(p,source,envelope,source_alias=None,*,evidence_source
         cited=supplied.get(w.source_id)
         if cited is None: raise DomainError('provider_output','Evidence was not in the supplied source context')
         inferred=w.target_id in assumptions
-        claims.append(Claim(id=uid(),source_id=cited.id,source_version=cited.version,locator=w.locator,excerpt=source_excerpt(cited,w),target_id=w.target_id,field='proposal_basis' if inferred else w.field,value=None if inferred else json.loads(w.value_json),source_kind=cited.kind,review='unreviewed' if inferred else 'confirmed'))
+        claims.append(Claim(id=uid(),source_id=cited.id,source_version=cited.version,locator=w.locator,excerpt=source_excerpt(cited,w),target_id=w.target_id,field='proposal_basis' if inferred else w.field,value=None if inferred else claim_value(w),source_kind=cited.kind,review='unreviewed' if inferred else 'confirmed'))
     proposal_source=None
     if assumptions:
         passages=[Passage(locator=f'proposal/{i+1}',text=w.proposal_reason.strip()) for i,w in enumerate(assumptions.values())]
         digest=hashlib.sha256('\n'.join(p.text for p in passages).encode()).hexdigest()
         proposal_source=Source(id=uid(),name='Archie zoning design assumptions',kind='assistant_proposal',sha256=digest,canonical_id=uid(),passages=passages,processed=[p.locator for p in passages])
         for w,passage in zip(assumptions.values(),passages):
-            claims.append(Claim(id=uid(),source_id=proposal_source.id,source_version=proposal_source.version,locator=passage.locator,excerpt=passage.text,target_id=w.id,field='proposed_zoning',value=json.loads(w.value_json),source_kind='assistant_proposal',review='unreviewed'))
+            claims.append(Claim(id=uid(),source_id=proposal_source.id,source_version=proposal_source.version,locator=passage.locator,excerpt=passage.text,target_id=w.id,field='proposed_zoning',value=operation_value(w),source_kind='assistant_proposal',review='unreviewed'))
             uncertainties.append(f'{w.id}: proposed zoning — {passage.text}')
     for w in envelope.operations:
-        value=json.loads(w.value_json)
-        if not isinstance(value,dict):raise DomainError('provider_output','Operation value must be an object')
+        value=operation_value(w)
         if w.entity=='interfaces' and 'port' in value:
             value['port']=normalize_interface_port(value['port'],w.id,uncertainties)
         if w.entity=='interfaces' and 'enforcement' in value:
